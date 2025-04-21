@@ -1,6 +1,8 @@
 package io.github.jotabrc.ov_fma_user.service;
 
+import io.github.jotabrc.ov_fma_user.dto.RoleDto;
 import io.github.jotabrc.ov_fma_user.dto.UserCreationUpdateDto;
+import io.github.jotabrc.ov_fma_user.dto.UserDto;
 import io.github.jotabrc.ov_fma_user.handler.CredentialNotAvailableException;
 import io.github.jotabrc.ov_fma_user.handler.RoleNotFoundException;
 import io.github.jotabrc.ov_fma_user.handler.UserNotFoundException;
@@ -68,6 +70,19 @@ public class UserServiceImpl implements UserService {
         // Update user data.
         user = updateUserData(dto, user);
         userRepository.save(user);
+    }
+
+    /**
+     * Get User by UUID.
+     * @param uuid uuid String to search user.
+     * @return UserDto.
+     * @throws UserNotFoundException if no user is found with the provided UUID parameter.
+     */
+    @Override
+    public UserDto getByUuid(String uuid) throws UserNotFoundException {
+        User user = userRepository.findByUuid(uuid)
+                .orElseThrow(() -> new UserNotFoundException("User with UUID %s not found".formatted(uuid)));
+        return toDto(user);
     }
 
     // =================================================================================================================
@@ -291,5 +306,10 @@ public class UserServiceImpl implements UserService {
     private Role getRoleUser() {
         return roleRepository.findByName(RoleName.USER)
                 .orElseThrow(() -> new RoleNotFoundException("Role USER not found"));
+    }
+
+    private UserDto toDto(User user) {
+        RoleDto roleDto = new RoleDto(user.getRole().getUuid(), user.getRole().getName().getName(), user.getRole().getDescription());
+        return new UserDto(user.getUuid(), user.getUsername(), user.getEmail(), user.getName(), roleDto);
     }
 }

@@ -1,10 +1,12 @@
 package io.github.jotabrc.ov_fma_user.controller;
 
 import io.github.jotabrc.ov_fma_user.dto.UserCreationUpdateDto;
+import io.github.jotabrc.ov_fma_user.dto.UserDto;
 import io.github.jotabrc.ov_fma_user.service.UserService;
 import io.github.jotabrc.ov_fma_user.util.ControllerMessage;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -57,9 +59,19 @@ public class UserController {
                 .message("User update was successful")
                 .uuid(dto.getUuid())
                 .build();
-        return ResponseEntity.ok(
-                controllerMessage
-                        .toJSON()
-        );
+        return ResponseEntity
+                .ok(
+                        controllerMessage
+                                .toJSON()
+                );
+    }
+
+    @GetMapping("/get-by-uuid/{uuid}")
+    @Tag(name = "User GET BY UUID", description = "Get user information with uuid")
+    public ResponseEntity<UserDto> getByUuid(@PathVariable("uuid") final String uuid) {
+        UserDto dto = userService.getByUuid(uuid);
+        return ResponseEntity
+                .status(HttpStatus.FOUND)
+                .body(dto);
     }
 }
