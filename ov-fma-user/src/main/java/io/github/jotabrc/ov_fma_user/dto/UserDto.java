@@ -9,9 +9,11 @@ import lombok.Getter;
 public class UserDto extends UserDtoAbs {
 
     private final RoleDto role;
+    private final String name;
 
-    public UserDto(final String uuid, final String username, final String email, final String name, final RoleDto role) {
-        super(uuid, username, email, name);
+    public UserDto(final String uuid, final String username, final String email, String name, final RoleDto role) {
+        super(uuid, username, email);
+        this.name = name;
         this.role = role;
     }
 }

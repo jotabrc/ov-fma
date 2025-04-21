@@ -1,5 +1,7 @@
 package io.github.jotabrc.ov_fma_user.controller;
 
+
+import com.fasterxml.jackson.core.JsonProcessingException;
 import io.github.jotabrc.ov_fma_user.dto.UserCreationUpdateDto;
 import io.github.jotabrc.ov_fma_user.dto.UserDto;
 import io.github.jotabrc.ov_fma_user.service.UserService;
@@ -30,7 +32,7 @@ public class UserController {
 
     @PostMapping("/signup")
     @Tag(name = "User SIGNUP", description = "Register's new user")
-    public ResponseEntity<String> signup(@RequestBody final UserCreationUpdateDto dto) throws NoSuchAlgorithmException {
+    public ResponseEntity<String> signup(@RequestBody final UserCreationUpdateDto dto) throws NoSuchAlgorithmException, JsonProcessingException {
         String uuid = userService.signup(dto);
         // Creates location path to retrieve user information
         URI location = ServletUriComponentsBuilder
@@ -52,7 +54,7 @@ public class UserController {
 
     @PutMapping("/update")
     @Tag(name = "User UPDATE", description = "Updates user information, requires valid UUID")
-    public ResponseEntity<String> update(@RequestBody final UserCreationUpdateDto dto) throws NoSuchAlgorithmException {
+    public ResponseEntity<String> update(@RequestBody final UserCreationUpdateDto dto) throws NoSuchAlgorithmException, JsonProcessingException {
         userService.update(dto);
         ControllerMessage controllerMessage = ControllerMessage
                 .builder()

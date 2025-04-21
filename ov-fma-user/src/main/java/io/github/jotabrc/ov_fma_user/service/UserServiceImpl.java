@@ -1,8 +1,11 @@
 package io.github.jotabrc.ov_fma_user.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import io.github.jotabrc.ov_fma_user.config.KafkaTopic;
 import io.github.jotabrc.ov_fma_user.dto.RoleDto;
 import io.github.jotabrc.ov_fma_user.dto.UserCreationUpdateDto;
 import io.github.jotabrc.ov_fma_user.dto.UserDto;
+import io.github.jotabrc.ov_fma_user.dto.UserKafkaDto;
 import io.github.jotabrc.ov_fma_user.handler.CredentialNotAvailableException;
 import io.github.jotabrc.ov_fma_user.handler.RoleNotFoundException;
 import io.github.jotabrc.ov_fma_user.handler.UserNotFoundException;
@@ -30,11 +33,13 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
+    private final KafkaProducer kafkaProducer;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, RoleRepository roleRepository) {
+    public UserServiceImpl(UserRepository userRepository, RoleRepository roleRepository, KafkaProducer kafkaProducer) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
+        this.kafkaProducer = kafkaProducer;
     }
 
     /**
@@ -45,13 +50,18 @@ public class UserServiceImpl implements UserService {
      * @return UUID if registration is successful.
      */
     @Override
-    public String signup(final UserCreationUpdateDto dto) throws NoSuchAlgorithmException {
+    public String signup(final UserCreationUpdateDto dto) throws NoSuchAlgorithmException, JsonProcessingException {
 
         // Throws CredentialNotAvailableException if email or username is already in use.
         emailAndUsernameAvailability(dto.getEmail(), dto.getUsername());
         // build UserDao to be persisted
         User user = buildUser(dto);
         userRepository.save(user);
+
+        // Sends Kafka message to Authentication service
+        // User will be added for authentication retrieval
+        sendKafkaMessage(user, KafkaTopic.USER_NEW);
+
         return user.getUuid();
     }
 
@@ -61,7 +71,7 @@ public class UserServiceImpl implements UserService {
      * @param dto UserCreationUpdateDto.
      */
     @Override
-    public void update(final UserCreationUpdateDto dto) throws NoSuchAlgorithmException {
+    public void update(final UserCreationUpdateDto dto) throws NoSuchAlgorithmException, JsonProcessingException {
         // Throws UserNotFoundException if user UUID is not found.
         User user = getUser(dto.getUuid());
         // Throws CredentialNotAvailableException if email or username is already in use.
@@ -69,11 +79,17 @@ public class UserServiceImpl implements UserService {
 
         // Update user data.
         user = updateUserData(dto, user);
+
+        // Sends Kafka message to Authentication service
+        // User will be updated
+        sendKafkaMessage(user, KafkaTopic.USER_UPDATE);
+
         userRepository.save(user);
     }
 
     /**
      * Get User by UUID.
+     *
      * @param uuid uuid String to search user.
      * @return UserDto.
      * @throws UserNotFoundException if no user is found with the provided UUID parameter.
@@ -308,8 +324,34 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new RoleNotFoundException("Role USER not found"));
     }
 
-    private UserDto toDto(User user) {
+    /**
+     * Transform User into UserDto.
+     *
+     * @param user User DAO.
+     * @return UserDto.
+     */
+    private UserDto toDto(final User user) {
         RoleDto roleDto = new RoleDto(user.getRole().getUuid(), user.getRole().getName().getName(), user.getRole().getDescription());
         return new UserDto(user.getUuid(), user.getUsername(), user.getEmail(), user.getName(), roleDto);
+    }
+
+    /**
+     * Transforms User into UserKafkaDto.
+     *
+     * @param user User DAO.
+     * @return UserKafkaDto.
+     */
+    private UserKafkaDto toKafkaDto(final User user) {
+        return new UserKafkaDto(user.getUuid(), user.getUsername(), user.getEmail(), user.getRole().getName().getName(), user.getSalt(), user.getHash(), user.isActive());
+    }
+
+    /**
+     * Send Kafka Message.
+     * @param user User DAO will be transformed into UserKafkaDto.
+     * @throws JsonProcessingException if DTO parsing to JSON error occurs.
+     */
+    private void sendKafkaMessage(final User user, final String topic) throws JsonProcessingException {
+        UserKafkaDto kafkaDto = toKafkaDto(user);
+        kafkaProducer.produce(kafkaDto, topic);
     }
 }

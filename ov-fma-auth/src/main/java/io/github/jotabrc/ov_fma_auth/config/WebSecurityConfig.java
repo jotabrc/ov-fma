@@ -1,4 +1,4 @@
-package io.github.jotabrc.ov_fma_user;
+package io.github.jotabrc.ov_fma_auth.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,18 +15,18 @@ import org.springframework.security.web.SecurityFilterChain;
 public class WebSecurityConfig {
 
     private static final String[] WHITELIST = {
-            "/v3/api-docs-user/**",
+            "/v3/api-docs-auth/**",
             "/v3/api-docs/**",
             "/swagger-resources",
             "/swagger-resources/**",
             "/configuration/ui",
             "/configuration/security",
-            "/swagger-user.html",
-            "/swagger-user/**",
+            "/swagger-auth.html",
+            "/swagger-auth/**",
             "/swagger-ui/**",
             "/swagger-ui.html",
             "/webjars/**",
-            "/h2-console-user/**",
+            "/h2-console-auth/**",
             "/login.do"
     };
 
