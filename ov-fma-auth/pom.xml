@@ -90,6 +90,12 @@
 			<artifactId>flyway-core</artifactId>
 			<version>10.20.1</version>
 		</dependency>
+		<!-- JWT TokenCreator - ov-auth -->
+		<dependency>
+			<groupId>io.github.jotabrc</groupId>
+			<artifactId>ov-auth</artifactId>
+			<version>3.3.4</version>
+		</dependency>
 	</dependencies>
 
 	<build>
