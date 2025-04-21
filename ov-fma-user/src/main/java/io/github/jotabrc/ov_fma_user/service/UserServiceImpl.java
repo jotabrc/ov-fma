@@ -55,7 +55,7 @@ public class UserServiceImpl implements UserService {
         // Throws CredentialNotAvailableException if email or username is already in use.
         emailAndUsernameAvailability(dto.getEmail(), dto.getUsername());
         // build UserDao to be persisted
-        User user = buildUser(dto);
+        User user = buildNewUser(dto);
         userRepository.save(user);
 
         // Sends Kafka message to Authentication service
@@ -75,10 +75,10 @@ public class UserServiceImpl implements UserService {
         // Throws UserNotFoundException if user UUID is not found.
         User user = getUser(dto.getUuid());
         // Throws CredentialNotAvailableException if email or username is already in use.
-        validateDataToBeChecked(dto, user);
+        dataToBeChecked(dto, user);
 
         // Update user data.
-        user = updateUserData(dto, user);
+        updateUserData(dto, user);
 
         // Sends Kafka message to Authentication service
         // User will be updated
@@ -121,7 +121,7 @@ public class UserServiceImpl implements UserService {
      * @param dto  New User data.
      * @param user Current user data.
      */
-    private void validateDataToBeChecked(final UserCreationUpdateDto dto, final User user) {
+    private void dataToBeChecked(final UserCreationUpdateDto dto, final User user) {
         boolean newEmail = false;
         boolean newUsername = false;
 
@@ -174,11 +174,11 @@ public class UserServiceImpl implements UserService {
      * @return updated User.
      * @throws NoSuchAlgorithmException if salt or hash encryption algorithm is not found.
      */
-    private User updateUserData(final UserCreationUpdateDto dto, final User user) throws NoSuchAlgorithmException {
+    private void updateUserData(final UserCreationUpdateDto dto, final User user) throws NoSuchAlgorithmException {
         // Create new salt and hash if password in UserCreationUpdateDto is not null or empty, or return those in User DAO.
         NewHashAndSalt result = updatePassword(dto.getPassword(), user);
 
-        return user
+        user
                 .setName(dto.getName())
                 .setUsername(dto.getUsername())
                 .setEmail(dto.getEmail())
@@ -193,7 +193,7 @@ public class UserServiceImpl implements UserService {
      * @return User DAO.
      * @throws NoSuchAlgorithmException if salt or hash encryption algorithm is not found.
      */
-    private User buildUser(final UserCreationUpdateDto dto) throws NoSuchAlgorithmException {
+    private User buildNewUser(final UserCreationUpdateDto dto) throws NoSuchAlgorithmException {
         byte[] salt = getSalt();
         String encodedSalt = getEncodedSalt(salt);
         String hash = getHash(dto.getPassword(), salt);
@@ -347,6 +347,7 @@ public class UserServiceImpl implements UserService {
 
     /**
      * Send Kafka Message.
+     *
      * @param user User DAO will be transformed into UserKafkaDto.
      * @throws JsonProcessingException if DTO parsing to JSON error occurs.
      */
