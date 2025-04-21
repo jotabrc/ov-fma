@@ -1,0 +1,16 @@
+spring:
+  server:
+    port: 8080
+  webflux:
+    static-path-pattern: ""
+  cloud:
+    gateway:
+      httpclient:
+        connect-timeout: 5000
+        response-timeout: 5000ms
+
+logging:
+  level:
+    org.springframework.cloud.gateway: TRACE
+    reactor.netty.http.client: DEBUG
+    org.springframework.security: DEBUG

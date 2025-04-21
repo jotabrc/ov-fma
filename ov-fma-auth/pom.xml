@@ -94,7 +94,12 @@
 		<dependency>
 			<groupId>io.github.jotabrc</groupId>
 			<artifactId>ov-auth</artifactId>
-			<version>3.3.4</version>
+			<version>4.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>io.github.jotabrc</groupId>
+			<artifactId>ov-auth-mvc-filter</artifactId>
+			<version>1.0.0</version>
 		</dependency>
 	</dependencies>
 

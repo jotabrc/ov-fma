@@ -12,6 +12,9 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import static io.github.jotabrc.ov_fma_auth.controller.ControllerPath.PREFIX;
+import static io.github.jotabrc.ov_fma_auth.controller.ControllerPath.VERSION;
+
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig {
@@ -30,7 +33,8 @@ public class WebSecurityConfig {
                 )
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(WHITELIST).permitAll()
-                        .anyRequest().permitAll()
+                        .requestMatchers(PREFIX + VERSION + "/auth/signin").hasAnyRole("USER", "ADMIN")
+                        .anyRequest().authenticated()
                 )
                 .addFilterBefore(new TokenGlobalFilter(), UsernamePasswordAuthenticationFilter.class)
                 .formLogin(AbstractHttpConfigurer::disable);

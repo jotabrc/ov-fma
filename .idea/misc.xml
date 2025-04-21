@@ -10,6 +10,7 @@
         <option value="$PROJECT_DIR$/ov-fma-user/ov-fma-user/pom.xml" />
         <option value="$PROJECT_DIR$/ov-fma-auth/pom.xml" />
         <option value="$PROJECT_DIR$/ov-fma-user/pom.xml" />
+        <option value="$PROJECT_DIR$/ov-fma-gateway/pom.xml" />
       </list>
     </option>
   </component>

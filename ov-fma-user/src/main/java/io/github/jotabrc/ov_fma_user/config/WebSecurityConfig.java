@@ -1,5 +1,6 @@
 package io.github.jotabrc.ov_fma_user.config;
 
+import io.github.jotabrc.ov_fma_user.util.RoleName;
 import io.github.jotabrc.ovauth.config.PropertiesWhitelistLoaderImpl;
 import io.github.jotabrc.ovauth.jwt.TokenGlobalFilter;
 import org.springframework.context.annotation.Bean;
@@ -12,6 +13,9 @@ import org.springframework.security.config.annotation.web.configurers.HeadersCon
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import static io.github.jotabrc.ov_fma_user.controller.ControllerPath.PREFIX;
+import static io.github.jotabrc.ov_fma_user.controller.ControllerPath.VERSION;
 
 @Configuration
 @EnableWebSecurity
@@ -32,7 +36,10 @@ public class WebSecurityConfig {
                 )
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(WHITELIST).permitAll()
-                        .anyRequest().permitAll()
+                        .requestMatchers(PREFIX + VERSION + "/user/signup").permitAll()
+                        .requestMatchers(PREFIX + VERSION + "/user/update").hasAnyRole(RoleName.USER.getName(), RoleName.ADMIN.getName())
+                        .requestMatchers(PREFIX + VERSION + "/user/get-by-uuid/**").hasAnyRole(RoleName.USER.getName(), RoleName.ADMIN.getName())
+                        .anyRequest().authenticated()
                 )
                 .addFilterBefore(new TokenGlobalFilter(), UsernamePasswordAuthenticationFilter.class)
                 .formLogin(AbstractHttpConfigurer::disable);
