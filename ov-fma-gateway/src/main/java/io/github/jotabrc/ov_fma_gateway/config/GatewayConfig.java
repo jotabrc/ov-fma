@@ -30,28 +30,70 @@ import java.util.stream.Collectors;
 public class GatewayConfig implements WebFluxConfigurer {
 
     private final LoadProperties loadProperties;
-    private final String[] whitelist;
+    private final String[] WHITELIST;
 
     @Autowired
     public GatewayConfig(LoadProperties loadProperties) {
         this.loadProperties = loadProperties;
-        this.whitelist = PropertiesWhitelistLoaderImpl.WHITELIST.values().toArray(new String[0]);
+        this.WHITELIST = PropertiesWhitelistLoaderImpl.WHITELIST.values().toArray(new String[0]);
     }
 
     @Bean
     public RouteLocator customRouteLocator(RouteLocatorBuilder locatorBuilder) {
         return locatorBuilder.routes()
+
+                // === USER ===
                 .route(RouteConfig.routeConfig.get("userServiceName"), r -> r.path(RouteConfig.routeConfig.get("userServicePath"))
                         .filters(f -> f
                                 .rewritePath(RouteConfig.routeConfig.get("userServicePattern"), RouteConfig.routeConfig.get("userServiceReplacement")))
                         .uri(RouteConfig.routeConfig.get("userServiceUri"))
                 )
 
+                // == H2 USER ===
+                .route(RouteConfig.routeConfig.get("userServiceH2Name"), r -> r.path(RouteConfig.routeConfig.get("userServiceH2Path"))
+                        .filters(f -> f
+                                .rewritePath(RouteConfig.routeConfig.get("userServiceH2Pattern"), RouteConfig.routeConfig.get("userServiceH2Replacement")))
+                        .uri(RouteConfig.routeConfig.get("userServiceUri"))
+                )
+
+                // === SWAGGER USER ===
+                .route(RouteConfig.routeConfig.get("userServiceSwaggerName"), r -> r.path(RouteConfig.routeConfig.get("userServiceSwaggerPath"))
+                        .filters(f -> f
+                                .rewritePath(RouteConfig.routeConfig.get("userServiceSwaggerPattern"), RouteConfig.routeConfig.get("userServiceSwaggerReplacement")))
+                        .uri(RouteConfig.routeConfig.get("userServiceUri"))
+                )
+                .route(RouteConfig.routeConfig.get("userServiceSwaggerApiDocsName"), r -> r.path(RouteConfig.routeConfig.get("userServiceSwaggerApiDocsPath"))
+                        .filters(f -> f
+                                .rewritePath(RouteConfig.routeConfig.get("userServiceSwaggerApiDocsPattern"), RouteConfig.routeConfig.get("userServiceSwaggerApiDocsReplacement")))
+                        .uri(RouteConfig.routeConfig.get("userServiceUri"))
+                )
+
+                // === AUTH ===
                 .route(RouteConfig.routeConfig.get("authServiceName"), r -> r.path(RouteConfig.routeConfig.get("authServicePath"))
                         .filters(f -> f
                                 .rewritePath(RouteConfig.routeConfig.get("authServicePattern"), RouteConfig.routeConfig.get("authServiceReplacement")))
                         .uri(RouteConfig.routeConfig.get("authServiceUri"))
                 )
+
+                // === H2 AUTH ===
+                .route(RouteConfig.routeConfig.get("authServiceH2Name"), r -> r.path(RouteConfig.routeConfig.get("authServiceH2Path"))
+                        .filters(f -> f
+                                .rewritePath(RouteConfig.routeConfig.get("authServiceH2Pattern"), RouteConfig.routeConfig.get("authServiceH2Replacement")))
+                        .uri(RouteConfig.routeConfig.get("authServiceUri"))
+                )
+
+                // === SWAGGER AUTH ===
+                .route(RouteConfig.routeConfig.get("authServiceSwaggerName"), r -> r.path(RouteConfig.routeConfig.get("authServiceSwaggerPath"))
+                        .filters(f -> f
+                                .rewritePath(RouteConfig.routeConfig.get("authServiceSwaggerPattern"), RouteConfig.routeConfig.get("authServiceSwaggerReplacement")))
+                        .uri(RouteConfig.routeConfig.get("authServiceUri"))
+                )
+                .route(RouteConfig.routeConfig.get("authServiceSwaggerApiDocsName"), r -> r.path(RouteConfig.routeConfig.get("authServiceSwaggerApiDocsPath"))
+                        .filters(f -> f
+                                .rewritePath(RouteConfig.routeConfig.get("authServiceSwaggerApiDocsPattern"), RouteConfig.routeConfig.get("authServiceSwaggerApiDocsReplacement")))
+                        .uri(RouteConfig.routeConfig.get("authServiceUri"))
+                )
+
                 .build();
     }
 
@@ -60,7 +102,7 @@ public class GatewayConfig implements WebFluxConfigurer {
         http
                 .csrf(ServerHttpSecurity.CsrfSpec::disable)
                 .authorizeExchange(auth -> auth
-                        .pathMatchers(whitelist).permitAll()
+                        .pathMatchers(WHITELIST).permitAll()
                         .pathMatchers("/user/signup").permitAll()
                         .pathMatchers("/auth/signin").permitAll()
                         .pathMatchers("/user/update").authenticated()

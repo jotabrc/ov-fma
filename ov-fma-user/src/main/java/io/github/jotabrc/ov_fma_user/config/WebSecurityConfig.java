@@ -3,6 +3,7 @@ package io.github.jotabrc.ov_fma_user.config;
 import io.github.jotabrc.ov_fma_user.util.RoleName;
 import io.github.jotabrc.ovauth.config.PropertiesWhitelistLoaderImpl;
 import io.github.jotabrc.ovauth.jwt.TokenGlobalFilter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
@@ -21,7 +22,14 @@ import static io.github.jotabrc.ov_fma_user.controller.ControllerPath.VERSION;
 @EnableWebSecurity
 public class WebSecurityConfig {
 
-    private static final String[] WHITELIST = PropertiesWhitelistLoaderImpl.WHITELIST.values().toArray(new String[0]);
+    private final LoadProperties loadProperties;
+    private final String[] WHITELIST;
+
+    @Autowired
+    public WebSecurityConfig(LoadProperties loadProperties) {
+        this.loadProperties = loadProperties;
+        this.WHITELIST = PropertiesWhitelistLoaderImpl.WHITELIST.values().toArray(new String[0]);
+    }
 
     @Bean
     protected SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -41,7 +49,7 @@ public class WebSecurityConfig {
                         .requestMatchers(PREFIX + VERSION + "/user/get-by-uuid/**").hasAnyRole(RoleName.USER.getName(), RoleName.ADMIN.getName())
                         .anyRequest().authenticated()
                 )
-                .addFilterBefore(new TokenGlobalFilter(), UsernamePasswordAuthenticationFilter.class)
+                .addFilterAfter(new TokenGlobalFilter(), UsernamePasswordAuthenticationFilter.class)
                 .formLogin(AbstractHttpConfigurer::disable);
         return http.build();
     }
