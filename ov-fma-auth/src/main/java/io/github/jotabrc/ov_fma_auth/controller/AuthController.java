@@ -5,7 +5,7 @@ import io.github.jotabrc.ov_fma_auth.service.AuthService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -26,7 +26,7 @@ public class AuthController {
         this.authService = authService;
     }
 
-    @GetMapping("/signin")
+    @PostMapping("/signin")
     @Tag(name = "SignIn Authentication", description = "Authenticates user")
     public ResponseEntity<String> signIn(@RequestBody final SignInDto dto) throws NoSuchAlgorithmException {
         String jwt = authService.signIn(dto);
