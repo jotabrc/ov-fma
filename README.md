@@ -2,7 +2,7 @@
 **System name**: OV-FMA \- Ostro Veda Finance Management Application (Aplicação de Gerenciamento Financeiro)  
 **Versão**: *
 
-# Project description
+ Project description
 Financial management; income, expenditure, tracking; financial budget and investment registration.  
 Services are used and deployed in four modules:
 
@@ -11,3 +11,6 @@ Services are used and deployed in four modules:
 3. **Authentication**: user authentication;
 4. **Finance**: Finance Manager API for registering, querying and updating financial information;
     1. Requires a registered and authenticated user (JWT).
+
+### Diagram
+![ov-fma.drawio.png](docs/ov-fma.drawio.png)
