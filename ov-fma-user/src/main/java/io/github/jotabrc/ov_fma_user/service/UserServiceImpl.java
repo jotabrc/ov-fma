@@ -6,6 +6,7 @@ import io.github.jotabrc.ov_fma_user.dto.RoleDto;
 import io.github.jotabrc.ov_fma_user.dto.UserCreationUpdateDto;
 import io.github.jotabrc.ov_fma_user.dto.UserDto;
 import io.github.jotabrc.ov_fma_user.dto.UserKafkaDto;
+import io.github.jotabrc.ov_fma_user.handler.AuthorizationDeniedException;
 import io.github.jotabrc.ov_fma_user.handler.CredentialNotAvailableException;
 import io.github.jotabrc.ov_fma_user.handler.RoleNotFoundException;
 import io.github.jotabrc.ov_fma_user.handler.UserNotFoundException;
@@ -15,6 +16,7 @@ import io.github.jotabrc.ov_fma_user.repository.RoleRepository;
 import io.github.jotabrc.ov_fma_user.repository.UserRepository;
 import io.github.jotabrc.ov_fma_user.util.RoleName;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.security.MessageDigest;
@@ -74,6 +76,8 @@ public class UserServiceImpl implements UserService {
     public void update(final UserCreationUpdateDto dto) throws NoSuchAlgorithmException, JsonProcessingException {
         // Throws UserNotFoundException if user UUID is not found.
         User user = getUser(dto.getUuid());
+        // Checks if account to be changed is the same as the token authentication
+        checkUserAuthorization(user.getUsername());
         // Throws CredentialNotAvailableException if email or username is already in use.
         dataToBeChecked(dto, user);
 
@@ -98,6 +102,8 @@ public class UserServiceImpl implements UserService {
     public UserDto getByUuid(String uuid) throws UserNotFoundException {
         User user = userRepository.findByUuid(uuid)
                 .orElseThrow(() -> new UserNotFoundException("User with UUID %s not found".formatted(uuid)));
+        // Checks if account requested user information matched authenticated user
+        checkUserAuthorization(user.getUsername());
         return toDto(user);
     }
 
@@ -354,5 +360,14 @@ public class UserServiceImpl implements UserService {
     private void sendKafkaMessage(final User user, final String topic) throws JsonProcessingException {
         UserKafkaDto kafkaDto = toKafkaDto(user);
         kafkaProducer.produce(kafkaDto, topic);
+    }
+
+    /**
+     * Checks SecurityContextHolder Authentication for matching username.
+     * @param username username to be checked.
+     */
+    private void checkUserAuthorization(final String username) {
+        if (!SecurityContextHolder.getContext().getAuthentication().getName().equals(username))
+            throw new AuthorizationDeniedException("Security Context Holder authentication doesn't match with provided user information");
     }
 }
