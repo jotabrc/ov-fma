@@ -13,4 +13,4 @@ Services are used and deployed in four modules:
     1. Requires a registered and authenticated user (JWT).
 
 ### Diagram
-![ov-fma.drawio.png](docs/ov-fma.drawio.png)
+![diagram.png](docs/diagram.png)
