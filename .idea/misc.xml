@@ -11,7 +11,14 @@
         <option value="$PROJECT_DIR$/ov-fma-auth/pom.xml" />
         <option value="$PROJECT_DIR$/ov-fma-user/pom.xml" />
         <option value="$PROJECT_DIR$/ov-fma-gateway/pom.xml" />
+        <option value="$PROJECT_DIR$/ov-fma-security/pom.xml" />
+        <option value="$PROJECT_DIR$/ov-fma-finance/pom.xml" />
       </list>
+    </option>
+    <option name="ignoredFiles">
+      <set>
+        <option value="$PROJECT_DIR$/ov-fma-security/pom.xml" />
+      </set>
     </option>
   </component>
   <component name="ProjectRootManager" version="2" languageLevel="JDK_21" project-jdk-name="21" project-jdk-type="JavaSDK">

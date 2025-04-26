@@ -2,7 +2,9 @@
 <project version="4">
   <component name="Encoding">
     <file url="file://$PROJECT_DIR$/ov-fma-auth/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ov-fma-finance/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/ov-fma-gateway/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ov-fma-security/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/ov-fma-user/ov-fma-user/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/ov-fma-user/src/main/java" charset="UTF-8" />
   </component>
