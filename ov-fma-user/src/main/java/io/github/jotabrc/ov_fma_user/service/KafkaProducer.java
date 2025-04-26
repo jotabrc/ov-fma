@@ -12,7 +12,7 @@ public class KafkaProducer {
 
     protected Properties getProperties() {
         Properties props = new Properties();
-        props.put("bootstrap.servers", "localhost:9092");
+        props.put("bootstrap.servers", "kafka:9092");
         props.put("key.serializer", "org.springframework.kafka.support.serializer.JsonSerializer");
         props.put("value.serializer", "org.springframework.kafka.support.serializer.JsonSerializer");
 

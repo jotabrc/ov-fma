@@ -17,7 +17,7 @@ public class KafkaConfig {
     public static final String USER_NEW = "user_new";
     public static final String USER_UPDATE = "user_update";
     public static final String GROUP_ID = "io.github.jotabrc";
-    public static final String SERVER = "localhost:9092";
+    public static final String SERVER = "kafka:9092";
 
     @Bean
     public ConsumerFactory<String, String> consumerFactory() {

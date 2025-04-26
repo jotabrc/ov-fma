@@ -1,0 +1,67 @@
+version: "3.9"
+
+services:
+  auth-service:
+    build:
+      context: ./ov-fma-auth
+      dockerfile: .dockerfile
+    env_file:
+      - ./ov-fma-auth/.env
+    ports:
+      - "8082:8080"
+    networks:
+      - app-network
+
+  user-service:
+    build:
+      context: ./ov-fma-user
+      dockerfile: .dockerfile
+    env_file:
+      - ./ov-fma-user/.env
+    ports:
+      - "8081:8080"
+    networks:
+      - app-network
+
+  gateway-service:
+    build:
+      context: ./ov-fma-gateway
+      dockerfile: .dockerfile
+    env_file:
+      - ./ov-fma-gateway/.env
+    ports:
+      - "8080:8080"
+    networks:
+      - app-network
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+    ports:
+      - "2181:2181"
+    networks:
+      - app-network
+
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    ports:
+      - "9092:9092"
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  auth-data:
+  user-data:
+  gateway-data:
