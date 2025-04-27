@@ -1,10 +1,27 @@
 version: "3.9"
 
 services:
+  finance-service:
+    build:
+      context: ./ov-fma-finance
+      args:
+        VM_IP: ${VM_IP}
+      dockerfile: .dockerfile
+    env_file:
+      - ./ov-fma-finance/.env
+    ports:
+      - "8083:8080"
+    networks:
+      - app-network
+
   auth-service:
     build:
       context: ./ov-fma-auth
+      args:
+        VM_IP: ${VM_IP}
       dockerfile: .dockerfile
+    environment:
+      - VM_IP=${VM_IP}
     env_file:
       - ./ov-fma-auth/.env
     ports:
@@ -15,7 +32,11 @@ services:
   user-service:
     build:
       context: ./ov-fma-user
+      args:
+        VM_IP: ${VM_IP}
       dockerfile: .dockerfile
+    environment:
+      - VM_IP=${VM_IP}
     env_file:
       - ./ov-fma-user/.env
     ports:
@@ -26,7 +47,11 @@ services:
   gateway-service:
     build:
       context: ./ov-fma-gateway
+      args:
+        VM_IP: ${VM_IP}
       dockerfile: .dockerfile
+    environment:
+      - VM_IP=${VM_IP}
     env_file:
       - ./ov-fma-gateway/.env
     ports:
@@ -65,3 +90,4 @@ volumes:
   auth-data:
   user-data:
   gateway-data:
+  finance-data:
