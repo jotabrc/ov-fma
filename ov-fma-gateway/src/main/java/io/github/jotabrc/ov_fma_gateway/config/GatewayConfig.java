@@ -42,6 +42,32 @@ public class GatewayConfig implements WebFluxConfigurer {
     public RouteLocator customRouteLocator(RouteLocatorBuilder locatorBuilder) {
         return locatorBuilder.routes()
 
+                // === FINANCE ===
+                .route(RouteConfig.routeConfig.get("financeServiceName"), r -> r.path(RouteConfig.routeConfig.get("financeServicePath"))
+                        .filters(f -> f
+                                .rewritePath(RouteConfig.routeConfig.get("financeServicePattern"), RouteConfig.routeConfig.get("financeServiceReplacement")))
+                        .uri(RouteConfig.routeConfig.get("financeServiceUri"))
+                )
+
+                // == H2 FINANCE ===
+                .route(RouteConfig.routeConfig.get("financeServiceH2Name"), r -> r.path(RouteConfig.routeConfig.get("financeServiceH2Path"))
+                        .filters(f -> f
+                                .rewritePath(RouteConfig.routeConfig.get("financeServiceH2Pattern"), RouteConfig.routeConfig.get("financeServiceH2Replacement")))
+                        .uri(RouteConfig.routeConfig.get("financeServiceUri"))
+                )
+
+                // === SWAGGER FINANCE ===
+                .route(RouteConfig.routeConfig.get("financeServiceSwaggerName"), r -> r.path(RouteConfig.routeConfig.get("financeServiceSwaggerPath"))
+                        .filters(f -> f
+                                .rewritePath(RouteConfig.routeConfig.get("financeServiceSwaggerPattern"), RouteConfig.routeConfig.get("financeServiceSwaggerReplacement")))
+                        .uri(RouteConfig.routeConfig.get("financeServiceUri"))
+                )
+                .route(RouteConfig.routeConfig.get("financeServiceSwaggerApiDocsName"), r -> r.path(RouteConfig.routeConfig.get("financeServiceSwaggerApiDocsPath"))
+                        .filters(f -> f
+                                .rewritePath(RouteConfig.routeConfig.get("financeServiceSwaggerApiDocsPattern"), RouteConfig.routeConfig.get("financeServiceSwaggerApiDocsReplacement")))
+                        .uri(RouteConfig.routeConfig.get("financeServiceUri"))
+                )
+
                 // === USER ===
                 .route(RouteConfig.routeConfig.get("userServiceName"), r -> r.path(RouteConfig.routeConfig.get("userServicePath"))
                         .filters(f -> f
