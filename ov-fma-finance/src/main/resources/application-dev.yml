@@ -29,3 +29,12 @@ springdoc:
     path: /v3/api-docs-finance
   swagger-ui:
     path: /swagger-finance
+
+logging:
+  level:
+    org:
+      springframework:
+        security: DEBUG
+        web: DEBUG
+        servlet:
+          DispatcherServlet: DEBUG

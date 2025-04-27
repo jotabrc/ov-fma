@@ -28,3 +28,12 @@ springdoc:
     path: /v3/api-docs-auth
   swagger-ui:
     path: /swagger-auth
+
+logging:
+  level:
+    org:
+      springframework:
+        security: DEBUG
+        web: DEBUG
+        servlet:
+          DispatcherServlet: DEBUG
