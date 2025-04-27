@@ -12,10 +12,10 @@ import java.time.LocalDateTime;
 @Entity(name = "tb_payment")
 public class Payment extends FinancialEntity {
 
-    private Party vendor;
+    private String vendor;
 
     public Payment(long id, String uuid, UserFinance userFinance, BigDecimal amount, String description, LocalDateTime createdAt,
-                   LocalDateTime updatedAt, long version, Party vendor) {
+                   LocalDateTime updatedAt, long version, String vendor) {
         super(id, uuid, userFinance, amount, description, createdAt, updatedAt, version);
         this.vendor = vendor;
     }

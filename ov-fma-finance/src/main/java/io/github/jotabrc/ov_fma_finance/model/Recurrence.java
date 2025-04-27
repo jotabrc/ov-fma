@@ -1,7 +1,6 @@
 package io.github.jotabrc.ov_fma_finance.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,6 +11,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Entity(name = "tb_recurrence")
+@Inheritance(strategy = InheritanceType.JOINED)
 public abstract class Recurrence extends FinancialEntity {
 
     @Column(name = "recurring_until", nullable = false)

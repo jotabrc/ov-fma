@@ -13,10 +13,10 @@ import java.time.LocalDateTime;
 @Entity(name = "tb_recurring_payment")
 public class RecurringPayment extends Recurrence {
 
-    private Party payee;
+    private String payee;
 
     public RecurringPayment(long id, String uuid, UserFinance userFinance, BigDecimal amount, String description, LocalDateTime createdAt,
-                            LocalDateTime updatedAt, long version, LocalDate recurringUntil, Party payee) {
+                            LocalDateTime updatedAt, long version, LocalDate recurringUntil, String payee) {
         super(id, uuid, userFinance, amount, description, createdAt, updatedAt, version, recurringUntil);
         this.payee = payee;
     }

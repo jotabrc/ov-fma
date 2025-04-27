@@ -9,9 +9,9 @@ import java.math.BigDecimal;
 @Setter
 public class ReceiptDto extends FinancialEntityDto {
 
-    private final PartyDto payee;
+    private final String payee;
 
-    public ReceiptDto(String userUuid, BigDecimal amount, String description, PartyDto payee) {
+    public ReceiptDto(String userUuid, BigDecimal amount, String description, String payee) {
         super(userUuid, amount, description);
         this.payee = payee;
     }

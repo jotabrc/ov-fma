@@ -1,13 +1,10 @@
 package io.github.jotabrc.ov_fma_finance.service;
 
 import io.github.jotabrc.ov_fma_finance.dto.RecurringPaymentDto;
-import io.github.jotabrc.ov_fma_finance.handler.PartyNotFoundException;
 import io.github.jotabrc.ov_fma_finance.handler.UserNotFoundException;
-import io.github.jotabrc.ov_fma_finance.model.Party;
 import io.github.jotabrc.ov_fma_finance.model.RecurringPayment;
 import io.github.jotabrc.ov_fma_finance.model.UserFinance;
 import io.github.jotabrc.ov_fma_finance.repository.FinanceRepository;
-import io.github.jotabrc.ov_fma_finance.repository.PartyRepository;
 import io.github.jotabrc.ov_fma_finance.repository.RecurringPaymentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,13 +16,11 @@ public class RecurringPaymentServiceImpl implements RecurringPaymentService {
 
     private final RecurringPaymentRepository recurringPaymentRepository;
     private final FinanceRepository financeRepository;
-    private final PartyRepository partyRepository;
 
     @Autowired
-    public RecurringPaymentServiceImpl(RecurringPaymentRepository recurringPaymentRepository, FinanceRepository financeRepository, PartyRepository partyRepository) {
+    public RecurringPaymentServiceImpl(RecurringPaymentRepository recurringPaymentRepository, FinanceRepository financeRepository) {
         this.recurringPaymentRepository = recurringPaymentRepository;
         this.financeRepository = financeRepository;
-        this.partyRepository = partyRepository;
     }
 
     /**
@@ -51,19 +46,8 @@ public class RecurringPaymentServiceImpl implements RecurringPaymentService {
      * @return RecurringPayment object.
      */
     private RecurringPayment buildNewRecurringPayment(final RecurringPaymentDto dto, final UserFinance userFinance) {
-        Party party = getPartyOrThrow(dto.getPayee().getName());
         return new RecurringPayment(0,
                 UUID.randomUUID().toString(), userFinance, dto.getAmount(),
-                dto.getDescription(), null, null, 0, dto.getRecurringUntil(), party);
-    }
-
-    /**
-     * Get Party information, or throw exception if no found.
-     * @param name Vendor name.
-     * @return Party object.
-     */
-    private Party getPartyOrThrow(final String name) {
-        return partyRepository.findByName(name)
-                .orElseThrow(() -> new PartyNotFoundException("Vendor not found with name %s".formatted(name)));
+                dto.getDescription(), null, null, 0, dto.getRecurringUntil(), dto.getPayee());
     }
 }

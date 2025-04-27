@@ -24,8 +24,8 @@ public abstract class FinancialEntity {
     @Column(length = 36, nullable = false, unique = true)
     private String uuid;
 
-    @OneToMany
-    @JoinColumn(name = "order_id", nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "user_finance_id", nullable = false)
     private UserFinance userFinance;
 
     @Column(precision = 12, scale = 2, nullable = false)

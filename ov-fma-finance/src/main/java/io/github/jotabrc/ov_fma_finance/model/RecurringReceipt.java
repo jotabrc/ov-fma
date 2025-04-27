@@ -13,10 +13,10 @@ import java.time.LocalDateTime;
 @Entity(name = "tb_recurring_receipt")
 public class RecurringReceipt extends Recurrence {
 
-    private Party vendor;
+    private String vendor;
 
     public RecurringReceipt(long id, String uuid, UserFinance userFinance, BigDecimal amount, String description, LocalDateTime createdAt,
-                            LocalDateTime updatedAt, long version, LocalDate recurringUntil, Party vendor) {
+                            LocalDateTime updatedAt, long version, LocalDate recurringUntil, String vendor) {
         super(id, uuid, userFinance, amount, description, createdAt, updatedAt, version, recurringUntil);
         this.vendor = vendor;
     }

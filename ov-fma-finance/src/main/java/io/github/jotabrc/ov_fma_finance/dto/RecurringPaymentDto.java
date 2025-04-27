@@ -10,9 +10,9 @@ import java.time.LocalDate;
 @Setter
 public class RecurringPaymentDto extends RecurrenceDto {
 
-    private final PartyDto payee;
+    private final String payee;
 
-    public RecurringPaymentDto(String userUuid, BigDecimal amount, String description, LocalDate recurringUntil, PartyDto payee) {
+    public RecurringPaymentDto(String userUuid, BigDecimal amount, String description, LocalDate recurringUntil, String payee) {
         super(userUuid, amount, description, recurringUntil);
         this.payee = payee;
     }
