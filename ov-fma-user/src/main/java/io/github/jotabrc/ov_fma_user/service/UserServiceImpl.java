@@ -75,7 +75,7 @@ public class UserServiceImpl implements UserService {
         // Throws UserNotFoundException if user UUID is not found.
         User user = getUser(dto.getUuid());
         // Checks if account to be changed is the same as the token authentication
-        checkUserAuthorization(user.getUsername());
+        checkUserAuthorization(user.getUuid());
         // Throws CredentialNotAvailableException if email or username is already in use.
         dataToBeChecked(dto, user);
 
@@ -104,7 +104,7 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findByUuid(uuid)
                 .orElseThrow(() -> new UserNotFoundException("User with UUID %s not found".formatted(uuid)));
         // Checks if account requested user information matched authenticated user
-        checkUserAuthorization(user.getUsername());
+        checkUserAuthorization(user.getUuid());
         return toDto(user);
     }
 
@@ -386,11 +386,11 @@ public class UserServiceImpl implements UserService {
     }
 
     /**
-     * Checks SecurityContextHolder Authentication for matching username.
-     * @param username username to be checked.
+     * Checks SecurityContextHolder Authentication for matching UUID.
+     * @param uuid UUID to be checked.
      */
-    private void checkUserAuthorization(final String username) {
-        if (!SecurityContextHolder.getContext().getAuthentication().getName().equals(username))
+    private void checkUserAuthorization(final String uuid) {
+        if (!SecurityContextHolder.getContext().getAuthentication().getName().equals(uuid))
             throw new AuthorizationDeniedException("Security Context Holder authentication doesn't match with provided user information");
     }
 }

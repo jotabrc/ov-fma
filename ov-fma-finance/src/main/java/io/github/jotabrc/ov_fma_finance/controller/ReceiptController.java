@@ -1,6 +1,5 @@
 package io.github.jotabrc.ov_fma_finance.controller;
 
-
 import io.github.jotabrc.ov_fma_finance.dto.ReceiptDto;
 import io.github.jotabrc.ov_fma_finance.dto.RecurringReceiptDto;
 import io.github.jotabrc.ov_fma_finance.service.ReceiptService;
@@ -19,7 +18,7 @@ import java.net.URI;
 import static io.github.jotabrc.ov_fma_finance.controller.ControllerPath.PREFIX;
 import static io.github.jotabrc.ov_fma_finance.controller.ControllerPath.VERSION;
 
-@RequestMapping(PREFIX + VERSION + "/receipt")
+@RequestMapping(PREFIX + VERSION + "/finance/receipt")
 @RestController
 public class ReceiptController {
 
@@ -53,7 +52,7 @@ public class ReceiptController {
                 );
     }
 
-    @PostMapping("/add--recurring-receipt")
+    @PostMapping("/add-recurring-receipt")
     @Tag(name = "Recurring Receipt", description = "Add new Recurring Receipt")
     public ResponseEntity<String> addRecurringReceipt(@RequestBody final RecurringReceiptDto dto) {
         String uuid = recurringReceiptService.addRecurringReceipt(dto);

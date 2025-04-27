@@ -19,7 +19,7 @@ import java.net.URI;
 import static io.github.jotabrc.ov_fma_finance.controller.ControllerPath.PREFIX;
 import static io.github.jotabrc.ov_fma_finance.controller.ControllerPath.VERSION;
 
-@RequestMapping(PREFIX + VERSION + "/payment")
+@RequestMapping(PREFIX + VERSION + "/finance/payment")
 @RestController
 public class PaymentController {
 
@@ -53,7 +53,7 @@ public class PaymentController {
                 );
     }
 
-    @PostMapping("/add--recurring-payment")
+    @PostMapping("/add-recurring-payment")
     @Tag(name = "Recurring Payment", description = "Add new Recurring Payment")
     public ResponseEntity<String> addRecurringPayment(@RequestBody final RecurringPaymentDto dto) {
         String uuid = recurringPaymentService.addRecurringPayment(dto);

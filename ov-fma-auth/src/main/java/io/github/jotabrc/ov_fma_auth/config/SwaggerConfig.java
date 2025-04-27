@@ -16,10 +16,12 @@ import static io.github.jotabrc.ov_fma_auth.controller.ControllerPath.VERSION;
 public class SwaggerConfig {
     @Bean
     public OpenAPI custom() {
+        String dynamicAddress = System.getenv("VM_IP");
+        dynamicAddress = dynamicAddress == null ? "localhost" : dynamicAddress;
         return new OpenAPI()
                 .servers(List.of(
                         new Server()
-                                .url("http://gateway-service:8080")
+                                .url("http://" + dynamicAddress + ":8080")
                                 .description("Gateway")
                 ));
     }

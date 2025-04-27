@@ -14,6 +14,9 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import static io.github.jotabrc.ov_fma_finance.controller.ControllerPath.PREFIX;
+import static io.github.jotabrc.ov_fma_finance.controller.ControllerPath.VERSION;
+
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig {
@@ -40,6 +43,10 @@ public class WebSecurityConfig {
                 )
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(WHITELIST).permitAll()
+                        .requestMatchers(PREFIX + VERSION + "/payment/add-payment").hasAnyRole("USER", "ADMIN")
+                        .requestMatchers(PREFIX + VERSION + "/payment/add-recurring-payment").hasAnyRole("USER", "ADMIN")
+                        .requestMatchers(PREFIX + VERSION + "/receipt/add-receipt").hasAnyRole("USER", "ADMIN")
+                        .requestMatchers(PREFIX + VERSION + "/receipt/add-recurring-receipt").hasAnyRole("USER", "ADMIN")
                         .anyRequest().authenticated()
                 )
                 .addFilterAfter(new TokenGlobalFilter(), UsernamePasswordAuthenticationFilter.class)
