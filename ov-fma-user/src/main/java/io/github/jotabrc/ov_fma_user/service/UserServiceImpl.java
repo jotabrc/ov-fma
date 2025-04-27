@@ -2,10 +2,7 @@ package io.github.jotabrc.ov_fma_user.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import io.github.jotabrc.ov_fma_user.config.KafkaTopic;
-import io.github.jotabrc.ov_fma_user.dto.RoleDto;
-import io.github.jotabrc.ov_fma_user.dto.UserCreationUpdateDto;
-import io.github.jotabrc.ov_fma_user.dto.UserDto;
-import io.github.jotabrc.ov_fma_user.dto.UserKafkaDto;
+import io.github.jotabrc.ov_fma_user.dto.*;
 import io.github.jotabrc.ov_fma_user.handler.AuthorizationDeniedException;
 import io.github.jotabrc.ov_fma_user.handler.CredentialNotAvailableException;
 import io.github.jotabrc.ov_fma_user.handler.RoleNotFoundException;
@@ -61,8 +58,9 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
 
         // Sends Kafka message to Authentication service
-        // User will be added for authentication retrieval
-        sendKafkaMessage(user, KafkaTopic.USER_NEW);
+        sendKafkaMessageToAuthService(user, KafkaTopic.USER_NEW);
+        // Sends Kafka message to Finance service
+        sendKafkaMessageToFinanceService(user, KafkaTopic.USER_FINANCE_NEW);
 
         return user.getUuid();
     }
@@ -86,7 +84,10 @@ public class UserServiceImpl implements UserService {
 
         // Sends Kafka message to Authentication service
         // User will be updated
-        sendKafkaMessage(user, KafkaTopic.USER_UPDATE);
+        sendKafkaMessageToAuthService(user, KafkaTopic.USER_UPDATE);
+        // Sends Kafka message to Finance service
+        // User will be updated
+        sendKafkaMessageToFinanceService(user, KafkaTopic.USER_FINANCE_UPDATE);
 
         userRepository.save(user);
     }
@@ -353,14 +354,35 @@ public class UserServiceImpl implements UserService {
     }
 
     /**
+     * Transforms User into UserFinanceKafkaDto.
+     *
+     * @param user User DAO.
+     * @return UserFinanceKafkaDto.
+     */
+    private UserFinanceKafkaDto toUserFinanceKafkaDto(final User user) {
+        return new UserFinanceKafkaDto(user.getUuid(), user.getUsername(), user.getEmail(), user.isActive());
+    }
+
+    /**
      * Send Kafka Message.
      *
      * @param user User DAO will be transformed into UserKafkaDto.
      * @throws JsonProcessingException if DTO parsing to JSON error occurs.
      */
-    private void sendKafkaMessage(final User user, final String topic) throws JsonProcessingException {
+    private void sendKafkaMessageToAuthService(final User user, final String topic) throws JsonProcessingException {
         UserKafkaDto kafkaDto = toKafkaDto(user);
         kafkaProducer.produce(kafkaDto, topic);
+    }
+
+    /**
+     * Send Kafka Message.
+     *
+     * @param user User DAO will be transformed into UserFinanceKafkaDto.
+     * @throws JsonProcessingException if DTO parsing to JSON error occurs.
+     */
+    private void sendKafkaMessageToFinanceService(final User user, final String topic) throws JsonProcessingException {
+        UserFinanceKafkaDto userFinanceKafkaDto = toUserFinanceKafkaDto(user);
+        kafkaProducer.produce(userFinanceKafkaDto, topic);
     }
 
     /**

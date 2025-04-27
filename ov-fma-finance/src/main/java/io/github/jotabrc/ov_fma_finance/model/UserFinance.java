@@ -25,10 +25,16 @@ public class UserFinance {
     @Column(name = "user_uuid", length = 36, nullable = false, unique = true)
     private String userUuid;
 
+    @Column(length = 50, unique = true, nullable = false)
+    private String username;
+
     @Column(length = 320, nullable = false, unique = true)
     private String email;
 
     private String name;
+
+    @Column(name = "is_active", nullable = false)
+    private boolean isActive;
 
     @OneToMany(mappedBy = "userFinance", cascade = CascadeType.ALL)
     private List<FinancialEntity> financialItems;

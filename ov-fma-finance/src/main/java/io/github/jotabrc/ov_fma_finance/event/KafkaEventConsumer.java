@@ -3,6 +3,7 @@ package io.github.jotabrc.ov_fma_finance.event;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.jotabrc.ov_fma_finance.config.KafkaConfig;
+import io.github.jotabrc.ov_fma_finance.dto.UserFinanceAddDto;
 import io.github.jotabrc.ov_fma_finance.dto.UserFinanceDto;
 import io.github.jotabrc.ov_fma_finance.service.FinanceService;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -18,13 +19,29 @@ public class KafkaEventConsumer {
         this.financeService = financeService;
     }
 
-    @KafkaListener(topics = {KafkaConfig.USER_FINANCE_NEW},
+    @KafkaListener(topics = {KafkaConfig.USER_FINANCE_NEW, KafkaConfig.USER_FINANCE_UPDATE},
             groupId = KafkaConfig.GROUP_ID, containerFactory = "kafkaListenerContainerFactory")
     public void listener(ConsumerRecord<String, String> record) throws JsonProcessingException {
 
         ObjectMapper objectMapper = new ObjectMapper();
-        UserFinanceDto dto = objectMapper.readValue(record.value(), UserFinanceDto.class);
+        UserFinanceAddDto userFinanceAddDto = objectMapper.readValue(record.value(), UserFinanceAddDto.class);
 
-        financeService.addUserFinance(dto);
+        UserFinanceDto dto = buildNewUserFinanceDto(userFinanceAddDto);
+
+        switch (record.topic()) {
+            case KafkaConfig.USER_FINANCE_NEW -> financeService.addUserFinance(dto);
+            case KafkaConfig.USER_FINANCE_UPDATE -> financeService.updateUserFinance(dto);
+        }
+    }
+
+    private UserFinanceDto buildNewUserFinanceDto(final UserFinanceAddDto dto) {
+        return UserFinanceDto
+                .builder()
+                .userUuid(dto.getUserUuid())
+                .username(dto.getUsername())
+                .email(dto.getEmail())
+                .name(dto.getName())
+                .isActive(dto.isActive())
+                .build();
     }
 }

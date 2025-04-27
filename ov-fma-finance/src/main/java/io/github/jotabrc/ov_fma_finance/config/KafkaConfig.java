@@ -15,6 +15,7 @@ import java.util.Map;
 public class KafkaConfig {
 
     public static final String USER_FINANCE_NEW = "user_finance_new";
+    public static final String USER_FINANCE_UPDATE = "user_finance_update";
     public static final String GROUP_ID = "io.github.jotabrc";
     public static final String SERVER = "kafka:9092";
 

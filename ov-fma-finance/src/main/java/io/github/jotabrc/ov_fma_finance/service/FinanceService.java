@@ -8,4 +8,5 @@ import org.springframework.validation.annotation.Validated;
 public interface FinanceService {
 
     void addUserFinance(@NotNull UserFinanceDto dto);
+    void updateUserFinance(@NotNull UserFinanceDto dto);
 }

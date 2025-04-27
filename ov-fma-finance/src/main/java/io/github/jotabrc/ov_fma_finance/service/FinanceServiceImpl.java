@@ -4,6 +4,7 @@ import io.github.jotabrc.ov_fma_finance.dto.PaymentDto;
 import io.github.jotabrc.ov_fma_finance.dto.UserFinanceDto;
 import io.github.jotabrc.ov_fma_finance.handler.PartyNotFoundException;
 import io.github.jotabrc.ov_fma_finance.handler.UserAlreadyExistsException;
+import io.github.jotabrc.ov_fma_finance.handler.UserNotFoundException;
 import io.github.jotabrc.ov_fma_finance.model.Party;
 import io.github.jotabrc.ov_fma_finance.model.Payment;
 import io.github.jotabrc.ov_fma_finance.model.UserFinance;
@@ -39,6 +40,20 @@ public class FinanceServiceImpl implements FinanceService {
         financeRepository.save(userFinance);
     }
 
+    /**
+     * Updates UserFinance data.
+     * @param dto New data.
+     */
+    @Override
+    public void updateUserFinance(UserFinanceDto dto) {
+        UserFinance userFinance = financeRepository.findByUserUuid(dto.getUserUuid())
+                .orElseThrow(() -> new UserNotFoundException("User with UUID %s not found"));
+
+        updateUserFinance(dto, userFinance);
+
+        financeRepository.save(userFinance);
+    }
+
     // =================================================================================================================
     // === PRIVATE METHODS ==
 
@@ -60,8 +75,10 @@ public class FinanceServiceImpl implements FinanceService {
         return UserFinance
                 .builder()
                 .userUuid(dto.getUserUuid())
+                .username(dto.getUsername())
                 .name(dto.getName())
                 .email(dto.getEmail())
+                .isActive(dto.isActive())
                 .financialItems(new ArrayList<>())
                 .build();
     }
@@ -86,5 +103,18 @@ public class FinanceServiceImpl implements FinanceService {
     private Party getPartyOrThrow(final String name) {
         return partyRepository.findByName(name)
                 .orElseThrow(() -> new PartyNotFoundException("Vendor not found with name %s".formatted(name)));
+    }
+
+    /**
+     * Update UserFinance data.
+     * @param dto New data.
+     * @param userFinance Current UserFinance.
+     */
+    private void updateUserFinance(UserFinanceDto dto, UserFinance userFinance) {
+        userFinance
+                .setUsername(dto.getUsername())
+                .setEmail(dto.getEmail())
+                .setName(dto.getName())
+                .setActive(dto.isActive());
     }
 }
