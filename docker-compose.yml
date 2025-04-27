@@ -7,6 +7,8 @@ services:
       args:
         VM_IP: ${VM_IP}
       dockerfile: .dockerfile
+    environment:
+      - VM_IP=${VM_IP}
     env_file:
       - ./ov-fma-finance/.env
     ports:

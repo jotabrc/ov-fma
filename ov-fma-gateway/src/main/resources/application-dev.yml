@@ -1,6 +1,10 @@
+server:
+  address: 0.0.0.0
+  port: 8080
+  ssl:
+    enabled: false
+
 spring:
-  server:
-    port: 8080
   webflux:
     static-path-pattern: ""
   cloud:

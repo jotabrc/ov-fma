@@ -1,4 +1,5 @@
 server:
+  address: 0.0.0.0
   port: 8081
 
 spring:
@@ -28,3 +29,12 @@ springdoc:
     path: /v3/api-docs-user
   swagger-ui:
     path: /swagger-user
+
+logging:
+  level:
+    org:
+      springframework:
+        security: DEBUG
+        web: DEBUG
+        servlet:
+          DispatcherServlet: DEBUG
