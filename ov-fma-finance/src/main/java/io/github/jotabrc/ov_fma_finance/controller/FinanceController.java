@@ -11,5 +11,4 @@ import static io.github.jotabrc.ov_fma_finance.controller.ControllerPath.VERSION
 @RestController
 public class FinanceController {
 
-
 }
