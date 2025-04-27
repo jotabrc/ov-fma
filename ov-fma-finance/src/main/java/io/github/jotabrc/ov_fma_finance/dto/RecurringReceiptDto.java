@@ -12,7 +12,7 @@ import java.time.LocalDate;
 @Entity(name = "tb_recurring_receipt")
 public class RecurringReceiptDto extends RecurrenceDto {
 
-    private PartyDto vendor;
+    private final PartyDto vendor;
 
     public RecurringReceiptDto(String userUuid, BigDecimal amount, String description, LocalDate recurringUntil, PartyDto vendor) {
         super(userUuid, amount, description, recurringUntil);

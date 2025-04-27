@@ -25,6 +25,11 @@ public class UserFinance {
     @Column(name = "user_uuid", length = 36, nullable = false, unique = true)
     private String userUuid;
 
+    @Column(length = 320, nullable = false, unique = true)
+    private String email;
+
+    private String name;
+
     @OneToMany(mappedBy = "userFinance", cascade = CascadeType.ALL)
     private List<FinancialEntity> financialItems;
 

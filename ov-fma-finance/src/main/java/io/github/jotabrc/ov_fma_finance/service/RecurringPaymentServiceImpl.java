@@ -1,61 +1,60 @@
 package io.github.jotabrc.ov_fma_finance.service;
 
-import io.github.jotabrc.ov_fma_finance.dto.PaymentDto;
+import io.github.jotabrc.ov_fma_finance.dto.RecurringPaymentDto;
 import io.github.jotabrc.ov_fma_finance.handler.PartyNotFoundException;
 import io.github.jotabrc.ov_fma_finance.handler.UserNotFoundException;
 import io.github.jotabrc.ov_fma_finance.model.Party;
-import io.github.jotabrc.ov_fma_finance.model.Payment;
+import io.github.jotabrc.ov_fma_finance.model.RecurringPayment;
 import io.github.jotabrc.ov_fma_finance.model.UserFinance;
 import io.github.jotabrc.ov_fma_finance.repository.FinanceRepository;
 import io.github.jotabrc.ov_fma_finance.repository.PartyRepository;
-import io.github.jotabrc.ov_fma_finance.repository.PaymentRepository;
+import io.github.jotabrc.ov_fma_finance.repository.RecurringPaymentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
 
 @Service
-public class PaymentServiceImpl implements PaymentService {
+public class RecurringPaymentServiceImpl implements RecurringPaymentService {
 
-    private final PaymentRepository paymentRepository;
+    private final RecurringPaymentRepository recurringPaymentRepository;
     private final FinanceRepository financeRepository;
     private final PartyRepository partyRepository;
 
     @Autowired
-    public PaymentServiceImpl(PaymentRepository paymentRepository, FinanceRepository financeRepository, PartyRepository partyRepository) {
-        this.paymentRepository = paymentRepository;
+    public RecurringPaymentServiceImpl(RecurringPaymentRepository recurringPaymentRepository, FinanceRepository financeRepository, PartyRepository partyRepository) {
+        this.recurringPaymentRepository = recurringPaymentRepository;
         this.financeRepository = financeRepository;
         this.partyRepository = partyRepository;
     }
 
     /**
-     * Add new Payment entity.
-     *
-     * @param dto Payment data.
-     * @return Payment UUID.
+     * Add new RecurringPayment entity.
+     * @param dto RecurringPayment data.
+     * @return RecurringPayment UUID.
      */
     @Override
-    public String addPayment(final PaymentDto dto) {
+    public String addRecurringPayment(final RecurringPaymentDto dto) {
         UserFinance userFinance = financeRepository.findByUserUuid(dto.getUserUuid())
                 .orElseThrow(() -> new UserNotFoundException("User with UUID %s not found".formatted(dto.getUserUuid())));
 
-        Payment payment = buildNewPayment(dto, userFinance);
-        return paymentRepository.save(payment).getUuid();
+        RecurringPayment payment = buildNewRecurringPayment(dto, userFinance);
+        return recurringPaymentRepository.save(payment).getUuid();
     }
 
     // =================================================================================================================
     // === PRIVATE METHODS ==
 
     /**
-     * Build new Payment entity to be persisted.
-     * @param dto Payment data.
-     * @return Payment object.
+     * Build new RecurringPayment entity to be persisted.
+     * @param dto RecurringPayment data.
+     * @return RecurringPayment object.
      */
-    private Payment buildNewPayment(final PaymentDto dto, final UserFinance userFinance) {
-        Party party = getPartyOrThrow(dto.getVendor().getName());
-        return new Payment(0,
+    private RecurringPayment buildNewRecurringPayment(final RecurringPaymentDto dto, final UserFinance userFinance) {
+        Party party = getPartyOrThrow(dto.getPayee().getName());
+        return new RecurringPayment(0,
                 UUID.randomUUID().toString(), userFinance, dto.getAmount(),
-                dto.getDescription(), null, null, 0, party);
+                dto.getDescription(), null, null, 0, dto.getRecurringUntil(), party);
     }
 
     /**

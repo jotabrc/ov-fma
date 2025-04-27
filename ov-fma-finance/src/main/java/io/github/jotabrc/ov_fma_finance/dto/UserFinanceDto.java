@@ -10,10 +10,11 @@ import java.util.List;
 @Setter
 @Builder
 @Accessors(chain = true)
-@NoArgsConstructor
 @AllArgsConstructor
 public class UserFinanceDto {
 
-    private String userUuid;
-    private List<FinancialEntity> financialItems;
+    private final String userUuid;
+    private final String email;
+    private final String name;
+    private final List<FinancialEntity> financialItems;
 }

@@ -348,7 +348,8 @@ public class UserServiceImpl implements UserService {
      * @return UserKafkaDto.
      */
     private UserKafkaDto toKafkaDto(final User user) {
-        return new UserKafkaDto(user.getUuid(), user.getUsername(), user.getEmail(), user.getRole().getName().getName(), user.getSalt(), user.getHash(), user.isActive());
+        return new UserKafkaDto(user.getUuid(), user.getUsername(), user.getEmail(), user.getRole().getName().getName(),
+                user.getSalt(), user.getHash(), user.isActive());
     }
 
     /**

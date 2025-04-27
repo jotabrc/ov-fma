@@ -1,11 +1,11 @@
 package io.github.jotabrc.ov_fma_finance.service;
 
-import io.github.jotabrc.ov_fma_finance.dto.UserFinanceDto;
+import io.github.jotabrc.ov_fma_finance.dto.ReceiptDto;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.validation.annotation.Validated;
 
 @Validated
-public interface FinanceService {
+public interface ReceiptService {
 
-    void addUserFinance(@NotNull UserFinanceDto dto);
+    String addReceipt(@NotNull ReceiptDto dto);
 }

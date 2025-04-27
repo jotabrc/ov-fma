@@ -39,16 +39,6 @@ public class FinanceServiceImpl implements FinanceService {
         financeRepository.save(userFinance);
     }
 
-    @Override
-    public void addReceipt() {
-
-    }
-
-    @Override
-    public void addRecurringReceipt() {
-
-    }
-
     // =================================================================================================================
     // === PRIVATE METHODS ==
 
@@ -70,6 +60,8 @@ public class FinanceServiceImpl implements FinanceService {
         return UserFinance
                 .builder()
                 .userUuid(dto.getUserUuid())
+                .name(dto.getName())
+                .email(dto.getEmail())
                 .financialItems(new ArrayList<>())
                 .build();
     }

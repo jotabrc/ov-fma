@@ -1,5 +1,5 @@
 server:
-  port: 8081
+  port: 8083
 
 spring:
   datasource:
@@ -18,13 +18,13 @@ spring:
   h2:
     console:
       enabled: true
-      path: /h2-console-user
+      path: /h2-console-finance
       settings:
         trace: false
         web-allow-others: false
 
 springdoc:
   api-docs:
-    path: /v3/api-docs-user
+    path: /v3/api-docs-finance
   swagger-ui:
-    path: /swagger-user
+    path: /swagger-finance

@@ -9,5 +9,5 @@ import lombok.Setter;
 @AllArgsConstructor
 public class PartyDto {
 
-    private String name;
+    private final String name;
 }
