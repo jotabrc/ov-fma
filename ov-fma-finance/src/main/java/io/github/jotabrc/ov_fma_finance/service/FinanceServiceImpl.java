@@ -71,7 +71,6 @@ public class FinanceServiceImpl implements FinanceService {
                 .builder()
                 .userUuid(dto.getUserUuid())
                 .username(dto.getUsername())
-                .name(dto.getName())
                 .email(dto.getEmail())
                 .isActive(dto.isActive())
                 .financialItems(new ArrayList<>())
@@ -98,7 +97,6 @@ public class FinanceServiceImpl implements FinanceService {
         userFinance
                 .setUsername(dto.getUsername())
                 .setEmail(dto.getEmail())
-                .setName(dto.getName())
                 .setActive(dto.isActive());
     }
 }

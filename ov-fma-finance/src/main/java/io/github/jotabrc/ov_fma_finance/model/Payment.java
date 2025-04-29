@@ -1,5 +1,6 @@
 package io.github.jotabrc.ov_fma_finance.model;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import lombok.Getter;
 import lombok.Setter;
@@ -12,11 +13,12 @@ import java.time.LocalDateTime;
 @Entity(name = "tb_payment")
 public class Payment extends FinancialEntity {
 
-    private String vendor;
+    @Column(nullable = false, unique = false)
+    private String payee;
 
     public Payment(long id, String uuid, UserFinance userFinance, BigDecimal amount, String description, LocalDateTime createdAt,
-                   LocalDateTime updatedAt, long version, String vendor) {
+                   LocalDateTime updatedAt, long version, String payee) {
         super(id, uuid, userFinance, amount, description, createdAt, updatedAt, version);
-        this.vendor = vendor;
+        this.payee = payee;
     }
 }

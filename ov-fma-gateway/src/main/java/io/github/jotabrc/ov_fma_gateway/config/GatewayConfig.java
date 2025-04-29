@@ -132,6 +132,7 @@ public class GatewayConfig implements WebFluxConfigurer {
                         .pathMatchers("/user/signup").permitAll()
                         .pathMatchers("/auth/signin").permitAll()
                         .pathMatchers("/user/update").authenticated()
+                        .pathMatchers("/finance/**").authenticated()
                         .pathMatchers("/user/get-by-uuid/**").authenticated()
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2

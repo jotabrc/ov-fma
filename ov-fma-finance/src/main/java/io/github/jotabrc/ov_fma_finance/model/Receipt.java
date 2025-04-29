@@ -12,11 +12,11 @@ import java.time.LocalDateTime;
 @Entity(name = "tb_receipt")
 public class Receipt extends FinancialEntity {
 
-    private String payee;
+    private String vendor;
 
     public Receipt(long id, String uuid, UserFinance userFinance, BigDecimal amount, String description, LocalDateTime createdAt,
-                   LocalDateTime updatedAt, long version, String payee) {
+                   LocalDateTime updatedAt, long version, String vendor) {
         super(id, uuid, userFinance, amount, description, createdAt, updatedAt, version);
-        this.payee = payee;
+        this.vendor = vendor;
     }
 }

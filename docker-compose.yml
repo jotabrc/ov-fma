@@ -2,6 +2,9 @@ version: "3.9"
 
 services:
   finance-service:
+    depends_on:
+      - kafka
+      - gateway-service
     build:
       context: ./ov-fma-finance
       args:
@@ -17,6 +20,9 @@ services:
       - app-network
 
   auth-service:
+    depends_on:
+      - kafka
+      - gateway-service
     build:
       context: ./ov-fma-auth
       args:
@@ -32,6 +38,9 @@ services:
       - app-network
 
   user-service:
+    depends_on:
+      - kafka
+      - gateway-service
     build:
       context: ./ov-fma-user
       args:
@@ -47,6 +56,8 @@ services:
       - app-network
 
   gateway-service:
+    depends_on:
+      - kafka
     build:
       context: ./ov-fma-gateway
       args:
