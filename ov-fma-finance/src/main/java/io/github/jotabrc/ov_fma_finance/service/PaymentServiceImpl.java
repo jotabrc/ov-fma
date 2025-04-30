@@ -2,14 +2,11 @@ package io.github.jotabrc.ov_fma_finance.service;
 
 import io.github.jotabrc.ov_fma_finance.dto.PaymentDto;
 import io.github.jotabrc.ov_fma_finance.handler.PaymentNotFoundException;
-import io.github.jotabrc.ov_fma_finance.handler.UnauthorizedException;
-import io.github.jotabrc.ov_fma_finance.handler.UserNotFoundException;
 import io.github.jotabrc.ov_fma_finance.model.Payment;
 import io.github.jotabrc.ov_fma_finance.model.UserFinance;
-import io.github.jotabrc.ov_fma_finance.repository.FinanceRepository;
 import io.github.jotabrc.ov_fma_finance.repository.PaymentRepository;
+import io.github.jotabrc.ov_fma_finance.util.ServiceUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
@@ -18,12 +15,12 @@ import java.util.UUID;
 public class PaymentServiceImpl implements PaymentService {
 
     private final PaymentRepository paymentRepository;
-    private final FinanceRepository financeRepository;
+    private final ServiceUtil serviceUtil;
 
     @Autowired
-    public PaymentServiceImpl(PaymentRepository paymentRepository, FinanceRepository financeRepository) {
+    public PaymentServiceImpl(PaymentRepository paymentRepository, ServiceUtil serviceUtil) {
         this.paymentRepository = paymentRepository;
-        this.financeRepository = financeRepository;
+        this.serviceUtil = serviceUtil;
     }
 
     /**
@@ -36,7 +33,7 @@ public class PaymentServiceImpl implements PaymentService {
     public String addPayment(final PaymentDto dto) {
         // Uses SecurityContextHolder Authorization subject (UUID) to find UserFinance
         // doesn't require to check user authorization for updating this information
-        UserFinance userFinance = getUserFinance();
+        UserFinance userFinance = serviceUtil.getUserFinance();
 
         Payment payment = buildNewPayment(dto, userFinance);
         return paymentRepository.save(payment).getUuid();
@@ -44,7 +41,7 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public void updatePayment(PaymentDto dto) {
-        checkUserAuthorization("Authorization doesn't match with user to be updated");
+        serviceUtil.checkUserAuthorization("Authorization doesn't match with user to be updated");
         Payment payment = getPayment(dto.getId());
 
         updatePayment(dto, payment);
@@ -53,7 +50,7 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public void deletePayment(long id) {
-        checkUserAuthorization("Authorization doesn't match with user to be updated");
+        serviceUtil.checkUserAuthorization("Authorization doesn't match with user to be updated");
         Payment payment = getPayment(id);
 
         paymentRepository.delete(payment);
@@ -61,42 +58,6 @@ public class PaymentServiceImpl implements PaymentService {
 
     // =================================================================================================================
     // === PRIVATE METHODS ==
-
-    /**
-     * Get User UUID from the SecurityContextHolder Authentication.
-     * @return UUID.
-     */
-    private String getUserUuid() {
-        return SecurityContextHolder.getContext().getAuthentication().getName();
-    }
-
-    /**
-     * Get UserFinance by UUID.
-     * @return UserFinance data.
-     */
-    private UserFinance getUserFinance() {
-        String userUuid = getUserUuid();
-        return financeRepository.findByUserUuid(userUuid)
-                .orElseThrow(() -> new UserNotFoundException("User with UUID %s not found".formatted(userUuid)));
-    }
-
-    /**
-     * Check User Authorization and call overridden method with a default message.
-     */
-    private void checkUserAuthorization() {
-        checkUserAuthorization("User authorization denied");
-    }
-
-    /**
-     * Check User Authorization and throws exception if denied.
-     * @param message Exception message.
-     * @throws UnauthorizedException
-     */
-    private void checkUserAuthorization(final String message) {
-        String userUuid = getUserUuid();
-        boolean isValid = SecurityContextHolder.getContext().getAuthentication().getName().equals(userUuid);
-        if (!isValid) throw new UnauthorizedException(message);
-    }
 
     /**
      * Build new Payment entity to be persisted.

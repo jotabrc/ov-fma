@@ -8,4 +8,6 @@ import org.springframework.validation.annotation.Validated;
 public interface RecurringPaymentService {
 
     String addRecurringPayment(@NotNull RecurringPaymentDto dto);
+    void updateRecurringPayment(@NotNull RecurringPaymentDto dto);
+    void deleteRecurringPayment(long id);
 }

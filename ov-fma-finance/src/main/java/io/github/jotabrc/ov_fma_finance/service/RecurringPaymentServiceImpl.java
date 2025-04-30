@@ -37,6 +37,16 @@ public class RecurringPaymentServiceImpl implements RecurringPaymentService {
         return recurringPaymentRepository.save(payment).getUuid();
     }
 
+    @Override
+    public void updateRecurringPayment(RecurringPaymentDto dto) {
+
+    }
+
+    @Override
+    public void deleteRecurringPayment(long id) {
+
+    }
+
     // =================================================================================================================
     // === PRIVATE METHODS ==
 
