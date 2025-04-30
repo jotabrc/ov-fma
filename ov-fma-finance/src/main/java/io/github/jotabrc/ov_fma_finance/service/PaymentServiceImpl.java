@@ -52,7 +52,6 @@ public class PaymentServiceImpl implements PaymentService {
     public void deletePayment(long id) {
         serviceUtil.checkUserAuthorization("Authorization doesn't match with user to be updated");
         Payment payment = getPayment(id);
-
         paymentRepository.delete(payment);
     }
 
