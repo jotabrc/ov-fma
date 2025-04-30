@@ -8,4 +8,6 @@ import org.springframework.validation.annotation.Validated;
 public interface PaymentService {
 
     String addPayment(@NotNull PaymentDto dto);
+    void updatePayment(@NotNull PaymentDto dto);
+    void deletePayment(long id);
 }

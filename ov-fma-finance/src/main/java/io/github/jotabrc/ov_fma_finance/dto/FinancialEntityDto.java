@@ -11,7 +11,7 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 public abstract class FinancialEntityDto {
 
-    private final String userUuid;
+    private final long id;
     private final BigDecimal amount;
     private final String description;
 }

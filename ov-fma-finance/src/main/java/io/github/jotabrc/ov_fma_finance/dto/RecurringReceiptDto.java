@@ -12,8 +12,8 @@ public class RecurringReceiptDto extends RecurrenceDto {
 
     private final String vendor;
 
-    public RecurringReceiptDto(String userUuid, BigDecimal amount, String description, LocalDate recurringUntil, String vendor) {
-        super(userUuid, amount, description, recurringUntil);
+    public RecurringReceiptDto(long id, BigDecimal amount, String description, LocalDate recurringUntil, String vendor) {
+        super(id, amount, description, recurringUntil);
         this.vendor = vendor;
     }
 }

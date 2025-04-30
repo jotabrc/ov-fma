@@ -12,8 +12,8 @@ public abstract class RecurrenceDto extends FinancialEntityDto {
 
     private final LocalDate recurringUntil;
 
-    public RecurrenceDto(String userUuid, BigDecimal amount, String description, LocalDate recurringUntil) {
-        super(userUuid, amount, description);
+    public RecurrenceDto(long id, BigDecimal amount, String description, LocalDate recurringUntil) {
+        super(id, amount, description);
         this.recurringUntil = recurringUntil;
     }
 }

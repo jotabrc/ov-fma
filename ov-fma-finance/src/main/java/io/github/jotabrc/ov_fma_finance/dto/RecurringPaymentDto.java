@@ -12,8 +12,8 @@ public class RecurringPaymentDto extends RecurrenceDto {
 
     private final String payee;
 
-    public RecurringPaymentDto(String userUuid, BigDecimal amount, String description, LocalDate recurringUntil, String payee) {
-        super(userUuid, amount, description, recurringUntil);
+    public RecurringPaymentDto(long id, BigDecimal amount, String description, LocalDate recurringUntil, String payee) {
+        super(id, amount, description, recurringUntil);
         this.payee = payee;
     }
 }
