@@ -22,13 +22,6 @@ Vagrant.configure("2") do |config|
       end
       machine.vm.provision "shell", path: "docker.sh"
 
-      machine.vm.provision "shell", inline: <<-SHELL
-        export VM_IP=$(ip -o -4 addr show enp0s8 | awk '{print $4}' | cut -d/ -f1)
-        echo "Accessible VM IP is: $VM_IP"
-
-        echo 'export VM_IP=$(ip -o -4 addr show enp0s8 | awk "{print \$4}" | cut -d/ -f1)' >> /home/vagrant/.bashrc
-      SHELL
-
       if "#{name}" == "master"
         machine.vm.provision "shell", path: "master.sh"
       else
