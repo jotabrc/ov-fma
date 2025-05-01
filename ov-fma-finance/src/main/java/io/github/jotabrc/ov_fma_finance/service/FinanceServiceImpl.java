@@ -1,17 +1,14 @@
 package io.github.jotabrc.ov_fma_finance.service;
 
-import io.github.jotabrc.ov_fma_finance.dto.PaymentDto;
 import io.github.jotabrc.ov_fma_finance.dto.UserFinanceDto;
 import io.github.jotabrc.ov_fma_finance.handler.UserAlreadyExistsException;
 import io.github.jotabrc.ov_fma_finance.handler.UserNotFoundException;
-import io.github.jotabrc.ov_fma_finance.model.Payment;
 import io.github.jotabrc.ov_fma_finance.model.UserFinance;
 import io.github.jotabrc.ov_fma_finance.repository.FinanceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.UUID;
 
 @Service
 public class FinanceServiceImpl implements FinanceService {
@@ -75,17 +72,6 @@ public class FinanceServiceImpl implements FinanceService {
                 .isActive(dto.isActive())
                 .financialItems(new ArrayList<>())
                 .build();
-    }
-
-    /**
-     * Build new Payment entity to be persisted.
-     * @param dto Payment data.
-     * @return Payment object.
-     */
-    private Payment buildNewPayment(final PaymentDto dto) {
-        return new Payment(0,
-                UUID.randomUUID().toString(), null, dto.getAmount(),
-                dto.getDescription(), null, null, 0, dto.getVendor());
     }
 
     /**
