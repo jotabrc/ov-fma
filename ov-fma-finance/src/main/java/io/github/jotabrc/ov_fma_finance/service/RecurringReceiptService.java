@@ -8,4 +8,6 @@ import org.springframework.validation.annotation.Validated;
 public interface RecurringReceiptService {
 
     String addRecurringReceipt(@NotNull RecurringReceiptDto dto);
+    void updateRecurringReceipt(@NotNull RecurringReceiptDto dto);
+    void deleteRecurringReceipt(long id);
 }

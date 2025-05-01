@@ -8,13 +8,13 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class GlobalErrorHandler {
 
-    @ExceptionHandler(PartyNotFoundException.class)
-    public ResponseEntity<String> handle(PartyNotFoundException e) {
-        return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
-    }
-
-    @ExceptionHandler(UserNotFoundException.class)
-    public ResponseEntity<String> handle(UserNotFoundException e) {
+    @ExceptionHandler({
+            ReceiptNotFoundException.class,
+            PartyNotFoundException.class,
+            UserNotFoundException.class,
+            PaymentNotFoundException.class
+    })
+    public ResponseEntity<String> handle(ReceiptNotFoundException e) {
         return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
     }
 

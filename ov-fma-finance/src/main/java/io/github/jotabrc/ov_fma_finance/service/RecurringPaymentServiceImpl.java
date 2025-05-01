@@ -49,6 +49,10 @@ public class RecurringPaymentServiceImpl implements RecurringPaymentService {
         recurringPaymentRepository.save(recurringPayment);
     }
 
+    /**
+     * Delete RecurringPayment by id.
+     * @param id ID of RecurringPayment to be deleted.
+     */
     @Override
     public void deleteRecurringPayment(final long id) {
         serviceUtil.checkUserAuthorization("Authorization doesn't match with user to be updated");

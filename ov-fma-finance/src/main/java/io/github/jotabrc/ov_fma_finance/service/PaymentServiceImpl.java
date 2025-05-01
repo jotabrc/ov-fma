@@ -39,6 +39,10 @@ public class PaymentServiceImpl implements PaymentService {
         return paymentRepository.save(payment).getUuid();
     }
 
+    /**
+     * Update Payment by ID.
+     * @param dto New Payment data.
+     */
     @Override
     public void updatePayment(PaymentDto dto) {
         serviceUtil.checkUserAuthorization("Authorization doesn't match with user to be updated");
@@ -48,6 +52,10 @@ public class PaymentServiceImpl implements PaymentService {
         paymentRepository.save(payment);
     }
 
+    /**
+     * Delete Payment by ID.
+     * @param id ID of Payment to be deleted.
+     */
     @Override
     public void deletePayment(long id) {
         serviceUtil.checkUserAuthorization("Authorization doesn't match with user to be updated");

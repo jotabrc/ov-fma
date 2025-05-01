@@ -8,10 +8,7 @@ import io.github.jotabrc.ov_fma_finance.service.RecurringPaymentService;
 import io.github.jotabrc.ov_fma_finance.util.ControllerMessage;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
@@ -53,6 +50,20 @@ public class PaymentController {
                 );
     }
 
+    @PutMapping("/update-payment")
+    @Tag(name = "Update Payment", description = "Update Payment")
+    public ResponseEntity<String> updatePayment(@RequestBody final PaymentDto dto) {
+        paymentService.updatePayment(dto);
+        return  ResponseEntity.ok("Payment with ID %d has been updated".formatted(dto.getId()));
+    }
+
+    @DeleteMapping("/delete-payment/{id}")
+    @Tag(name = "Delete Payment", description = "Delete Payment")
+    public ResponseEntity<String> deletePayment(@PathVariable final long id) {
+        paymentService.deletePayment(id);
+        return  ResponseEntity.ok("Payment with ID %d has been deleted".formatted(id));
+    }
+
     @PostMapping("/add-recurring-payment")
     @Tag(name = "Recurring Payment", description = "Add new Recurring Payment")
     public ResponseEntity<String> addRecurringPayment(@RequestBody final RecurringPaymentDto dto) {
@@ -73,5 +84,19 @@ public class PaymentController {
                         controllerMessage
                                 .toJSON()
                 );
+    }
+
+    @PutMapping("/update-recurring-payment")
+    @Tag(name = "Update Recurring Payment", description = "Update Recurring Payment")
+    public ResponseEntity<String> updateRecurringPayment(@RequestBody final RecurringPaymentDto dto) {
+        recurringPaymentService.updateRecurringPayment(dto);
+        return  ResponseEntity.ok("Recurring Payment with ID %d has been updated".formatted(dto.getId()));
+    }
+
+    @DeleteMapping("/delete-recurring-payment/{id}")
+    @Tag(name = "Delete Recurring Payment", description = "Delete Recurring Payment")
+    public ResponseEntity<String> deleteRecurringPayment(@PathVariable final long id) {
+        recurringPaymentService.deleteRecurringPayment(id);
+        return  ResponseEntity.ok("Recurring Payment with ID %d has been deleted".formatted(id));
     }
 }

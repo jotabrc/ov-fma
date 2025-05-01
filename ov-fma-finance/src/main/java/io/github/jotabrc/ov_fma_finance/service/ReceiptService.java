@@ -8,4 +8,6 @@ import org.springframework.validation.annotation.Validated;
 public interface ReceiptService {
 
     String addReceipt(@NotNull ReceiptDto dto);
+    void updateReceipt(@NotNull ReceiptDto dto);
+    void deleteReceipt(long id);
 }

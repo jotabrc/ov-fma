@@ -8,5 +8,6 @@ import org.springframework.validation.annotation.Validated;
 public interface ServiceUtil {
 
     UserFinance getUserFinance();
+    void checkUserAuthorization();
     void checkUserAuthorization(@NotNull String message);
 }
