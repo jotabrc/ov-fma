@@ -1,8 +1,54 @@
 version: "3.9"
 
+volumes:
+  auth-data:
+  user-data:
+  gateway-data:
+  finance-data:
+
 services:
+  finance-postgres-sql:
+    depends_on:
+      - kafka
+      - gateway-service
+    image: postgres:latest
+    volumes:
+      - finance-data:/var/lib/postgresql/data
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node-hostname == databases
+
+  user-postgres-sql:
+    depends_on:
+      - kafka
+      - gateway-service
+    image: postgres:latest
+    volumes:
+      - user-data:/var/lib/postgresql/data
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node-hostname == databases
+
+  auth-postgres-sql:
+    depends_on:
+      - kafka
+      - gateway-service
+    image: postgres:latest
+    volumes:
+      - auth-data:/var/lib/postgresql/data
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node-hostname == databases
+
   finance-service:
     depends_on:
+      - finance-postgres-sql
       - kafka
       - gateway-service
     build:
@@ -14,6 +60,12 @@ services:
       - VM_IP=${VM_IP}
     env_file:
       - ./ov-fma-finance/.env
+    deploy:
+      replicas: 3
+      update_config:
+        parallelism: 2
+      restart_policy:
+        condition: on-failure
     ports:
       - "8083:8080"
     networks:
@@ -21,6 +73,7 @@ services:
 
   auth-service:
     depends_on:
+      - auth-postgres-sql
       - kafka
       - gateway-service
     build:
@@ -32,6 +85,12 @@ services:
       - VM_IP=${VM_IP}
     env_file:
       - ./ov-fma-auth/.env
+    deploy:
+      replicas: 3
+      update_config:
+        parallelism: 2
+      restart_policy:
+        condition: on-failure
     ports:
       - "8082:8080"
     networks:
@@ -39,6 +98,7 @@ services:
 
   user-service:
     depends_on:
+      - user-postgres-sql
       - kafka
       - gateway-service
     build:
@@ -50,6 +110,12 @@ services:
       - VM_IP=${VM_IP}
     env_file:
       - ./ov-fma-user/.env
+    deploy:
+      replicas: 3
+      update_config:
+        parallelism: 2
+      restart_policy:
+        condition: on-failure
     ports:
       - "8081:8080"
     networks:
@@ -67,6 +133,12 @@ services:
       - VM_IP=${VM_IP}
     env_file:
       - ./ov-fma-gateway/.env
+    deploy:
+      replicas: 3
+      update_config:
+        parallelism: 2
+      restart_policy:
+        condition: on-failure
     ports:
       - "8080:8080"
     networks:
@@ -76,6 +148,12 @@ services:
     image: confluentinc/cp-zookeeper:latest
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
+    deploy:
+      replicas: 3
+      update_config:
+        parallelism: 2
+      restart_policy:
+        condition: on-failure
     ports:
       - "2181:2181"
     networks:
@@ -90,6 +168,12 @@ services:
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
       KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    deploy:
+      replicas: 3
+      update_config:
+        parallelism: 2
+      restart_policy:
+        condition: on-failure
     ports:
       - "9092:9092"
     networks:
@@ -97,10 +181,4 @@ services:
 
 networks:
   app-network:
-    driver: bridge
-
-volumes:
-  auth-data:
-  user-data:
-  gateway-data:
-  finance-data:
+    driver: overlay
