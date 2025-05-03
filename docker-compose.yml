@@ -11,40 +11,64 @@ services:
     depends_on:
       - kafka
       - gateway-service
-    image: postgres:latest
+    image: postgres:alpine
     volumes:
       - finance-data:/var/lib/postgresql/data
+    env_file:
+      - ./ov-fma-finance/.env.postgres
+    ports:
+      - "5433:5432"
+    networks:
+      - app-network
     deploy:
       replicas: 1
       placement:
         constraints:
-          - node-hostname == databases
+          - node.hostname == database
+      restart_policy:
+        condition: on-failure
 
   user-postgres-sql:
     depends_on:
       - kafka
       - gateway-service
-    image: postgres:latest
+    image: postgres:alpine
     volumes:
       - user-data:/var/lib/postgresql/data
+    env_file:
+      - ./ov-fma-user/.env.postgres
+    ports:
+      - "5434:5432"
+    networks:
+      - app-network
     deploy:
       replicas: 1
       placement:
         constraints:
-          - node-hostname == databases
+          - node.hostname == database
+      restart_policy:
+        condition: on-failure
 
   auth-postgres-sql:
     depends_on:
       - kafka
       - gateway-service
-    image: postgres:latest
+    image: postgres:alpine
     volumes:
       - auth-data:/var/lib/postgresql/data
+    env_file:
+      - ./ov-fma-auth/.env.postgres
+    ports:
+      - "5435:5432"
+    networks:
+      - app-network
     deploy:
       replicas: 1
       placement:
         constraints:
-          - node-hostname == databases
+          - node.hostname == database
+      restart_policy:
+        condition: on-failure
 
   finance-service:
     depends_on:
@@ -53,15 +77,16 @@ services:
       - gateway-service
     build:
       context: ./ov-fma-finance
-      args:
-        VM_IP: ${VM_IP}
       dockerfile: .dockerfile
-    environment:
-      - VM_IP=${VM_IP}
+    image: jotabr092/ov-fma-finance
     env_file:
       - ./ov-fma-finance/.env
+      - ./ov-fma-finance/.env.postgres
     deploy:
       replicas: 3
+      placement:
+        constraints:
+          - node.hostname != database
       update_config:
         parallelism: 2
       restart_policy:
@@ -78,15 +103,16 @@ services:
       - gateway-service
     build:
       context: ./ov-fma-auth
-      args:
-        VM_IP: ${VM_IP}
       dockerfile: .dockerfile
-    environment:
-      - VM_IP=${VM_IP}
+    image: jotabr092/ov-fma-auth
     env_file:
       - ./ov-fma-auth/.env
+      - ./ov-fma-auth/.env.postgres
     deploy:
       replicas: 3
+      placement:
+        constraints:
+          - node.hostname != database
       update_config:
         parallelism: 2
       restart_policy:
@@ -103,15 +129,16 @@ services:
       - gateway-service
     build:
       context: ./ov-fma-user
-      args:
-        VM_IP: ${VM_IP}
       dockerfile: .dockerfile
-    environment:
-      - VM_IP=${VM_IP}
+    image: jotabr092/ov-fma-user
     env_file:
       - ./ov-fma-user/.env
+      - ./ov-fma-user/.env.postgres
     deploy:
       replicas: 3
+      placement:
+        constraints:
+          - node.hostname != database
       update_config:
         parallelism: 2
       restart_policy:
@@ -126,15 +153,15 @@ services:
       - kafka
     build:
       context: ./ov-fma-gateway
-      args:
-        VM_IP: ${VM_IP}
       dockerfile: .dockerfile
-    environment:
-      - VM_IP=${VM_IP}
+    image: jotabr092/ov-fma-gateway
     env_file:
       - ./ov-fma-gateway/.env
     deploy:
       replicas: 3
+      placement:
+        constraints:
+          - node.hostname != database
       update_config:
         parallelism: 2
       restart_policy:
@@ -150,6 +177,9 @@ services:
       ZOOKEEPER_CLIENT_PORT: 2181
     deploy:
       replicas: 3
+      placement:
+        constraints:
+          - node.hostname != database
       update_config:
         parallelism: 2
       restart_policy:
@@ -170,6 +200,9 @@ services:
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
     deploy:
       replicas: 3
+      placement:
+        constraints:
+          - node.hostname != database
       update_config:
         parallelism: 2
       restart_policy:

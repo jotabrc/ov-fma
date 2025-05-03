@@ -1,0 +1,14 @@
+server:
+  address: 0.0.0.0
+  port: 8080
+  ssl:
+    enabled: false
+
+spring:
+  webflux:
+    static-path-pattern: ""
+  cloud:
+    gateway:
+      httpclient:
+        connect-timeout: 5000
+        response-timeout: 5000ms
