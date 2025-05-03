@@ -39,6 +39,8 @@ public class InsertRole implements CommandLineRunner {
                         .build()
         );
 
-        roles.forEach(roleRepository::save);
+        roles.forEach(r -> {
+            if (!roleRepository.existsByName(r.getName())) roleRepository.save(r);
+        });
     }
 }
