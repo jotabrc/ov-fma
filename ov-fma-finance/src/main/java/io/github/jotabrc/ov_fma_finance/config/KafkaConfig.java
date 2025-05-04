@@ -17,12 +17,12 @@ public class KafkaConfig {
     public static final String USER_FINANCE_NEW = "user_finance_new";
     public static final String USER_FINANCE_UPDATE = "user_finance_update";
     public static final String GROUP_ID = "io.github.jotabrc";
-    public static final String SERVER = "kafka:9092";
+    public static final String SERVERS = "kafka-1:9092, kafka-2:9093, kafka-3:9094";
 
     @Bean
     public ConsumerFactory<String, String> consumerFactory() {
         Map<String, Object> config = new HashMap<>();
-        config.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, SERVER);
+        config.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, SERVERS);
         config.put(ConsumerConfig.GROUP_ID_CONFIG, GROUP_ID);
         config.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
         config.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);

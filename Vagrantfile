@@ -24,12 +24,12 @@ Vagrant.configure("2") do |config|
 
       if "#{name}" == "master"
         machine.vm.provision "shell", path: "master.sh"
-        config.vm.synced_folder "/home/joao/Projects/ov-fma", "/data/ov-fma", type: "rsync", rsync__exclude: [".vagrant"]
         machine.vm.provision "shell", path: "additional-setup.sh"
       else
         machine.vm.provision "shell", path: "worker.sh"
       end
 
+        config.vm.synced_folder "/home/joao/Projects/ov-fma", "/data/ov-fma", type: "rsync", rsync__exclude: [".vagrant"]
     end
   end
 end

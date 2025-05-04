@@ -9,7 +9,9 @@ volumes:
 services:
   finance-postgres-sql:
     depends_on:
-      - kafka
+      - kafka-1
+      - kafka-2
+      - kafka-3
       - gateway-service
     image: postgres:alpine
     volumes:
@@ -30,7 +32,9 @@ services:
 
   user-postgres-sql:
     depends_on:
-      - kafka
+      - kafka-1
+      - kafka-2
+      - kafka-3
       - gateway-service
     image: postgres:alpine
     volumes:
@@ -51,7 +55,9 @@ services:
 
   auth-postgres-sql:
     depends_on:
-      - kafka
+      - kafka-1
+      - kafka-2
+      - kafka-3
       - gateway-service
     image: postgres:alpine
     volumes:
@@ -72,8 +78,10 @@ services:
 
   finance-service:
     depends_on:
+      - kafka-1
+      - kafka-2
+      - kafka-3
       - finance-postgres-sql
-      - kafka
       - gateway-service
     build:
       context: ./ov-fma-finance
@@ -98,8 +106,10 @@ services:
 
   auth-service:
     depends_on:
+      - kafka-1
+      - kafka-2
+      - kafka-3
       - auth-postgres-sql
-      - kafka
       - gateway-service
     build:
       context: ./ov-fma-auth
@@ -124,8 +134,10 @@ services:
 
   user-service:
     depends_on:
+      - kafka-1
+      - kafka-2
+      - kafka-3
       - user-postgres-sql
-      - kafka
       - gateway-service
     build:
       context: ./ov-fma-user
@@ -150,7 +162,9 @@ services:
 
   gateway-service:
     depends_on:
-      - kafka
+      - kafka-1
+      - kafka-2
+      - kafka-3
     build:
       context: ./ov-fma-gateway
       dockerfile: .dockerfile
@@ -175,13 +189,14 @@ services:
     image: confluentinc/cp-zookeeper:latest
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
     deploy:
-      replicas: 3
+      replicas: 1
       placement:
         constraints:
           - node.hostname != database
       update_config:
-        parallelism: 2
+        parallelism: 1
       restart_policy:
         condition: on-failure
     ports:
@@ -189,26 +204,84 @@ services:
     networks:
       - app-network
 
-  kafka:
-    image: confluentinc/cp-kafka:latest
+  kafka-1:
+    build:
+      context: ./kafka
+      dockerfile: .dockerfile
+    image: jotabr092/cp-kafka:latest
     depends_on:
       - zookeeper
     environment:
+      KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
-      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka-1:9092, PLAINTEXT_HOST://localhost:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
+      KAFKA_DEFAULT_REPLICATION_FACTOR: 3
     deploy:
-      replicas: 3
+      replicas: 1
       placement:
         constraints:
           - node.hostname != database
       update_config:
-        parallelism: 2
+        parallelism: 1
       restart_policy:
         condition: on-failure
     ports:
       - "9092:9092"
+    networks:
+      - app-network
+
+  kafka-2:
+    image: jotabr092/cp-kafka:latest
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_BROKER_ID: 2
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka-2:9093, PLAINTEXT_HOST://localhost:29093
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
+      KAFKA_DEFAULT_REPLICATION_FACTOR: 3
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.hostname != database
+      update_config:
+        parallelism: 1
+      restart_policy:
+        condition: on-failure
+    ports:
+      - "9093:9093"
+    networks:
+      - app-network
+
+  kafka-3:
+    image: jotabr092/cp-kafka:latest
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_BROKER_ID: 3
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka-3:9094, PLAINTEXT_HOST://localhost:29094
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
+      KAFKA_DEFAULT_REPLICATION_FACTOR: 3
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.hostname != database
+      update_config:
+        parallelism: 1
+      restart_policy:
+        condition: on-failure
+    ports:
+      - "9094:9094"
     networks:
       - app-network
 
