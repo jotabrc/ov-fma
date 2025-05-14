@@ -23,25 +23,25 @@ CREATE TABLE IF NOT EXISTS tb_financial_entity (
 
 CREATE TABLE IF NOT EXISTS tb_payment (
     id BIGINT PRIMARY KEY,
-    payee VARCHAR(255) NOT NULL UNIQUE,
+    payee VARCHAR(255) NOT NULL,
     FOREIGN KEY (id) REFERENCES tb_financial_entity (id)
 );
 
 CREATE TABLE IF NOT EXISTS tb_receipt (
     id BIGINT PRIMARY KEY,
-    vendor VARCHAR(255) NOT NULL UNIQUE,
+    vendor VARCHAR(255) NOT NULL,
     FOREIGN KEY (id) REFERENCES tb_financial_entity (id)
 );
 
 CREATE TABLE IF NOT EXISTS tb_recurring_payment (
     id BIGINT PRIMARY KEY,
-    payee VARCHAR(255) NOT NULL UNIQUE,
+    payee VARCHAR(255) NOT NULL,
     FOREIGN KEY (id) REFERENCES tb_financial_entity (id)
 );
 
 CREATE TABLE IF NOT EXISTS tb_recurring_receipt (
     id BIGINT PRIMARY KEY,
-    vendor VARCHAR(255) NOT NULL UNIQUE,
+    vendor VARCHAR(255) NOT NULL,
     FOREIGN KEY (id) REFERENCES tb_financial_entity (id)
 );
 
