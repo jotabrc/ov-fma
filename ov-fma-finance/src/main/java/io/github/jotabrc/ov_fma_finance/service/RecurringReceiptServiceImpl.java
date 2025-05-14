@@ -43,6 +43,7 @@ public class RecurringReceiptServiceImpl implements RecurringReceiptService {
         serviceUtil.checkUserAuthorization();
         RecurringReceipt receipt = getRecurringReceipt(dto.getId());
         updateRecurringReceipt(dto, receipt);
+        recurringReceiptRepository.save(receipt);
     }
 
     /**
@@ -54,6 +55,7 @@ public class RecurringReceiptServiceImpl implements RecurringReceiptService {
         serviceUtil.checkUserAuthorization();
         RecurringReceipt receipt = getRecurringReceipt(id);
         recurringReceiptRepository.delete(receipt);
+        recurringReceiptRepository.save(receipt);
     }
 
     // =================================================================================================================
