@@ -13,6 +13,8 @@ import io.github.jotabrc.ov_fma_user.repository.RoleRepository;
 import io.github.jotabrc.ov_fma_user.repository.UserRepository;
 import io.github.jotabrc.ov_fma_user.util.RoleName;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -70,12 +72,13 @@ public class UserServiceImpl implements UserService {
      *
      * @param dto UserCreationUpdateDto.
      */
+    @CachePut(value = "users", key = "#uuid")
     @Override
-    public void update(final UserCreationUpdateDto dto) throws NoSuchAlgorithmException, JsonProcessingException {
+    public UserDto update(final String uuid, final UserCreationUpdateDto dto) throws NoSuchAlgorithmException, JsonProcessingException {
+        // Checks if account to be changed is the same as the token authentication
+        checkUserAuthorization(uuid);
         // Throws UserNotFoundException if user UUID is not found.
         User user = getUser(dto.getUuid());
-        // Checks if account to be changed is the same as the token authentication
-        checkUserAuthorization(user.getUuid());
         // Throws CredentialNotAvailableException if email or username is already in use.
         dataToBeChecked(dto, user);
 
@@ -90,6 +93,7 @@ public class UserServiceImpl implements UserService {
         sendKafkaMessageToFinanceService(user, KafkaTopic.USER_FINANCE_UPDATE);
 
         userRepository.save(user);
+        return toDto(user);
     }
 
     /**
@@ -99,12 +103,13 @@ public class UserServiceImpl implements UserService {
      * @return UserDto.
      * @throws UserNotFoundException if no user is found with the provided UUID parameter.
      */
+    @Cacheable(value = "users", key = "#uuid")
     @Override
     public UserDto getByUuid(String uuid) throws UserNotFoundException {
+        // Checks if account requested user information matched authenticated user
+        checkUserAuthorization(uuid);
         User user = userRepository.findByUuid(uuid)
                 .orElseThrow(() -> new UserNotFoundException("User with UUID %s not found".formatted(uuid)));
-        // Checks if account requested user information matched authenticated user
-        checkUserAuthorization(user.getUuid());
         return toDto(user);
     }
 

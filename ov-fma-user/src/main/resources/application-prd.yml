@@ -3,6 +3,25 @@ server:
   port: 8081
 
 spring:
+  kafka:
+    bootstrap-servers: kafka-1:9092, kafka-2:9093, kafka-3:9094
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      retries: 3
+      acks: all
+    consumer:
+      group-id: io.github.jotabrc
+      auto-offset-reset: latest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      enable-auto-commit: false
+  cache:
+    type: redis
+  redis:
+    host: redis-cache
+    port: 6379
+    password: ${REDIS_PASSWORD}
   datasource:
     url: jdbc:postgresql://${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}
     username: ${POSTGRES_USER}

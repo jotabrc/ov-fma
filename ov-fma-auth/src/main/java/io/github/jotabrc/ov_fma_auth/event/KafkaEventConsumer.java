@@ -7,7 +7,6 @@ import io.github.jotabrc.ov_fma_auth.dto.UserDto;
 import io.github.jotabrc.ov_fma_auth.service.AuthService;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 
@@ -20,8 +19,6 @@ public class KafkaEventConsumer {
     public KafkaEventConsumer(AuthService authService) {
         this.authService = authService;
     }
-
-    @Bean
 
     @KafkaListener(topics = {KafkaConfig.USER_NEW, KafkaConfig.USER_UPDATE},
             groupId = KafkaConfig.GROUP_ID, containerFactory = "kafkaListenerContainerFactory")

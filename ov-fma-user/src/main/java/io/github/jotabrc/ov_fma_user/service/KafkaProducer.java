@@ -2,31 +2,26 @@ package io.github.jotabrc.ov_fma_user.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.kafka.clients.producer.ProducerRecord;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
-
-import java.util.Properties;
 
 @Component
 public class KafkaProducer {
 
-    protected Properties getProperties() {
-        Properties props = new Properties();
-        props.put("bootstrap.servers", "kafka-1:9092, kafka-2:9093, kafka-3:9094");
-        props.put("key.serializer", "org.springframework.kafka.support.serializer.JsonSerializer");
-        props.put("value.serializer", "org.springframework.kafka.support.serializer.JsonSerializer");
+    @Autowired
+    private final KafkaTemplate<String, String> kafkaTemplate;
+    private final ObjectMapper objectMapper;
 
-        return props;
+    public KafkaProducer(KafkaTemplate<String, String> kafkaTemplate, ObjectMapper objectMapper) {
+        this.kafkaTemplate = kafkaTemplate;
+        this.objectMapper = objectMapper;
     }
 
+    @Async
     public <T> void produce(T t, String topic) throws JsonProcessingException {
-        org.apache.kafka.clients.producer.KafkaProducer<String, String> producer = new org.apache.kafka.clients.producer.KafkaProducer<>(getProperties());
-
-        ObjectMapper objectMapper = new ObjectMapper();
         String json = objectMapper.writeValueAsString(t);
-        ProducerRecord<String, String> record = new ProducerRecord<>(topic, "key", json);
-
-        producer.send(record);
-        producer.close();
+        kafkaTemplate.send(topic, json);
     }
 }

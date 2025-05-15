@@ -1,12 +1,37 @@
 version: "3.9"
 
+networks:
+  app-network:
+    driver: overlay
+
 volumes:
   auth-data:
   user-data:
   gateway-data:
   finance-data:
+  redis-data:
 
 services:
+  redis-cache:
+    image: redis:8.0.1-alpine
+    volumes:
+      - redis-data:/data
+      - ./redis/redis.conf:/usr/local/etc/redis/redis.conf
+    environment:
+      REDIS_PASSWORD: admin
+    ports:
+      - "6379:6379"
+    networks:
+      - app-network
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.hostname == database
+      restart_policy:
+        condition: on-failure
+
+
   finance-postgres-sql:
     depends_on:
       - kafka-1
@@ -284,7 +309,3 @@ services:
       - "9094:9094"
     networks:
       - app-network
-
-networks:
-  app-network:
-    driver: overlay

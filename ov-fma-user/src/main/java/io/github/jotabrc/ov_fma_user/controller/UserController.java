@@ -52,10 +52,10 @@ public class UserController {
                 );
     }
 
-    @PutMapping("/update")
+    @PutMapping("/update/{uuid}")
     @Tag(name = "User UPDATE", description = "Updates user information, requires valid UUID")
-    public ResponseEntity<String> update(@RequestBody final UserCreationUpdateDto dto) throws NoSuchAlgorithmException, JsonProcessingException {
-        userService.update(dto);
+    public ResponseEntity<String> update(@PathVariable final String uuid, @RequestBody final UserCreationUpdateDto dto) throws NoSuchAlgorithmException, JsonProcessingException {
+        userService.update(uuid, dto);
         ControllerMessage controllerMessage = ControllerMessage
                 .builder()
                 .message("User update was successful")
