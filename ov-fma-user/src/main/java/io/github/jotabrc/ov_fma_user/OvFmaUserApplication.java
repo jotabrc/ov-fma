@@ -11,5 +11,4 @@ public class OvFmaUserApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(OvFmaUserApplication.class, args);
 	}
-
 }

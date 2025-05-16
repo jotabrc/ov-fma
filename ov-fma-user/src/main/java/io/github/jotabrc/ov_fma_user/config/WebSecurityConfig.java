@@ -1,5 +1,6 @@
 package io.github.jotabrc.ov_fma_user.config;
 
+import io.github.jotabrc.ov_fma_user.util.LoadProperties;
 import io.github.jotabrc.ov_fma_user.util.RoleName;
 import io.github.jotabrc.ovauth.config.PropertiesWhitelistLoaderImpl;
 import io.github.jotabrc.ovauth.jwt.TokenGlobalFilter;

@@ -20,7 +20,7 @@ public class KafkaEventConsumer {
     }
 
     @KafkaListener(topics = {KafkaConfig.USER_FINANCE_NEW, KafkaConfig.USER_FINANCE_UPDATE},
-            groupId = KafkaConfig.GROUP_ID, containerFactory = "kafkaListenerContainerFactory")
+            containerFactory = "kafkaListenerContainerFactory")
     public void listener(ConsumerRecord<String, String> record) throws JsonProcessingException {
 
         ObjectMapper objectMapper = new ObjectMapper();

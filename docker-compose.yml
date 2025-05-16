@@ -19,6 +19,7 @@ services:
       - ./redis/redis.conf:/usr/local/etc/redis/redis.conf
     environment:
       REDIS_PASSWORD: admin
+    command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
     ports:
       - "6379:6379"
     networks:
@@ -35,8 +36,6 @@ services:
   finance-postgres-sql:
     depends_on:
       - kafka-1
-      - kafka-2
-      - kafka-3
       - gateway-service
     image: postgres:alpine
     volumes:
@@ -58,8 +57,6 @@ services:
   user-postgres-sql:
     depends_on:
       - kafka-1
-      - kafka-2
-      - kafka-3
       - gateway-service
     image: postgres:alpine
     volumes:
@@ -81,8 +78,6 @@ services:
   auth-postgres-sql:
     depends_on:
       - kafka-1
-      - kafka-2
-      - kafka-3
       - gateway-service
     image: postgres:alpine
     volumes:
@@ -104,8 +99,6 @@ services:
   finance-service:
     depends_on:
       - kafka-1
-      - kafka-2
-      - kafka-3
       - finance-postgres-sql
       - gateway-service
     build:
@@ -116,12 +109,12 @@ services:
       - ./ov-fma-finance/.env
       - ./ov-fma-finance/.env.postgres
     deploy:
-      replicas: 3
+      replicas: 1
       placement:
         constraints:
           - node.hostname != database
       update_config:
-        parallelism: 2
+        parallelism: 1
       restart_policy:
         condition: on-failure
     ports:
@@ -132,8 +125,6 @@ services:
   auth-service:
     depends_on:
       - kafka-1
-      - kafka-2
-      - kafka-3
       - auth-postgres-sql
       - gateway-service
     build:
@@ -144,12 +135,12 @@ services:
       - ./ov-fma-auth/.env
       - ./ov-fma-auth/.env.postgres
     deploy:
-      replicas: 3
+      replicas: 1
       placement:
         constraints:
           - node.hostname != database
       update_config:
-        parallelism: 2
+        parallelism: 1
       restart_policy:
         condition: on-failure
     ports:
@@ -160,9 +151,8 @@ services:
   user-service:
     depends_on:
       - kafka-1
-      - kafka-2
-      - kafka-3
       - user-postgres-sql
+      - redis-cache
       - gateway-service
     build:
       context: ./ov-fma-user
@@ -172,12 +162,12 @@ services:
       - ./ov-fma-user/.env
       - ./ov-fma-user/.env.postgres
     deploy:
-      replicas: 3
+      replicas: 1
       placement:
         constraints:
           - node.hostname != database
       update_config:
-        parallelism: 2
+        parallelism: 1
       restart_policy:
         condition: on-failure
     ports:
@@ -188,8 +178,6 @@ services:
   gateway-service:
     depends_on:
       - kafka-1
-      - kafka-2
-      - kafka-3
     build:
       context: ./ov-fma-gateway
       dockerfile: .dockerfile
@@ -197,12 +185,12 @@ services:
     env_file:
       - ./ov-fma-gateway/.env
     deploy:
-      replicas: 3
+      replicas: 1
       placement:
         constraints:
           - node.hostname != database
       update_config:
-        parallelism: 2
+        parallelism: 1
       restart_policy:
         condition: on-failure
     ports:
@@ -242,8 +230,8 @@ services:
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka-1:9092, PLAINTEXT_HOST://localhost:29092
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
-      KAFKA_DEFAULT_REPLICATION_FACTOR: 3
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_DEFAULT_REPLICATION_FACTOR: 1
     deploy:
       replicas: 1
       placement:
@@ -255,57 +243,5 @@ services:
         condition: on-failure
     ports:
       - "9092:9092"
-    networks:
-      - app-network
-
-  kafka-2:
-    image: jotabr092/cp-kafka:latest
-    depends_on:
-      - zookeeper
-    environment:
-      KAFKA_BROKER_ID: 2
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka-2:9093, PLAINTEXT_HOST://localhost:29093
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
-      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
-      KAFKA_DEFAULT_REPLICATION_FACTOR: 3
-    deploy:
-      replicas: 1
-      placement:
-        constraints:
-          - node.hostname != database
-      update_config:
-        parallelism: 1
-      restart_policy:
-        condition: on-failure
-    ports:
-      - "9093:9093"
-    networks:
-      - app-network
-
-  kafka-3:
-    image: jotabr092/cp-kafka:latest
-    depends_on:
-      - zookeeper
-    environment:
-      KAFKA_BROKER_ID: 3
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka-3:9094, PLAINTEXT_HOST://localhost:29094
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
-      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
-      KAFKA_DEFAULT_REPLICATION_FACTOR: 3
-    deploy:
-      replicas: 1
-      placement:
-        constraints:
-          - node.hostname != database
-      update_config:
-        parallelism: 1
-      restart_policy:
-        condition: on-failure
-    ports:
-      - "9094:9094"
     networks:
       - app-network

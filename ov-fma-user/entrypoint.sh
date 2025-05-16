@@ -14,7 +14,6 @@ wait_for_port() {
 
 wait_for_port "user-postgres-sql" 5432
 wait_for_port "kafka-1" 9092
-wait_for_port "kafka-2" 9093
-wait_for_port "kafka-3" 9094
-sleep 60
+wait_for_port "redis-cache" 6379
+sleep 10
 exec java -jar user-service.jar

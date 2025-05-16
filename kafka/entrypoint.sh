@@ -13,5 +13,5 @@ wait_for_port() {
 }
 
 wait_for_port "zookeeper" 2181
-sleep 60
+sleep 10
 exec /etc/confluent/docker/run

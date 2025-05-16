@@ -3,7 +3,6 @@
 
 machines = {
   "master" => {"memory" => "1024", "cpu" => "1", "ip" => "101", "image" => "bento/ubuntu-24.04"},
-  "node01" => {"memory" => "1024", "cpu" => "1", "ip" => "102", "image" => "bento/ubuntu-24.04"},
   "database" => {"memory" => "1024", "cpu" => "1", "ip" => "103", "image" => "bento/ubuntu-24.04"}
 }
 

@@ -4,29 +4,48 @@ server:
 
 spring:
   kafka:
-    bootstrap-servers: kafka-1:9092, kafka-2:9093, kafka-3:9094
+    auto:
+      create:
+        topics:
+          enable: true
+    bootstrap-servers: kafka-1:9092
     producer:
+      client-id: "${HOSTNAME}"
+#      transaction-id-prefix: "user-service-producer-"
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.apache.kafka.common.serialization.StringSerializer
       retries: 3
       acks: all
-    consumer:
-      group-id: io.github.jotabrc
-      auto-offset-reset: latest
-      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      enable-auto-commit: false
-  cache:
-    type: redis
   redis:
     host: redis-cache
     port: 6379
-    password: ${REDIS_PASSWORD}
+    password: admin
+  cache:
+    type: redis
   datasource:
     url: jdbc:postgresql://${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}
     username: ${POSTGRES_USER}
     password: ${POSTGRES_PASSWORD}
   jpa:
+    show-sql: true
     open-in-view: false
     hibernate:
       ddl-auto: validate
+    properties:
+      hibernate:
+        format_sql: true
+
+logging:
+  level:
+    io.lettuce.core: TRACE
+    io.lettuce: DEBUG
+    org:
+      springframework:
+        security: DEBUG
+        web: DEBUG
+        servlet:
+          DispatcherServlet: DEBUG
+        data:
+          redis: DEBUG
+        cache:
+          interceptor: DEBUG

@@ -1,7 +1,7 @@
 package io.github.jotabrc.ov_fma_user.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import io.github.jotabrc.ov_fma_user.config.KafkaTopic;
+import io.github.jotabrc.ov_fma_user.config.KafkaConfig;
 import io.github.jotabrc.ov_fma_user.dto.*;
 import io.github.jotabrc.ov_fma_user.handler.AuthorizationDeniedException;
 import io.github.jotabrc.ov_fma_user.handler.CredentialNotAvailableException;
@@ -60,9 +60,9 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
 
         // Sends Kafka message to Authentication service
-        sendKafkaMessageToAuthService(user, KafkaTopic.USER_NEW);
+        sendKafkaMessageToAuthService(user, KafkaConfig.USER_NEW);
         // Sends Kafka message to Finance service
-        sendKafkaMessageToFinanceService(user, KafkaTopic.USER_FINANCE_NEW);
+        sendKafkaMessageToFinanceService(user, KafkaConfig.USER_FINANCE_NEW);
 
         return user.getUuid();
     }
@@ -87,10 +87,10 @@ public class UserServiceImpl implements UserService {
 
         // Sends Kafka message to Authentication service
         // User will be updated
-        sendKafkaMessageToAuthService(user, KafkaTopic.USER_UPDATE);
+        sendKafkaMessageToAuthService(user, KafkaConfig.USER_UPDATE);
         // Sends Kafka message to Finance service
         // User will be updated
-        sendKafkaMessageToFinanceService(user, KafkaTopic.USER_FINANCE_UPDATE);
+        sendKafkaMessageToFinanceService(user, KafkaConfig.USER_FINANCE_UPDATE);
 
         userRepository.save(user);
         return toDto(user);

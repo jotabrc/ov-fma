@@ -1,4 +1,4 @@
-package io.github.jotabrc.ov_fma_user.config;
+package io.github.jotabrc.ov_fma_user.util;
 
 import io.github.jotabrc.ovauth.config.PropertiesWhitelistLoaderImpl;
 import jakarta.annotation.PostConstruct;
