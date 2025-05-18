@@ -2,8 +2,10 @@ package io.github.jotabrc.ov_fma_finance.service;
 
 import io.github.jotabrc.ov_fma_finance.dto.ReceiptDto;
 import io.github.jotabrc.ov_fma_finance.handler.ReceiptNotFoundException;
+import io.github.jotabrc.ov_fma_finance.handler.UserNotFoundException;
 import io.github.jotabrc.ov_fma_finance.model.Receipt;
 import io.github.jotabrc.ov_fma_finance.model.UserFinance;
+import io.github.jotabrc.ov_fma_finance.repository.FinanceRepository;
 import io.github.jotabrc.ov_fma_finance.repository.ReceiptRepository;
 import io.github.jotabrc.ov_fma_finance.util.ServiceUtil;
 import org.springframework.stereotype.Service;
@@ -14,10 +16,12 @@ import java.util.UUID;
 public class ReceiptServiceImpl implements ReceiptService {
 
     private final ReceiptRepository receiptRepository;
+    private final FinanceRepository financeRepository;
     private final ServiceUtil serviceUtil;
 
-    public ReceiptServiceImpl(ReceiptRepository receiptRepository, ServiceUtil serviceUtil) {
+    public ReceiptServiceImpl(ReceiptRepository receiptRepository, FinanceRepository financeRepository, ServiceUtil serviceUtil) {
         this.receiptRepository = receiptRepository;
+        this.financeRepository = financeRepository;
         this.serviceUtil = serviceUtil;
     }
 
@@ -28,7 +32,9 @@ public class ReceiptServiceImpl implements ReceiptService {
      */
     @Override
     public String addReceipt(final ReceiptDto dto) {
-        UserFinance userFinance = serviceUtil.getUserFinance();
+        final String uuid = serviceUtil.getUserUuid();
+        UserFinance userFinance = financeRepository.findByUserUuid(uuid)
+                .orElseThrow(() -> new UserNotFoundException("User with UUID %s not found".formatted(uuid)));
 
         Receipt receipt = buildNewReceipt(dto, userFinance);
         return receiptRepository.save(receipt).getUuid();

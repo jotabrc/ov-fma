@@ -2,8 +2,10 @@ package io.github.jotabrc.ov_fma_finance.service;
 
 import io.github.jotabrc.ov_fma_finance.dto.RecurringPaymentDto;
 import io.github.jotabrc.ov_fma_finance.handler.PaymentNotFoundException;
+import io.github.jotabrc.ov_fma_finance.handler.UserNotFoundException;
 import io.github.jotabrc.ov_fma_finance.model.RecurringPayment;
 import io.github.jotabrc.ov_fma_finance.model.UserFinance;
+import io.github.jotabrc.ov_fma_finance.repository.FinanceRepository;
 import io.github.jotabrc.ov_fma_finance.repository.RecurringPaymentRepository;
 import io.github.jotabrc.ov_fma_finance.util.ServiceUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,22 +17,27 @@ import java.util.UUID;
 public class RecurringPaymentServiceImpl implements RecurringPaymentService {
 
     private final RecurringPaymentRepository recurringPaymentRepository;
+    private final FinanceRepository financeRepository;
     private final ServiceUtil serviceUtil;
 
     @Autowired
-    public RecurringPaymentServiceImpl(RecurringPaymentRepository recurringPaymentRepository, ServiceUtil serviceUtil) {
+    public RecurringPaymentServiceImpl(RecurringPaymentRepository recurringPaymentRepository, FinanceRepository financeRepository, ServiceUtil serviceUtil) {
         this.recurringPaymentRepository = recurringPaymentRepository;
+        this.financeRepository = financeRepository;
         this.serviceUtil = serviceUtil;
     }
 
     /**
      * Add new RecurringPayment entity.
+     *
      * @param dto RecurringPayment data.
      * @return RecurringPayment UUID.
      */
     @Override
     public String addRecurringPayment(final RecurringPaymentDto dto) {
-        UserFinance userFinance = serviceUtil.getUserFinance();
+        final String uuid = serviceUtil.getUserUuid();
+        UserFinance userFinance = financeRepository.findByUserUuid(uuid)
+                .orElseThrow(() -> new UserNotFoundException("User with UUID %s not found".formatted(uuid)));
 
         RecurringPayment payment = buildNewRecurringPayment(dto, userFinance);
         return recurringPaymentRepository.save(payment).getUuid();
@@ -38,6 +45,7 @@ public class RecurringPaymentServiceImpl implements RecurringPaymentService {
 
     /**
      * Update RecurringPayment data.
+     *
      * @param dto New data.
      */
     @Override
@@ -51,6 +59,7 @@ public class RecurringPaymentServiceImpl implements RecurringPaymentService {
 
     /**
      * Delete RecurringPayment by id.
+     *
      * @param id ID of RecurringPayment to be deleted.
      */
     @Override
@@ -65,17 +74,28 @@ public class RecurringPaymentServiceImpl implements RecurringPaymentService {
 
     /**
      * Build new RecurringPayment entity to be persisted.
+     *
      * @param dto RecurringPayment data.
      * @return RecurringPayment object.
      */
     private RecurringPayment buildNewRecurringPayment(final RecurringPaymentDto dto, final UserFinance userFinance) {
         return new RecurringPayment(0,
-                UUID.randomUUID().toString(), userFinance, dto.getAmount(),
-                dto.getDescription(), null, null, 0, dto.getRecurringUntil(), dto.getPayee());
+                UUID.randomUUID().toString(),
+                userFinance,
+                dto.getAmount(),
+                dto.getDescription(),
+                null,
+                null,
+                0,
+                dto.getDay(),
+                dto.getMonth(),
+                dto.getYear(),
+                dto.getPayee());
     }
 
     /**
      * Get RecurringPayment by ID.
+     *
      * @param id RecurringPayment ID.
      * @return RecurringPayment.
      */
@@ -86,13 +106,19 @@ public class RecurringPaymentServiceImpl implements RecurringPaymentService {
 
     /**
      * Updates RecurringPayment with new data.
-     * @param dto New data.
+     *
+     * @param dto              New data.
      * @param recurringPayment Current data to be updated.
      */
     private void updateRecurringPayment(final RecurringPaymentDto dto, final RecurringPayment recurringPayment) {
         recurringPayment
                 .setAmount(dto.getAmount())
                 .setDescription(dto.getDescription());
-        recurringPayment.setPayee(dto.getPayee());
+
+        recurringPayment
+                .setPayee(dto.getPayee())
+                .setDay(dto.getDay())
+                .setMonth(dto.getMonth())
+                .setMonth(dto.getMonth());
     }
 }

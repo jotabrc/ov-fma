@@ -7,6 +7,6 @@ import org.springframework.validation.annotation.Validated;
 @Validated
 public interface FinanceService {
 
-    void addUserFinance(@NotNull UserFinanceDto dto);
-    void updateUserFinance(@NotNull UserFinanceDto dto);
+    UserFinanceDto addUserFinance(@NotNull UserFinanceDto dto);
+    UserFinanceDto updateUserFinance(@NotNull UserFinanceDto dto);
 }

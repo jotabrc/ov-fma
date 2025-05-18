@@ -6,7 +6,6 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Getter
@@ -18,8 +17,8 @@ public class RecurringReceipt extends Recurrence {
     private String vendor;
 
     public RecurringReceipt(long id, String uuid, UserFinance userFinance, BigDecimal amount, String description, LocalDateTime createdAt,
-                            LocalDateTime updatedAt, long version, LocalDate recurringUntil, String vendor) {
-        super(id, uuid, userFinance, amount, description, createdAt, updatedAt, version, recurringUntil);
+                            LocalDateTime updatedAt, long version, int day, int month, int year, String vendor) {
+        super(id, uuid, userFinance, amount, description, createdAt, updatedAt, version, day, month, year);
         this.vendor = vendor;
     }
 }

@@ -33,7 +33,7 @@ public class UserController {
     @PostMapping("/signup")
     @Tag(name = "User SIGNUP", description = "Register's new user")
     public ResponseEntity<String> signup(@RequestBody final UserCreationUpdateDto dto) throws NoSuchAlgorithmException, JsonProcessingException {
-        String uuid = userService.signup(dto);
+        String uuid = userService.signup(dto).getUuid();
         // Creates location path to retrieve user information
         URI location = ServletUriComponentsBuilder
                 .fromPath(PREFIX + VERSION + "/user/get-by-uuid/{uuid}")

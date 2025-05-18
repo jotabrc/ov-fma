@@ -1,9 +1,11 @@
 package io.github.jotabrc.ov_fma_auth.service;
 
 import io.github.jotabrc.ov_fma_auth.AuthRepository;
+import io.github.jotabrc.ov_fma_auth.config.RedisConfig;
 import io.github.jotabrc.ov_fma_auth.dto.SignInDto;
 import io.github.jotabrc.ov_fma_auth.dto.UserDto;
 import io.github.jotabrc.ov_fma_auth.handler.AuthenticationDeniedException;
+import io.github.jotabrc.ov_fma_auth.handler.TooManyRequestsException;
 import io.github.jotabrc.ov_fma_auth.handler.UserAlreadyExistsException;
 import io.github.jotabrc.ov_fma_auth.handler.UserNotFoundException;
 import io.github.jotabrc.ov_fma_auth.model.User;
@@ -16,6 +18,7 @@ import org.springframework.stereotype.Service;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.time.Duration;
 import java.util.Base64;
 import java.util.Date;
 import java.util.List;
@@ -26,10 +29,12 @@ import java.util.List;
 @Service
 public class AuthServiceImpl implements AuthService {
 
+    private final RedisConfig redisConfig;
     private final AuthRepository authRepository;
 
     @Autowired
-    public AuthServiceImpl(AuthRepository authRepository) {
+    public AuthServiceImpl(RedisConfig redisConfig, AuthRepository authRepository) {
+        this.redisConfig = redisConfig;
         this.authRepository = authRepository;
     }
 
@@ -67,10 +72,17 @@ public class AuthServiceImpl implements AuthService {
      * @return JWT Token.
      */
     @Override
-    public String signIn(final SignInDto dto) throws NoSuchAlgorithmException {
-        User user = getUserByUsername(dto.getUsername());
+    public String signIn(final SignInDto dto, final String uuid) throws NoSuchAlgorithmException {
+        Boolean firstAttempt = redisConfig.redisTemplate().opsForValue().setIfAbsent(uuid, 1, Duration.ofMinutes(10));
 
+        Long tries = 1L;
+        if (Boolean.FALSE.equals(firstAttempt)) tries = redisConfig.redisTemplate().opsForValue().increment(uuid, 1);
+        if (tries == null) tries = 1L;
+        else if (tries.compareTo(4L) >= 0) throw new TooManyRequestsException("Too many requests, wait before trying again");
+
+        User user = getUserByUsername(dto.getUsername());
         validateCredentials(dto, user);
+
         return createJwtToken(user.getUuid(), user.getRole());
     }
 

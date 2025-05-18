@@ -1,4 +1,4 @@
-package io.github.jotabrc.ov_fma_user.config;
+package io.github.jotabrc.ov_fma_auth.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -46,7 +46,7 @@ public class RedisConfig {
     @Bean
     public RedisCacheManager config(RedisConnectionFactory factory) {
         RedisCacheConfiguration config = RedisCacheConfiguration.defaultCacheConfig()
-                .entryTtl(Duration.ofMinutes(60))
+                .entryTtl(Duration.ofSeconds(5))
                 .disableCachingNullValues()
                 .serializeValuesWith(
                         RedisSerializationContext.SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer())

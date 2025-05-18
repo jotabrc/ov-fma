@@ -5,10 +5,7 @@ import io.github.jotabrc.ov_fma_auth.service.AuthService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.NoSuchAlgorithmException;
 
@@ -26,10 +23,10 @@ public class AuthController {
         this.authService = authService;
     }
 
-    @PostMapping("/signin")
+    @PostMapping("/signin/{uuid}")
     @Tag(name = "SignIn Authentication", description = "Authenticates user")
-    public ResponseEntity<String> signIn(@RequestBody final SignInDto dto) throws NoSuchAlgorithmException {
-        String jwt = authService.signIn(dto);
+    public ResponseEntity<String> signIn(@RequestBody final SignInDto dto, @PathVariable final String uuid) throws NoSuchAlgorithmException {
+        String jwt = authService.signIn(dto, uuid);
         return ResponseEntity.ok("Token created: %s".formatted(jwt));
     }
 }

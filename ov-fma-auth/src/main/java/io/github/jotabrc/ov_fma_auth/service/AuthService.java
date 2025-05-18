@@ -13,5 +13,5 @@ public interface AuthService {
     void add(@NotNull UserDto dto);
     void update(@NotNull UserDto dto);
 
-    String signIn(@NotNull SignInDto dto) throws NoSuchAlgorithmException;
+    String signIn(@NotNull SignInDto dto, @NotNull String uuid) throws NoSuchAlgorithmException;
 }

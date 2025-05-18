@@ -1,25 +1,37 @@
 package io.github.jotabrc.ov_fma_finance.model;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Getter
 @Setter
+@Accessors(chain = true)
 @Entity(name = "tb_recurrence")
 @Inheritance(strategy = InheritanceType.JOINED)
 public abstract class Recurrence extends FinancialEntity {
 
-    @Column(name = "recurring_until", nullable = false)
-    private LocalDate recurringUntil;
+    @Column(nullable = false)
+    private int day;
+
+    @Column(nullable = false)
+    private int month;
+
+    @Column(nullable = false)
+    private int year;
 
     public Recurrence(long id, String uuid, UserFinance userFinance, BigDecimal amount, String description, LocalDateTime createdAt,
-                      LocalDateTime updatedAt, long version, LocalDate recurringUntil) {
+                      LocalDateTime updatedAt, long version, int day, int month, int year) {
         super(id, uuid, userFinance, amount, description, createdAt, updatedAt, version);
-        this.recurringUntil = recurringUntil;
+        this.day = day;
+        this.month = month;
+        this.year = year;
     }
 }

@@ -12,6 +12,12 @@ import lombok.experimental.Accessors;
 @NoArgsConstructor
 public class UserFinanceAddDto {
 
+    /* *
+    * Producer is sending JSON with field uuid for the user, however,
+    * the tb_user_finance uses user_uuid for better clarity.
+    * for proper Jackson parsing, @JsonProperty is being used to map,
+    * the field correctly.
+    * */
     @JsonProperty("uuid")
     private String userUuid;
     private String username;

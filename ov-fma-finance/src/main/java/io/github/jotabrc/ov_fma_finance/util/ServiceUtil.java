@@ -7,6 +7,7 @@ import org.springframework.validation.annotation.Validated;
 @Validated
 public interface ServiceUtil {
 
+    String getUserUuid();
     UserFinance getUserFinance();
     void checkUserAuthorization();
     void checkUserAuthorization(@NotNull String message);

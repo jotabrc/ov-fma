@@ -11,7 +11,7 @@ import java.security.NoSuchAlgorithmException;
 @Validated
 public interface UserService {
 
-    String signup(@NotNull UserCreationUpdateDto dto) throws NoSuchAlgorithmException, JsonProcessingException;
+    UserDto signup(@NotNull UserCreationUpdateDto dto) throws NoSuchAlgorithmException, JsonProcessingException;
     UserDto update(@NotNull String uuid, @NotNull UserCreationUpdateDto dto) throws NoSuchAlgorithmException, JsonProcessingException;
 
     UserDto getByUuid(@NotNull String uuid);

@@ -2,8 +2,10 @@ package io.github.jotabrc.ov_fma_finance.service;
 
 import io.github.jotabrc.ov_fma_finance.dto.PaymentDto;
 import io.github.jotabrc.ov_fma_finance.handler.PaymentNotFoundException;
+import io.github.jotabrc.ov_fma_finance.handler.UserNotFoundException;
 import io.github.jotabrc.ov_fma_finance.model.Payment;
 import io.github.jotabrc.ov_fma_finance.model.UserFinance;
+import io.github.jotabrc.ov_fma_finance.repository.FinanceRepository;
 import io.github.jotabrc.ov_fma_finance.repository.PaymentRepository;
 import io.github.jotabrc.ov_fma_finance.util.ServiceUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,11 +17,13 @@ import java.util.UUID;
 public class PaymentServiceImpl implements PaymentService {
 
     private final PaymentRepository paymentRepository;
+    private final FinanceRepository financeRepository;
     private final ServiceUtil serviceUtil;
 
     @Autowired
-    public PaymentServiceImpl(PaymentRepository paymentRepository, ServiceUtil serviceUtil) {
+    public PaymentServiceImpl(PaymentRepository paymentRepository, FinanceRepository financeRepository, ServiceUtil serviceUtil) {
         this.paymentRepository = paymentRepository;
+        this.financeRepository = financeRepository;
         this.serviceUtil = serviceUtil;
     }
 
@@ -31,9 +35,9 @@ public class PaymentServiceImpl implements PaymentService {
      */
     @Override
     public String addPayment(final PaymentDto dto) {
-        // Uses SecurityContextHolder Authorization subject (UUID) to find UserFinance
-        // doesn't require to check user authorization for updating this information
-        UserFinance userFinance = serviceUtil.getUserFinance();
+        final String uuid = serviceUtil.getUserUuid();
+        UserFinance userFinance = financeRepository.findByUserUuid(uuid)
+                .orElseThrow(() -> new UserNotFoundException("User with UUID %s not found".formatted(uuid)));
 
         Payment payment = buildNewPayment(dto, userFinance);
         return paymentRepository.save(payment).getUuid();

@@ -1,4 +1,4 @@
-package io.github.jotabrc.ov_fma_user.config;
+package io.github.jotabrc.ov_fma_finance.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

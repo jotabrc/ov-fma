@@ -50,8 +50,9 @@ public class UserServiceImpl implements UserService {
      * @param dto User data to be persisted and validated.
      * @return UUID if registration is successful.
      */
+    @Cacheable(value = "user", key = "#dto.getUuid")
     @Override
-    public String signup(final UserCreationUpdateDto dto) throws NoSuchAlgorithmException, JsonProcessingException {
+    public UserDto signup(final UserCreationUpdateDto dto) throws NoSuchAlgorithmException, JsonProcessingException {
 
         // Throws CredentialNotAvailableException if email or username is already in use.
         emailAndUsernameAvailability(dto.getEmail(), dto.getUsername());
@@ -64,15 +65,16 @@ public class UserServiceImpl implements UserService {
         // Sends Kafka message to Finance service
         sendKafkaMessageToFinanceService(user, KafkaConfig.USER_FINANCE_NEW);
 
-        return user.getUuid();
+        return toDto(user);
     }
 
     /**
      * Updates user information, update password if NOT null/empty/blank.
      *
+     * @param uuid
      * @param dto UserCreationUpdateDto.
      */
-    @CachePut(value = "users", key = "#uuid")
+    @CachePut(value = "user", key = "#uuid")
     @Override
     public UserDto update(final String uuid, final UserCreationUpdateDto dto) throws NoSuchAlgorithmException, JsonProcessingException {
         // Checks if account to be changed is the same as the token authentication
@@ -103,13 +105,12 @@ public class UserServiceImpl implements UserService {
      * @return UserDto.
      * @throws UserNotFoundException if no user is found with the provided UUID parameter.
      */
-    @Cacheable(value = "users", key = "#uuid")
+    @Cacheable(value = "user", key = "#uuid")
     @Override
-    public UserDto getByUuid(String uuid) throws UserNotFoundException {
+    public UserDto getByUuid(final String uuid) throws UserNotFoundException {
         // Checks if account requested user information matched authenticated user
         checkUserAuthorization(uuid);
-        User user = userRepository.findByUuid(uuid)
-                .orElseThrow(() -> new UserNotFoundException("User with UUID %s not found".formatted(uuid)));
+        User user = getUser(uuid);
         return toDto(user);
     }
 
