@@ -24,7 +24,7 @@ public class RedisConfig {
         redisConfig.setHostName("redis-cache");
 
         Optional<String> PORT = Optional.ofNullable(System.getenv("REDIS_PORT"));
-        Optional<String> PASSWORD = Optional.ofNullable(System.getenv("REDIS_PORT"));
+        Optional<String> PASSWORD = Optional.ofNullable(System.getenv("REDIS_PASSWORD"));
 
         redisConfig.setPort(Integer.parseInt(PORT.orElse("6379")));
         redisConfig.setPassword(PASSWORD.orElse("admin"));
