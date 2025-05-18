@@ -130,7 +130,7 @@ public class GatewayConfig implements WebFluxConfigurer {
                 .authorizeExchange(auth -> auth
                         .pathMatchers(WHITELIST).permitAll()
                         .pathMatchers("/user/signup").permitAll()
-                        .pathMatchers("/auth/signin").permitAll()
+                        .pathMatchers("/auth/signin/**").permitAll()
                         .pathMatchers("/user/update").authenticated()
                         .pathMatchers("/finance/**").authenticated()
                         .pathMatchers("/user/get-by-uuid/**").authenticated()
