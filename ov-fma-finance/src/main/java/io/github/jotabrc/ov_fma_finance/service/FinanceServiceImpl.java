@@ -82,6 +82,7 @@ public class FinanceServiceImpl implements FinanceService {
                 .userUuid(dto.getUserUuid())
                 .username(dto.getUsername())
                 .email(dto.getEmail())
+                .name(dto.getName())
                 .isActive(dto.isActive())
                 .financialItems(new ArrayList<>())
                 .build();
@@ -107,7 +108,6 @@ public class FinanceServiceImpl implements FinanceService {
                         .userUuid(u.getUserUuid())
                         .username(u.getUsername())
                         .email(u.getEmail())
-                        .name(u.getEmail())
                         .isActive(u.isActive())
                         .financialItems(
                                 u.getFinancialItems()
@@ -124,7 +124,7 @@ public class FinanceServiceImpl implements FinanceService {
         else if (financialEntity instanceof Receipt e) return toDto(e);
         else if (financialEntity instanceof RecurringPayment e) return toDto(e);
         else if (financialEntity instanceof RecurringReceipt e) return toDto(e);
-        else throw new InstanceNotCompatibleException("FinancialEntity has no instance compatible for conversion");
+        else throw new InstanceNotCompatibleException("Unsupported FinancialEntity type %s".formatted(financialEntity.getClass()));
     }
 
     private FinancialEntityDto toDto(final Payment payment) {
