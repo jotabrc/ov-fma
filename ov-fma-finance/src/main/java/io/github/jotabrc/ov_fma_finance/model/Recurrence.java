@@ -18,13 +18,13 @@ import java.time.LocalDateTime;
 @Inheritance(strategy = InheritanceType.JOINED)
 public abstract class Recurrence extends FinancialEntity {
 
-    @Column(nullable = false)
+    @Column(nullable = false, name = "recurrence_day")
     private int day;
 
-    @Column(nullable = false)
+    @Column(nullable = false, name = "recurrence_month")
     private int month;
 
-    @Column(nullable = false)
+    @Column(nullable = false, name = "recurrence_year")
     private int year;
 
     public Recurrence(long id, String uuid, UserFinance userFinance, BigDecimal amount, String description, LocalDateTime createdAt,
