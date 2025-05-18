@@ -1,0 +1,35 @@
+server:
+  address: 0.0.0.0
+  port: 8084
+
+spring:
+  security:
+    user:
+      name: ${SPRING_USER}
+      password: ${SPRING_PASSWORD}
+  application:
+    name: ov-config
+  cloud:
+    config:
+      server:
+        git:
+          uri: ${REPO_URI}
+          username: ${GIT_USERNAME}
+          password: ${GIT_PASSWORD}
+          clone-on-start: true
+          default-label: main
+          force-pull: true
+          timeout: 5
+          refresh-rate: 600
+#          skip-ssl-validation: true
+          search-paths:
+            - '{application}/{profile}'
+
+logging:
+  level:
+    org.springframework.cloud.config: DEBUG
+    org.springframework.cloud.config.server.environment: DEBUG
+    org.eclipse.jgit: DEBUG
+    org.springframework.web: DEBUG
+    org.springframework.security: DEBUG
+    org.springframework.servlet.DispatcherServlet: DEBUG

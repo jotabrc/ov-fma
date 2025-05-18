@@ -14,6 +14,8 @@
         <option value="$PROJECT_DIR$/ov-fma-security/pom.xml" />
         <option value="$PROJECT_DIR$/ov-fma-finance/pom.xml" />
         <option value="$PROJECT_DIR$/pom.xml" />
+        <option value="$PROJECT_DIR$/ov-config/pom.xml" />
+        <option value="$PROJECT_DIR$/ov-fma-config/pom.xml" />
       </list>
     </option>
     <option name="ignoredFiles">

@@ -10,6 +10,15 @@
         <module name="ov-fma-finance" />
         <module name="ov-fma-user" />
       </profile>
+      <profile name="Annotation profile for ov-fma-config" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.38/lombok-1.18.38.jar" />
+        </processorPath>
+        <module name="ov-fma-config" />
+      </profile>
       <profile name="Annotation profile for ov-fma-parent" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
@@ -28,6 +37,7 @@
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="ov-fma-auth" options="-parameters" />
+      <module name="ov-fma-config" options="-parameters" />
       <module name="ov-fma-finance" options="-parameters" />
       <module name="ov-fma-gateway" options="-parameters" />
       <module name="ov-fma-security" options="-parameters" />

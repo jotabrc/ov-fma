@@ -96,11 +96,33 @@ services:
       restart_policy:
         condition: on-failure
 
+  config-service:
+    build:
+      context: ./ov-fma-config
+      dockerfile: .dockerfile
+    image: jotabr092/ov-fma-config
+    env_file:
+      - ./ov-fma-config/.env
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.hostname != database
+      update_config:
+        parallelism: 1
+      restart_policy:
+        condition: on-failure
+    ports:
+      - "8084:8080"
+    networks:
+      - app-network
+
   finance-service:
     depends_on:
       - kafka-1
       - finance-postgres-sql
       - gateway-service
+      - config-service
     build:
       context: ./ov-fma-finance
       dockerfile: .dockerfile
@@ -127,6 +149,7 @@ services:
       - kafka-1
       - auth-postgres-sql
       - gateway-service
+      - config-service
     build:
       context: ./ov-fma-auth
       dockerfile: .dockerfile
@@ -154,6 +177,7 @@ services:
       - user-postgres-sql
       - redis-cache
       - gateway-service
+      - config-service
     build:
       context: ./ov-fma-user
       dockerfile: .dockerfile
@@ -178,6 +202,7 @@ services:
   gateway-service:
     depends_on:
       - kafka-1
+      - config-service
     build:
       context: ./ov-fma-gateway
       dockerfile: .dockerfile

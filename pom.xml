@@ -11,5 +11,6 @@
         <module>ov-fma-finance</module>
         <module>ov-fma-gateway</module>
         <module>ov-fma-user</module>
+        <module>ov-fma-config</module>
     </modules>
 </project>

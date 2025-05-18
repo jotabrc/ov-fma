@@ -13,6 +13,7 @@ wait_for_port() {
 }
 
 wait_for_port "auth-postgres-sql" 5432
+wait_for_port "config-service" 8084
 wait_for_port "kafka-1" 9092
 sleep 10
 exec java -jar auth-service.jar

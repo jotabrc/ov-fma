@@ -14,5 +14,6 @@ wait_for_port() {
 
 wait_for_port "finance-postgres-sql" 5432
 wait_for_port "kafka-1" 9092
+wait_for_port "config-service" 8084
 sleep 10
 exec java -jar finance-service.jar
