@@ -1,45 +1,19 @@
-server:
-  address: 0.0.0.0
-  port: 8082
-
 spring:
-  kafka:
-    bootstrap-servers: kafka-1:9092
-    consumer:
-      group-id: io.github.jotabrc
-      client-id: "${HOSTNAME}"
-      auto-offset-reset: latest
-      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-  #      properties:
-  #        spring.deserializer.key.delegate.class: org.apache.kafka.common.serialization.StringDeserializer
-  #        spring.deserializer.value.delegate.class: org.apache.kafka.common.serialization.StringDeserializer
-  #        spring.json.trusted.packages: "*"
-  #        spring.json.value.default.type: package.CustomDto
-  redis:
-    host: redis-cache
-    port: ${REDIS_PORT}
-    password: ${REDIS_PASSWORD}
-  cache:
-    type: redis
-  datasource:
-    url: jdbc:postgresql://${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}
-    username: ${POSTGRES_USER}
-    password: ${POSTGRES_PASSWORD}
-  jpa:
-    show-sql: true
-    open-in-view: false
-    hibernate:
-      ddl-auto: validate
-    properties:
-      hibernate:
-        format_sql: true
-
-logging:
-  level:
-    org:
-      springframework:
-        security: DEBUG
-        web: DEBUG
-        servlet:
-          DispatcherServlet: DEBUG
+  profiles:
+    active: prd
+  config:
+    import: configserver:http://${CONFIG_SERVER_URI}:${CONFIG_SERVER_PORT}
+  application:
+    name: ov-fma-auth
+  cloud:
+    bootstrap:
+      enabled: true
+    config:
+      #      uri: http://${CONFIG_SERVER_URI}:${CONFIG_SERVER_PORT}
+      failFast: true
+      retry:
+        initialInterval: 1000
+        maxAttempts: 5
+        multiplier: 1.5
+      username: ${CONFIG_SERVER_USER}
+      password: ${CONFIG_SERVER_PASSWORD}

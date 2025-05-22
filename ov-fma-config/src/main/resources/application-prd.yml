@@ -3,12 +3,12 @@ server:
   port: 8084
 
 spring:
+  application:
+    name: ov-fma-config
   security:
     user:
       name: ${SPRING_USER}
       password: ${SPRING_PASSWORD}
-  application:
-    name: ov-config
   cloud:
     config:
       server:
@@ -24,6 +24,8 @@ spring:
 #          skip-ssl-validation: true
           search-paths:
             - '{application}/{profile}'
+            - '{application}/ov-auth.properties'
+            - '{application}/service.properties'
 
 logging:
   level:

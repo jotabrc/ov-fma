@@ -1,14 +1,19 @@
-server:
-  address: 0.0.0.0
-  port: 8080
-  ssl:
-    enabled: false
-
 spring:
-  webflux:
-    static-path-pattern: ""
+  profiles:
+    active: prd
+  config:
+    import: configserver:http://${CONFIG_SERVER_URI}:${CONFIG_SERVER_PORT}
+  application:
+    name: ov-fma-gateway
   cloud:
-    gateway:
-      httpclient:
-        connect-timeout: 5000
-        response-timeout: 5000ms
+    bootstrap:
+      enabled: true
+    config:
+      #      uri: http://${CONFIG_SERVER_URI}:${CONFIG_SERVER_PORT}
+      failFast: true
+      retry:
+        initialInterval: 1000
+        maxAttempts: 5
+        multiplier: 1.5
+      username: ${CONFIG_SERVER_USER}
+      password: ${CONFIG_SERVER_PASSWORD}
