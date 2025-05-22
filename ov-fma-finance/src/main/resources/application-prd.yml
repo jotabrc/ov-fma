@@ -2,8 +2,6 @@ server:
   address: 0.0.0.0
   port: 8083
 spring:
-  profiles:
-    active: prd
   config:
     import: configserver:http://${CONFIG_SERVER_URI}:${CONFIG_SERVER_PORT}
   application:
