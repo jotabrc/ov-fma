@@ -9,6 +9,6 @@ public interface ServiceUtil {
 
     String getUserUuid();
     UserFinance getUserFinance();
-    void checkUserAuthorization();
-    void checkUserAuthorization(@NotNull String message);
+    void checkUserAuthorization(@NotNull String userUuid);
+    void checkUserAuthorization(@NotNull String userUuid, @NotNull String message);
 }

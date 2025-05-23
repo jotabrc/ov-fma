@@ -2,7 +2,6 @@ package io.github.jotabrc.ov_fma_finance.service;
 
 import io.github.jotabrc.ov_fma_finance.dto.PaymentDto;
 import io.github.jotabrc.ov_fma_finance.handler.PaymentNotFoundException;
-import io.github.jotabrc.ov_fma_finance.handler.UserNotFoundException;
 import io.github.jotabrc.ov_fma_finance.model.Payment;
 import io.github.jotabrc.ov_fma_finance.model.UserFinance;
 import io.github.jotabrc.ov_fma_finance.repository.FinanceRepository;
@@ -34,36 +33,33 @@ public class PaymentServiceImpl implements PaymentService {
      * @return Payment UUID.
      */
     @Override
-    public String addPayment(final PaymentDto dto) {
-        final String uuid = serviceUtil.getUserUuid();
-        UserFinance userFinance = financeRepository.findByUserUuid(uuid)
-                .orElseThrow(() -> new UserNotFoundException("User with UUID %s not found".formatted(uuid)));
-
+    public String addPayment(final String userUuid, final PaymentDto dto) {
+        serviceUtil.checkUserAuthorization(userUuid);
+        UserFinance userFinance = serviceUtil.getUserFinance();
         Payment payment = buildNewPayment(dto, userFinance);
         return paymentRepository.save(payment).getUuid();
     }
 
     /**
-     * Update Payment by ID.
+     * Update Payment.
      * @param dto New Payment data.
      */
     @Override
-    public void updatePayment(PaymentDto dto) {
-        serviceUtil.checkUserAuthorization("Authorization doesn't match with user to be updated");
-        Payment payment = getPayment(dto.getId());
-
+    public void updatePayment(final String userUuid, final PaymentDto dto) {
+        serviceUtil.checkUserAuthorization(userUuid);
+        Payment payment = getPayment(dto.getUuid());
         updatePayment(dto, payment);
         paymentRepository.save(payment);
     }
 
     /**
-     * Delete Payment by ID.
-     * @param id ID of Payment to be deleted.
+     * Delete Payment.
+     * @param uuid UUID of Payment to be deleted.
      */
     @Override
-    public void deletePayment(long id) {
-        serviceUtil.checkUserAuthorization("Authorization doesn't match with user to be updated");
-        Payment payment = getPayment(id);
+    public void deletePayment(final String userUuid, final String uuid) {
+        serviceUtil.checkUserAuthorization(userUuid);
+        Payment payment = getPayment(uuid);
         paymentRepository.delete(payment);
     }
 
@@ -77,8 +73,15 @@ public class PaymentServiceImpl implements PaymentService {
      */
     private Payment buildNewPayment(final PaymentDto dto, final UserFinance userFinance) {
         return new Payment(0,
-                UUID.randomUUID().toString(), userFinance, dto.getAmount(),
-                dto.getDescription(), null, null, 0, dto.getPayee());
+                UUID.randomUUID().toString(),
+                userFinance,
+                dto.getDueDate(),
+                dto.getAmount(),
+                dto.getDescription(),
+                null,
+                null,
+                0,
+                dto.getPayee());
     }
 
     /**
@@ -88,18 +91,19 @@ public class PaymentServiceImpl implements PaymentService {
      */
     private void updatePayment(final PaymentDto dto, final Payment payment) {
         payment
+                .setDueDate(dto.getDueDate())
                 .setAmount(dto.getAmount())
                 .setDescription(dto.getDescription());
         payment.setPayee(dto.getPayee());
     }
 
     /**
-     * Get Payment by ID.
-     * @param id FinancialEntity / Payment ID.
+     * Get Payment by UUID.
+     * @param uuid Payment UUID.
      * @return Payment.
      */
-    private Payment getPayment(final long id) {
-        return paymentRepository.findById(id)
-                .orElseThrow(() -> new PaymentNotFoundException("Payment with ID %d not found for".formatted(id)));
+    private Payment getPayment(final String uuid) {
+        return paymentRepository.findByUuid(uuid)
+                .orElseThrow(() -> new PaymentNotFoundException("Payment with UUID %s not found for".formatted(uuid)));
     }
 }

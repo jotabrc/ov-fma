@@ -1,6 +1,7 @@
 CREATE TABLE IF NOT EXISTS tb_user_finance (
     id BIGSERIAL PRIMARY KEY,
     user_uuid VARCHAR(36) NOT NULL UNIQUE,
+    name VARCHAR(255) NOT NULL;
     username VARCHAR(50) NOT NULL UNIQUE,
     email VARCHAR(320) NOT NULL UNIQUE,
     is_active BOOLEAN NOT NULL,
@@ -13,6 +14,7 @@ CREATE TABLE IF NOT EXISTS tb_financial_entity (
     id BIGSERIAL PRIMARY KEY,
     uuid VARCHAR(36) NOT NULL UNIQUE,
     user_finance_id BIGINT NOT NULL,
+    due_date DATE NOT NULL,
     amount DECIMAL(12,2) NOT NULL,
     description VARCHAR(255),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

@@ -6,27 +6,22 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
+import java.time.LocalDate;
 
 @Getter
 @Setter
 public abstract class RecurrenceDto extends FinancialEntityDto implements Serializable {
 
-    private final int day;
-    private final int month;
-    private final int year;
+    private final LocalDate recurringUntil;
 
     @JsonCreator
     public RecurrenceDto(
-            @JsonProperty("id") long id,
-            @JsonProperty("amount") BigDecimal amount,
+            @JsonProperty("uuid") String uuid,
+            @JsonProperty("dueDate") LocalDate dueDate,
+            @JsonProperty("amount") double amount,
             @JsonProperty("description") String description,
-            @JsonProperty("day") int day,
-            @JsonProperty("month") int month,
-            @JsonProperty("year") int year) {
-        super(id, amount, description);
-        this.day = day;
-        this.month = month;
-        this.year = year;
+            @JsonProperty("recurringUntil") LocalDate recurringUntil) {
+        super(uuid, dueDate, amount, description);
+        this.recurringUntil = recurringUntil;
     }
 }

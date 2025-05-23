@@ -45,21 +45,21 @@ public class RecurringReceiptServiceImpl implements RecurringReceiptService {
      * @param dto New RecurringReceipt data.
      */
     @Override
-    public void updateRecurringReceipt(RecurringReceiptDto dto) {
-        serviceUtil.checkUserAuthorization();
-        RecurringReceipt receipt = getRecurringReceipt(dto.getId());
+    public void updateRecurringReceipt(final RecurringReceiptDto dto) {
+        serviceUtil.checkUserAuthorization(dto.getUuid());
+        RecurringReceipt receipt = getRecurringReceipt(dto.getUuid());
         updateRecurringReceipt(dto, receipt);
         recurringReceiptRepository.save(receipt);
     }
 
     /**
-     * Delete RecurringReceipt by ID.
-     * @param id ID of RecurringReceipt to be deleted.
+     * Delete RecurringReceipt.
+     * @param uuid UUID of RecurringReceipt to be deleted.
      */
     @Override
-    public void deleteRecurringReceipt(long id) {
-        serviceUtil.checkUserAuthorization();
-        RecurringReceipt receipt = getRecurringReceipt(id);
+    public void deleteRecurringReceipt(final String uuid) {
+        serviceUtil.checkUserAuthorization(uuid);
+        RecurringReceipt receipt = getRecurringReceipt(uuid);
         recurringReceiptRepository.delete(receipt);
         recurringReceiptRepository.save(receipt);
     }
@@ -76,25 +76,24 @@ public class RecurringReceiptServiceImpl implements RecurringReceiptService {
         return new RecurringReceipt(0,
                 UUID.randomUUID().toString(),
                 userFinance,
+                dto.getDueDate(),
                 dto.getAmount(),
                 dto.getDescription(),
                 null,
                 null,
                 0,
-                dto.getDay(),
-                dto.getMonth(),
-                dto.getYear(),
+                dto.getRecurringUntil(),
                 dto.getVendor());
     }
 
     /**
-     * Get RecurringReceipt by ID.
-     * @param id RecurringReceipt ID.
+     * Get RecurringReceipt.
+     * @param uuid RecurringReceipt UUID.
      * @return RecurringReceipt.
      */
-    private RecurringReceipt getRecurringReceipt(final long id) {
-        return recurringReceiptRepository.findById(id)
-                .orElseThrow(() -> new ReceiptNotFoundException("Recurring Receipt with ID %d not found".formatted(id)));
+    private RecurringReceipt getRecurringReceipt(final String uuid) {
+        return recurringReceiptRepository.findByUuid(uuid)
+                .orElseThrow(() -> new ReceiptNotFoundException("Recurring Receipt with UUID %s not found".formatted(uuid)));
     }
 
     /**
@@ -104,13 +103,12 @@ public class RecurringReceiptServiceImpl implements RecurringReceiptService {
      */
     private void updateRecurringReceipt(final RecurringReceiptDto dto, final RecurringReceipt receipt) {
         receipt
+                .setDueDate(dto.getDueDate())
                 .setAmount(dto.getAmount())
                 .setDescription(dto.getDescription());
         receipt
                 .setVendor(dto.getVendor())
-                .setDay(dto.getDay())
-                .setMonth(dto.getMonth())
-                .setMonth(dto.getMonth());
+                .setRecurringUntil(dto.getRecurringUntil());;
 
     }
 }

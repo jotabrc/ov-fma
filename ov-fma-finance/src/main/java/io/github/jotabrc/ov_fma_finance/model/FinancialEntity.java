@@ -8,7 +8,7 @@ import lombok.experimental.Accessors;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Getter
@@ -30,8 +30,11 @@ public abstract class FinancialEntity {
     @JoinColumn(name = "user_finance_id", nullable = false)
     private UserFinance userFinance;
 
+    @Column(name = "due_date")
+    private LocalDate dueDate;
+
     @Column(precision = 12, scale = 2, nullable = false)
-    private BigDecimal amount;
+    private double amount;
 
     private String description;
 

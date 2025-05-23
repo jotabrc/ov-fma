@@ -2,7 +2,6 @@ package io.github.jotabrc.ov_fma_finance.service;
 
 import io.github.jotabrc.ov_fma_finance.dto.ReceiptDto;
 import io.github.jotabrc.ov_fma_finance.handler.ReceiptNotFoundException;
-import io.github.jotabrc.ov_fma_finance.handler.UserNotFoundException;
 import io.github.jotabrc.ov_fma_finance.model.Receipt;
 import io.github.jotabrc.ov_fma_finance.model.UserFinance;
 import io.github.jotabrc.ov_fma_finance.repository.FinanceRepository;
@@ -32,34 +31,33 @@ public class ReceiptServiceImpl implements ReceiptService {
      */
     @Override
     public String addReceipt(final ReceiptDto dto) {
-        final String uuid = serviceUtil.getUserUuid();
-        UserFinance userFinance = financeRepository.findByUserUuid(uuid)
-                .orElseThrow(() -> new UserNotFoundException("User with UUID %s not found".formatted(uuid)));
+        serviceUtil.checkUserAuthorization(dto.getUuid());
+        UserFinance userFinance = serviceUtil.getUserFinance();
 
         Receipt receipt = buildNewReceipt(dto, userFinance);
         return receiptRepository.save(receipt).getUuid();
     }
 
     /**
-     * Update Receipt with ID.
+     * Update Receipt.
      * @param dto New Receipt data.
      */
     @Override
-    public void updateReceipt(ReceiptDto dto) {
-        serviceUtil.checkUserAuthorization();
-        Receipt receipt = getReceipt(dto.getId());
+    public void updateReceipt(final ReceiptDto dto) {
+        serviceUtil.checkUserAuthorization(dto.getUuid());
+        Receipt receipt = getReceipt(dto.getUuid());
         updateReceipt(dto, receipt);
         receiptRepository.save(receipt);
     }
 
     /**
-     * Delete Receipt with ID.
-     * @param id ID of Receipt to be deleted.
+     * Delete Receipt with UUID.
+     * @param uuid UUID of Receipt to be deleted.
      */
     @Override
-    public void deleteReceipt(long id) {
-        serviceUtil.checkUserAuthorization();
-        Receipt receipt = getReceipt(id);
+    public void deleteReceipt(final String uuid) {
+        serviceUtil.checkUserAuthorization(uuid);
+        Receipt receipt = getReceipt(uuid);
         receiptRepository.delete(receipt);
     }
 
@@ -73,18 +71,26 @@ public class ReceiptServiceImpl implements ReceiptService {
      */
     private Receipt buildNewReceipt(final ReceiptDto dto, final UserFinance userFinance) {
         return new Receipt(0,
-                UUID.randomUUID().toString(), userFinance, dto.getAmount(),
-                dto.getDescription(), null, null, 0, dto.getVendor());
+                UUID.randomUUID().toString(),
+                userFinance,
+                dto.getDueDate(),
+                dto.getAmount(),
+                dto.getDescription(),
+                null,
+                null,
+                0,
+                dto.getVendor());
     }
 
     /**
-     * Get Receipt with ID.
-     * @param id Receipt id.
+     * Get Receipt with UUID.
+     *
+     * @param uuid Receipt UUID.
      * @return Receipt.
      */
-    private Receipt getReceipt(final long id) {
-        return receiptRepository.findById(id)
-                .orElseThrow(() -> new ReceiptNotFoundException("Receipt with ID %d not found".formatted(id)));
+    private Receipt getReceipt(final String uuid) {
+        return receiptRepository.findByUuid(uuid)
+                .orElseThrow(() -> new ReceiptNotFoundException("Receipt with UUID %s not found".formatted(uuid)));
     }
 
     /**
@@ -94,6 +100,7 @@ public class ReceiptServiceImpl implements ReceiptService {
      */
     private void updateReceipt(final ReceiptDto dto, final Receipt receipt) {
         receipt
+                .setDueDate(dto.getDueDate())
                 .setAmount(dto.getAmount())
                 .setDescription(dto.getDescription());
         receipt.setVendor(dto.getVendor());

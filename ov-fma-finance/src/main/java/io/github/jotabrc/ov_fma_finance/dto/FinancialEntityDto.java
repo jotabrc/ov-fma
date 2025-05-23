@@ -6,22 +6,25 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
+import java.time.LocalDate;
 
 @Getter
 @Setter
 public abstract class FinancialEntityDto implements Serializable {
 
-    private final long id;
-    private final BigDecimal amount;
+    private final String uuid;
+    private final LocalDate dueDate;
+    private final double amount;
     private final String description;
 
     @JsonCreator
     public FinancialEntityDto(
-            @JsonProperty("id") long id,
-            @JsonProperty("amount") BigDecimal amount,
+            @JsonProperty("uuid") String uuid,
+            @JsonProperty("dueDate") LocalDate dueDate,
+            @JsonProperty("amount") double amount,
             @JsonProperty("amount") String description) {
-        this.id = id;
+        this.uuid = uuid;
+        this.dueDate = dueDate;
         this.amount = amount;
         this.description = description;
     }

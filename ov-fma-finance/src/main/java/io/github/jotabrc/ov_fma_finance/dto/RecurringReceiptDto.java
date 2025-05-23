@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
+import java.time.LocalDate;
 
 @Getter
 @Setter
@@ -16,14 +16,13 @@ public class RecurringReceiptDto extends RecurrenceDto implements Serializable {
 
     @JsonCreator
     public RecurringReceiptDto(
-            @JsonProperty("id") long id,
-            @JsonProperty("amount") BigDecimal amount,
+            @JsonProperty("uuid") String uuid,
+            @JsonProperty("dueDate") LocalDate dueDate,
+            @JsonProperty("amount") double amount,
             @JsonProperty("description") String description,
-            @JsonProperty("day") int day,
-            @JsonProperty("month") int month,
-            @JsonProperty("year") int year,
+            @JsonProperty("recurringUntil") LocalDate recurringUntil,
             @JsonProperty("payee") String vendor) {
-        super(id, amount, description, day, month, year);
+        super(uuid, dueDate, amount, description, recurringUntil);
         this.vendor = vendor;
     }
 }

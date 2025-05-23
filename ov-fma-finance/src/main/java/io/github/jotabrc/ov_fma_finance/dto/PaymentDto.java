@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
+import java.time.LocalDate;
 
 @Getter
 @Setter
@@ -16,11 +16,12 @@ public class PaymentDto extends FinancialEntityDto implements Serializable {
 
     @JsonCreator
     public PaymentDto(
-            @JsonProperty("id") long id,
-            @JsonProperty("amount") BigDecimal amount,
+            @JsonProperty("uuid") String uuid,
+            @JsonProperty("dueDate") LocalDate dueDate,
+            @JsonProperty("amount") double amount,
             @JsonProperty("description") String description,
             @JsonProperty("payee") String payee) {
-        super(id, amount, description);
+        super(uuid, dueDate, amount, description);
         this.payee = payee;
     }
 }

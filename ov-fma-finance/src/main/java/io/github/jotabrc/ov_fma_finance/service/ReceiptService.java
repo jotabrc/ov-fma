@@ -9,5 +9,5 @@ public interface ReceiptService {
 
     String addReceipt(@NotNull ReceiptDto dto);
     void updateReceipt(@NotNull ReceiptDto dto);
-    void deleteReceipt(long id);
+    void deleteReceipt(@NotNull String uuid);
 }

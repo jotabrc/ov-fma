@@ -9,5 +9,5 @@ public interface RecurringReceiptService {
 
     String addRecurringReceipt(@NotNull RecurringReceiptDto dto);
     void updateRecurringReceipt(@NotNull RecurringReceiptDto dto);
-    void deleteRecurringReceipt(long id);
+    void deleteRecurringReceipt(@NotNull String uuid);
 }

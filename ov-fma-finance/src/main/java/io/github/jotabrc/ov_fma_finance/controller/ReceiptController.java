@@ -7,10 +7,7 @@ import io.github.jotabrc.ov_fma_finance.service.RecurringReceiptService;
 import io.github.jotabrc.ov_fma_finance.util.ControllerMessage;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
@@ -41,7 +38,7 @@ public class ReceiptController {
                 .toUri();
         ControllerMessage controllerMessage = ControllerMessage
                 .builder()
-                .message("Receipt created")
+                .message("Receipt has been created")
                 .uuid(uuid)
                 .build();
         return  ResponseEntity
@@ -50,6 +47,20 @@ public class ReceiptController {
                         controllerMessage
                                 .toJSON()
                 );
+    }
+
+    @PutMapping("/update-receipt")
+    @Tag(name = "Update Receipt", description = "Updated Receipt")
+    public ResponseEntity<String> updateReceipt(@RequestBody ReceiptDto dto) {
+        receiptService.updateReceipt(dto);
+        return ResponseEntity.ok("Receipt with UUID %s has been updated".formatted(dto.getUuid()));
+    }
+
+    @DeleteMapping("/delete-receipt/{uuid}")
+    @Tag(name = "Delete Receipt", description = "Delete Receipt")
+    public ResponseEntity<String> deleteReceipt(@PathVariable final String uuid) {
+        receiptService.deleteReceipt(uuid);
+        return ResponseEntity.ok("Receipt with UUID %s has been deleted".formatted(uuid));
     }
 
     @PostMapping("/add-recurring-receipt")
@@ -63,7 +74,7 @@ public class ReceiptController {
                 .toUri();
         ControllerMessage controllerMessage = ControllerMessage
                 .builder()
-                .message("Recurring Receipt created")
+                .message("Recurring Receipt has been created")
                 .uuid(uuid)
                 .build();
         return  ResponseEntity
@@ -72,5 +83,19 @@ public class ReceiptController {
                         controllerMessage
                                 .toJSON()
                 );
+    }
+
+    @PutMapping("/update-recurring-receipt")
+    @Tag(name = "Update Recurring Receipt", description = "Update Recurring Receipt")
+    public ResponseEntity<String> updateRecurringReceipt(@RequestBody RecurringReceiptDto dto) {
+        recurringReceiptService.updateRecurringReceipt(dto);
+        return ResponseEntity.ok("Recurring Receipt with UUID %s has been updated".formatted(dto.getUuid()));
+    }
+
+    @DeleteMapping("/delete-recurring-receipt/{uuid}")
+    @Tag(name = "Delete Recurring Receipt", description = "Delete Recurring Receipt")
+    public ResponseEntity<String> deleteRecurringReceipt(@PathVariable final String uuid) {
+        recurringReceiptService.deleteRecurringReceipt(uuid);
+        return  ResponseEntity.ok("Recurring Receipt with UUID %s has been deleted".formatted(uuid));
     }
 }

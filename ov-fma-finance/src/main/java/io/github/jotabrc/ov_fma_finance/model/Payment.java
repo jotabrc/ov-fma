@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
-import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Getter
@@ -18,9 +18,9 @@ public class Payment extends FinancialEntity {
     @Column(nullable = false, unique = false)
     private String payee;
 
-    public Payment(long id, String uuid, UserFinance userFinance, BigDecimal amount, String description, LocalDateTime createdAt,
+    public Payment(long id, String uuid, UserFinance userFinance, LocalDate dueDate, double amount, String description, LocalDateTime createdAt,
                    LocalDateTime updatedAt, long version, String payee) {
-        super(id, uuid, userFinance, amount, description, createdAt, updatedAt, version);
+        super(id, uuid, userFinance, dueDate, amount, description, createdAt, updatedAt, version);
         this.payee = payee;
     }
 }

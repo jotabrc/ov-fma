@@ -1,4 +1,0 @@
-BEGIN;
-ALTER TABLE tb_user_finance
-ADD name VARCHAR(255) NOT NULL;
-COMMIT;

@@ -6,11 +6,17 @@ import io.github.jotabrc.ov_fma_finance.handler.UserAlreadyExistsException;
 import io.github.jotabrc.ov_fma_finance.handler.UserNotFoundException;
 import io.github.jotabrc.ov_fma_finance.model.*;
 import io.github.jotabrc.ov_fma_finance.repository.FinanceRepository;
+import io.github.jotabrc.ov_fma_finance.util.ServiceUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.function.Function;
 
@@ -18,43 +24,50 @@ import java.util.function.Function;
 public class FinanceServiceImpl implements FinanceService {
 
     private final FinanceRepository financeRepository;
+    private final ServiceUtil serviceUtil;
 
     @Autowired
-    public FinanceServiceImpl(FinanceRepository financeRepository) {
+    public FinanceServiceImpl(FinanceRepository financeRepository, ServiceUtil serviceUtil) {
         this.financeRepository = financeRepository;
+        this.serviceUtil = serviceUtil;
     }
 
     /**
      * Add new UserFinance Entity. New insertions are received with Kafka on user registration in User service.
      *
      * @param dto UserFinance data.
-     * @return UserFinanceDto
      */
     @Override
     @Cacheable(value = "user_finance", key = "#dto.getUserUuid")
-    public UserFinanceDto addUserFinance(final UserFinanceDto dto) {
+    public void addUserFinance(final UserFinanceDto dto) {
         checkUserExistence(dto.getUserUuid());
 
         UserFinance userFinance = buildNewUserFinance(dto);
         financeRepository.save(userFinance);
-        return toDto(userFinance);
     }
 
     /**
      * Updates UserFinance data.
      *
      * @param dto New data.
-     * @return UserFinanceDto
      */
     @Override
     @CachePut(value = "user_finance", key = "#dto.getUserUuid")
-    public UserFinanceDto updateUserFinance(UserFinanceDto dto) {
+    public void updateUserFinance(UserFinanceDto dto) {
         UserFinance userFinance = financeRepository.findByUserUuid(dto.getUserUuid())
                 .orElseThrow(() -> new UserNotFoundException("User with UUID %s not found"));
 
         updateUserFinance(dto, userFinance);
         financeRepository.save(userFinance);
-        return toDto(userFinance);
+    }
+
+    @Override
+    public Page<UserFinanceDto> get(final String userUuid, final LocalDate fromDate, final LocalDate toDate, final int pageStart, final int pageSize) {
+        serviceUtil.checkUserAuthorization(userUuid);
+        Pageable pageable = PageRequest.of(pageStart, pageSize, Sort.by("dueDate").descending());
+        Page<UserFinance> page = financeRepository.findByDueDate(userUuid, fromDate, toDate, pageable);
+
+        return page.map(this::toDto);
     }
 
     // =================================================================================================================
@@ -98,6 +111,7 @@ public class FinanceServiceImpl implements FinanceService {
         userFinance
                 .setUsername(dto.getUsername())
                 .setEmail(dto.getEmail())
+                .setName(dto.getName())
                 .setActive(dto.isActive());
     }
 
@@ -108,6 +122,7 @@ public class FinanceServiceImpl implements FinanceService {
                         .userUuid(u.getUserUuid())
                         .username(u.getUsername())
                         .email(u.getEmail())
+                        .name(u.getName())
                         .isActive(u.isActive())
                         .financialItems(
                                 u.getFinancialItems()
@@ -130,7 +145,8 @@ public class FinanceServiceImpl implements FinanceService {
     private FinancialEntityDto toDto(final Payment payment) {
         Function<Payment, PaymentDto> toDto = p ->
                 new PaymentDto(
-                        p.getId(),
+                        p.getUuid(),
+                        p.getDueDate(),
                         p.getAmount(),
                         p.getDescription(),
                         p.getPayee()
@@ -141,7 +157,8 @@ public class FinanceServiceImpl implements FinanceService {
     private FinancialEntityDto toDto(final Receipt receipt) {
         Function<Receipt, ReceiptDto> toDto = r ->
                 new ReceiptDto(
-                        r.getId(),
+                        r.getUuid(),
+                        r.getDueDate(),
                         r.getAmount(),
                         r.getDescription(),
                         r.getVendor()
@@ -152,27 +169,25 @@ public class FinanceServiceImpl implements FinanceService {
     private FinancialEntityDto toDto(final RecurringPayment recurringPayment) {
         Function<RecurringPayment, RecurringPaymentDto> toDto = p ->
                 new RecurringPaymentDto(
-                        p.getId(),
+                        p.getUuid(),
+                        p.getDueDate(),
                         p.getAmount(),
                         p.getDescription(),
-                        p.getDay(),
-                        p.getMonth(),
-                        p.getYear(),
+                        p.getRecurringUntil(),
                         p.getPayee()
                 );
         return toDto.apply(recurringPayment);
     }
 
     private FinancialEntityDto toDto(final RecurringReceipt recurringReceipt) {
-        Function<RecurringReceipt, RecurringReceiptDto> toDto = p ->
+        Function<RecurringReceipt, RecurringReceiptDto> toDto = r ->
                 new RecurringReceiptDto(
-                        p.getId(),
-                        p.getAmount(),
-                        p.getDescription(),
-                        p.getDay(),
-                        p.getMonth(),
-                        p.getYear(),
-                        p.getVendor()
+                        r.getUuid(),
+                        r.getDueDate(),
+                        r.getAmount(),
+                        r.getDescription(),
+                        r.getRecurringUntil(),
+                        r.getVendor()
                 );
         return toDto.apply(recurringReceipt);
     }

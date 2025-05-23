@@ -7,7 +7,7 @@ import org.springframework.validation.annotation.Validated;
 @Validated
 public interface PaymentService {
 
-    String addPayment(@NotNull PaymentDto dto);
-    void updatePayment(@NotNull PaymentDto dto);
-    void deletePayment(long id);
+    String addPayment(@NotNull String userUuid, @NotNull PaymentDto dto);
+    void updatePayment(@NotNull String userUuid, @NotNull PaymentDto dto);
+    void deletePayment(@NotNull String userUuid, @NotNull String uuid);
 }

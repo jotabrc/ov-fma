@@ -7,7 +7,7 @@ import org.springframework.validation.annotation.Validated;
 @Validated
 public interface RecurringPaymentService {
 
-    String addRecurringPayment(@NotNull RecurringPaymentDto dto);
-    void updateRecurringPayment(@NotNull RecurringPaymentDto dto);
-    void deleteRecurringPayment(long id);
+    String addRecurringPayment(@NotNull String userUuid, @NotNull RecurringPaymentDto dto);
+    void updateRecurringPayment(@NotNull String userUuid, @NotNull RecurringPaymentDto dto);
+    void deleteRecurringPayment(@NotNull String userUuid, @NotNull String uuid);
 }

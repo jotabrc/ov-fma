@@ -42,21 +42,22 @@ public class ServiceUtilImpl implements ServiceUtil {
 
     /**
      * Check User Authorization and call overridden method with a default message.
+     * @param userUuid User uuid.
      */
     @Override
-    public void checkUserAuthorization() {
-        checkUserAuthorization("User authorization denied");
+    public void checkUserAuthorization(final String userUuid) {
+        checkUserAuthorization(userUuid, "User authorization denied");
     }
 
     /**
      * Check User Authorization and throws exception if denied.
+     * @param userUuid User uuid.
      * @param message Exception message.
      * @throws UnauthorizedException
      */
     @Override
-    public void checkUserAuthorization(final String message) {
-        String userUuid = getUserUuid();
-        boolean isValid = SecurityContextHolder.getContext().getAuthentication().getName().equals(userUuid);
+    public void checkUserAuthorization(final String userUuid, final String message) {
+        boolean isValid = getUserUuid().equals(userUuid);
         if (!isValid) throw new UnauthorizedException(message);
     }
 }
