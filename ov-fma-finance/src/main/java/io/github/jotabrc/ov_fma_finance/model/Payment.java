@@ -1,5 +1,7 @@
 package io.github.jotabrc.ov_fma_finance.model;
 
+import io.github.jotabrc.ov_fma_finance.dto.FinancialEntityDto;
+import io.github.jotabrc.ov_fma_finance.dto.PaymentDto;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import lombok.Getter;
@@ -22,5 +24,16 @@ public class Payment extends FinancialEntity {
                    LocalDateTime updatedAt, long version, String payee) {
         super(id, uuid, userFinance, dueDate, amount, description, createdAt, updatedAt, version);
         this.payee = payee;
+    }
+
+    @Override
+    public FinancialEntityDto transform() {
+        return new PaymentDto(
+                this.getUuid(),
+                this.getDueDate(),
+                this.getAmount(),
+                this.getDescription(),
+                this.getPayee()
+        );
     }
 }

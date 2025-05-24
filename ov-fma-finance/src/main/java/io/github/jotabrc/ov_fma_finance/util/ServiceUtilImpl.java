@@ -69,8 +69,9 @@ public class ServiceUtilImpl implements ServiceUtil {
      * @param u2 Entity owner user UUID.
      */
     @Override
-    public void ownerMatcher(String u1, String u2) {
+    public boolean ownerMatcher(String u1, String u2) {
         BiPredicate<String, String> matches = String::equals;
         if (!matches.test(u1, u2)) throw  new UnauthorizedException("User authorization denied to modify requested data, owner doesn't match");
+        return true;
     }
 }

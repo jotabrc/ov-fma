@@ -3,7 +3,6 @@ package io.github.jotabrc.ov_fma_finance.service;
 import io.github.jotabrc.ov_fma_finance.dto.*;
 import io.github.jotabrc.ov_fma_finance.handler.InstanceNotCompatibleException;
 import io.github.jotabrc.ov_fma_finance.handler.UserAlreadyExistsException;
-import io.github.jotabrc.ov_fma_finance.handler.UserNotFoundException;
 import io.github.jotabrc.ov_fma_finance.model.*;
 import io.github.jotabrc.ov_fma_finance.repository.FinanceRepository;
 import io.github.jotabrc.ov_fma_finance.util.ServiceUtil;
@@ -41,7 +40,6 @@ public class FinanceServiceImpl implements FinanceService {
     @Cacheable(value = "user_finance", key = "#dto.getUserUuid")
     public void addUserFinance(final UserFinanceDto dto) {
         checkUserExistence(dto.getUserUuid());
-
         UserFinance userFinance = buildNewUserFinance(dto);
         financeRepository.save(userFinance);
     }
@@ -53,21 +51,23 @@ public class FinanceServiceImpl implements FinanceService {
      */
     @Override
     @CachePut(value = "user_finance", key = "#dto.getUserUuid")
-    public void updateUserFinance(UserFinanceDto dto) {
-        UserFinance userFinance = financeRepository.findByUserUuid(dto.getUserUuid())
-                .orElseThrow(() -> new UserNotFoundException("User with UUID %s not found"));
-
+    public void updateUserFinance(final UserFinanceDto dto) {
+        UserFinance userFinance = serviceUtil.getUserFinance();
         updateUserFinance(dto, userFinance);
         financeRepository.save(userFinance);
     }
 
     @Override
-    public Page<UserFinanceDto> get(final String userUuid, final LocalDate fromDate, final LocalDate toDate, final int pageStart, final int pageSize) {
+    public Page<UserFinanceDto> get(final String userUuid,
+                                    final LocalDate fromDate,
+                                    final LocalDate toDate,
+                                    final int pageStart,
+                                    final int pageSize) {
         serviceUtil.checkUserAuthorization(userUuid);
         Pageable pageable = PageRequest.of(pageStart, pageSize, Sort.by("dueDate").descending());
         Page<UserFinance> page = financeRepository.findByDueDate(userUuid, fromDate, toDate, pageable);
-
-        return page.map(this::toDto);
+        page.forEach(u -> serviceUtil.ownerMatcher(userUuid, u.getUserUuid()));
+        return page.map(UserFinance::transform);
     }
 
     // =================================================================================================================
@@ -107,7 +107,8 @@ public class FinanceServiceImpl implements FinanceService {
      * @param dto         New data.
      * @param userFinance Current UserFinance.
      */
-    private void updateUserFinance(UserFinanceDto dto, UserFinance userFinance) {
+    private void updateUserFinance(final UserFinanceDto dto,
+                                   final UserFinance userFinance) {
         userFinance
                 .setUsername(dto.getUsername())
                 .setEmail(dto.getEmail())
@@ -115,6 +116,7 @@ public class FinanceServiceImpl implements FinanceService {
                 .setActive(dto.isActive());
     }
 
+    @Deprecated(forRemoval = true)
     private UserFinanceDto toDto(final UserFinance user) {
         Function<UserFinance, UserFinanceDto> toDto = u ->
                 UserFinanceDto
@@ -134,6 +136,7 @@ public class FinanceServiceImpl implements FinanceService {
         return toDto.apply(user);
     }
 
+    @Deprecated(forRemoval = true)
     private FinancialEntityDto toDto(final FinancialEntity financialEntity) {
         if (financialEntity instanceof Payment e) return toDto(e);
         else if (financialEntity instanceof Receipt e) return toDto(e);
@@ -142,6 +145,7 @@ public class FinanceServiceImpl implements FinanceService {
         else throw new InstanceNotCompatibleException("Unsupported FinancialEntity type %s".formatted(financialEntity.getClass()));
     }
 
+    @Deprecated(forRemoval = true)
     private FinancialEntityDto toDto(final Payment payment) {
         Function<Payment, PaymentDto> toDto = p ->
                 new PaymentDto(
@@ -154,6 +158,7 @@ public class FinanceServiceImpl implements FinanceService {
         return toDto.apply(payment);
     }
 
+    @Deprecated(forRemoval = true)
     private FinancialEntityDto toDto(final Receipt receipt) {
         Function<Receipt, ReceiptDto> toDto = r ->
                 new ReceiptDto(
@@ -166,6 +171,7 @@ public class FinanceServiceImpl implements FinanceService {
         return toDto.apply(receipt);
     }
 
+    @Deprecated(forRemoval = true)
     private FinancialEntityDto toDto(final RecurringPayment recurringPayment) {
         Function<RecurringPayment, RecurringPaymentDto> toDto = p ->
                 new RecurringPaymentDto(
@@ -179,6 +185,7 @@ public class FinanceServiceImpl implements FinanceService {
         return toDto.apply(recurringPayment);
     }
 
+    @Deprecated(forRemoval = true)
     private FinancialEntityDto toDto(final RecurringReceipt recurringReceipt) {
         Function<RecurringReceipt, RecurringReceiptDto> toDto = r ->
                 new RecurringReceiptDto(

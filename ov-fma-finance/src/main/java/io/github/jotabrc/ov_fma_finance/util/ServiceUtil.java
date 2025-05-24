@@ -11,5 +11,5 @@ public interface ServiceUtil {
     UserFinance getUserFinance();
     void checkUserAuthorization(@NotNull String userUuid);
     void checkUserAuthorization(@NotNull String userUuid, @NotNull String message);
-    void ownerMatcher(@NotNull String u1, @NotNull String u2);
+    boolean ownerMatcher(@NotNull String u1, @NotNull String u2);
 }

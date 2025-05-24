@@ -1,5 +1,7 @@
 package io.github.jotabrc.ov_fma_finance.model;
 
+import io.github.jotabrc.ov_fma_finance.dto.FinancialEntityDto;
+import io.github.jotabrc.ov_fma_finance.dto.ReceiptDto;
 import jakarta.persistence.Entity;
 import lombok.Getter;
 import lombok.Setter;
@@ -18,5 +20,16 @@ public class Receipt extends FinancialEntity {
                    LocalDateTime updatedAt, long version, String vendor) {
         super(id, uuid, userFinance, dueDate, amount, description, createdAt, updatedAt, version);
         this.vendor = vendor;
+    }
+
+    @Override
+    public FinancialEntityDto transform() {
+        return new ReceiptDto(
+                this.getUuid(),
+                this.getDueDate(),
+                this.getAmount(),
+                this.getDescription(),
+                this.getVendor()
+        );
     }
 }

@@ -1,5 +1,7 @@
 package io.github.jotabrc.ov_fma_finance.model;
 
+import io.github.jotabrc.ov_fma_finance.dto.FinancialEntityDto;
+import io.github.jotabrc.ov_fma_finance.util.ToDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -23,7 +25,7 @@ import java.time.LocalDateTime;
                 @Index(name = "idx_user_finance_id", columnList = "user_finance_id")
         }
 )
-public abstract class FinancialEntity {
+public abstract class FinancialEntity implements ToDto<FinancialEntityDto> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

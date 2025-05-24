@@ -1,5 +1,7 @@
 package io.github.jotabrc.ov_fma_finance.model;
 
+import io.github.jotabrc.ov_fma_finance.dto.UserFinanceDto;
+import io.github.jotabrc.ov_fma_finance.util.ToDto;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.Accessors;
@@ -16,7 +18,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity(name = "tb_user_finance")
-public class UserFinance {
+public class UserFinance implements ToDto<UserFinanceDto> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -50,4 +52,22 @@ public class UserFinance {
 
     @Version
     private long version;
+
+    @Override
+    public UserFinanceDto transform() {
+        return UserFinanceDto
+                .builder()
+                .userUuid(this.getUserUuid())
+                .username(this.getUsername())
+                .email(this.getEmail())
+                .name(this.getName())
+                .isActive(this.isActive())
+                .financialItems(
+                        this.getFinancialItems()
+                                .stream()
+                                .map(FinancialEntity::transform)
+                                .toList()
+                )
+                .build();
+    }
 }
