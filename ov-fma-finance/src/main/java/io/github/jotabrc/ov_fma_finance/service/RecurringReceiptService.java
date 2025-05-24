@@ -7,7 +7,7 @@ import org.springframework.validation.annotation.Validated;
 @Validated
 public interface RecurringReceiptService {
 
-    String addRecurringReceipt(@NotNull RecurringReceiptDto dto);
-    void updateRecurringReceipt(@NotNull RecurringReceiptDto dto);
-    void deleteRecurringReceipt(@NotNull String uuid);
+    String addRecurringReceipt(@NotNull String userUuid, @NotNull RecurringReceiptDto dto);
+    void updateRecurringReceipt(@NotNull String userUuid, @NotNull RecurringReceiptDto dto);
+    void deleteRecurringReceipt(@NotNull String userUuid, @NotNull String uuid);
 }

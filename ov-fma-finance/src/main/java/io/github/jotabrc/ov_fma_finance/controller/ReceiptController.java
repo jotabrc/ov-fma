@@ -15,7 +15,7 @@ import java.net.URI;
 import static io.github.jotabrc.ov_fma_finance.controller.ControllerPath.PREFIX;
 import static io.github.jotabrc.ov_fma_finance.controller.ControllerPath.VERSION;
 
-@RequestMapping(PREFIX + VERSION + "/finance/receipt")
+@RequestMapping(PREFIX + VERSION + "/finance/user/{userUuid}/receipt")
 @RestController
 public class ReceiptController {
 
@@ -27,10 +27,10 @@ public class ReceiptController {
         this.recurringReceiptService = recurringReceiptService;
     }
 
-    @PostMapping("/add-receipt")
+    @PostMapping
     @Tag(name = "Receipt", description = "Add new Receipt")
-    public ResponseEntity<String> addReceipt(@RequestBody final ReceiptDto dto) {
-        String uuid = receiptService.addReceipt(dto);
+    public ResponseEntity<String> addReceipt(@PathVariable final String userUuid, @RequestBody final ReceiptDto dto) {
+        String uuid = receiptService.addReceipt(userUuid, dto);
         // Creates location path
         URI location = ServletUriComponentsBuilder
                 .fromPath(PREFIX + VERSION + "/receipt/get-by-uuid/{uuid}")
@@ -49,24 +49,24 @@ public class ReceiptController {
                 );
     }
 
-    @PutMapping("/update-receipt")
+    @PutMapping("/update")
     @Tag(name = "Update Receipt", description = "Updated Receipt")
-    public ResponseEntity<String> updateReceipt(@RequestBody ReceiptDto dto) {
-        receiptService.updateReceipt(dto);
+    public ResponseEntity<String> updateReceipt(@PathVariable final String userUuid, @RequestBody ReceiptDto dto) {
+        receiptService.updateReceipt(userUuid, dto);
         return ResponseEntity.ok("Receipt with UUID %s has been updated".formatted(dto.getUuid()));
     }
 
-    @DeleteMapping("/delete-receipt/{uuid}")
+    @DeleteMapping("/{uuid}")
     @Tag(name = "Delete Receipt", description = "Delete Receipt")
-    public ResponseEntity<String> deleteReceipt(@PathVariable final String uuid) {
-        receiptService.deleteReceipt(uuid);
+    public ResponseEntity<String> deleteReceipt(@PathVariable final String userUuid, @PathVariable final String uuid) {
+        receiptService.deleteReceipt(userUuid, uuid);
         return ResponseEntity.ok("Receipt with UUID %s has been deleted".formatted(uuid));
     }
 
-    @PostMapping("/add-recurring-receipt")
+    @PostMapping("/recurring")
     @Tag(name = "Recurring Receipt", description = "Add new Recurring Receipt")
-    public ResponseEntity<String> addRecurringReceipt(@RequestBody final RecurringReceiptDto dto) {
-        String uuid = recurringReceiptService.addRecurringReceipt(dto);
+    public ResponseEntity<String> addRecurringReceipt(@PathVariable final String userUuid, @RequestBody final RecurringReceiptDto dto) {
+        String uuid = recurringReceiptService.addRecurringReceipt(userUuid, dto);
         // Creates location path
         URI location = ServletUriComponentsBuilder
                 .fromPath(PREFIX + VERSION + "/recurring-receipt/get-by-uuid/{uuid}")
@@ -85,17 +85,17 @@ public class ReceiptController {
                 );
     }
 
-    @PutMapping("/update-recurring-receipt")
+    @PutMapping("/recurring/update")
     @Tag(name = "Update Recurring Receipt", description = "Update Recurring Receipt")
-    public ResponseEntity<String> updateRecurringReceipt(@RequestBody RecurringReceiptDto dto) {
-        recurringReceiptService.updateRecurringReceipt(dto);
+    public ResponseEntity<String> updateRecurringReceipt(@PathVariable final String userUuid, @RequestBody RecurringReceiptDto dto) {
+        recurringReceiptService.updateRecurringReceipt(userUuid, dto);
         return ResponseEntity.ok("Recurring Receipt with UUID %s has been updated".formatted(dto.getUuid()));
     }
 
-    @DeleteMapping("/delete-recurring-receipt/{uuid}")
+    @DeleteMapping("/recurring/{uuid}")
     @Tag(name = "Delete Recurring Receipt", description = "Delete Recurring Receipt")
-    public ResponseEntity<String> deleteRecurringReceipt(@PathVariable final String uuid) {
-        recurringReceiptService.deleteRecurringReceipt(uuid);
+    public ResponseEntity<String> deleteRecurringReceipt(@PathVariable final String userUuid, @PathVariable final String uuid) {
+        recurringReceiptService.deleteRecurringReceipt(userUuid, uuid);
         return  ResponseEntity.ok("Recurring Receipt with UUID %s has been deleted".formatted(uuid));
     }
 }

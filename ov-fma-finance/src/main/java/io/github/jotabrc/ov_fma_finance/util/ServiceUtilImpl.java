@@ -9,6 +9,8 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.util.function.BiPredicate;
+
 @Service
 public class ServiceUtilImpl implements ServiceUtil {
 
@@ -59,5 +61,16 @@ public class ServiceUtilImpl implements ServiceUtil {
     public void checkUserAuthorization(final String userUuid, final String message) {
         boolean isValid = getUserUuid().equals(userUuid);
         if (!isValid) throw new UnauthorizedException(message);
+    }
+
+    /**
+     * Checks User Ownership UUID (u1) with entity UUID (u2)
+     * @param u1 User UUID.
+     * @param u2 Entity owner user UUID.
+     */
+    @Override
+    public void ownerMatcher(String u1, String u2) {
+        BiPredicate<String, String> matches = String::equals;
+        if (!matches.test(u1, u2)) throw  new UnauthorizedException("User authorization denied to modify requested data, owner doesn't match");
     }
 }

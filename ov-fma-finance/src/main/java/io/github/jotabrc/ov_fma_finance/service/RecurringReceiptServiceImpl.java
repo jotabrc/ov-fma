@@ -2,10 +2,8 @@ package io.github.jotabrc.ov_fma_finance.service;
 
 import io.github.jotabrc.ov_fma_finance.dto.RecurringReceiptDto;
 import io.github.jotabrc.ov_fma_finance.handler.ReceiptNotFoundException;
-import io.github.jotabrc.ov_fma_finance.handler.UserNotFoundException;
 import io.github.jotabrc.ov_fma_finance.model.RecurringReceipt;
 import io.github.jotabrc.ov_fma_finance.model.UserFinance;
-import io.github.jotabrc.ov_fma_finance.repository.FinanceRepository;
 import io.github.jotabrc.ov_fma_finance.repository.RecurringReceiptRepository;
 import io.github.jotabrc.ov_fma_finance.util.ServiceUtil;
 import org.springframework.stereotype.Service;
@@ -16,12 +14,10 @@ import java.util.UUID;
 public class RecurringReceiptServiceImpl implements RecurringReceiptService {
 
     private final RecurringReceiptRepository recurringReceiptRepository;
-    private final FinanceRepository financeRepository;
     private final ServiceUtil serviceUtil;
 
-    public RecurringReceiptServiceImpl(RecurringReceiptRepository recurringReceiptRepository, FinanceRepository financeRepository, ServiceUtil serviceUtil) {
+    public RecurringReceiptServiceImpl(RecurringReceiptRepository recurringReceiptRepository, ServiceUtil serviceUtil) {
         this.recurringReceiptRepository = recurringReceiptRepository;
-        this.financeRepository = financeRepository;
         this.serviceUtil = serviceUtil;
     }
 
@@ -31,11 +27,9 @@ public class RecurringReceiptServiceImpl implements RecurringReceiptService {
      * @return RecurringReceipt UUID.
      */
     @Override
-    public String addRecurringReceipt(final RecurringReceiptDto dto) {
-        final String uuid = serviceUtil.getUserUuid();
-        UserFinance userFinance = financeRepository.findByUserUuid(uuid)
-                .orElseThrow(() -> new UserNotFoundException("User with UUID %s not found".formatted(uuid)));
-
+    public String addRecurringReceipt(final String userUuid, final RecurringReceiptDto dto) {
+        serviceUtil.checkUserAuthorization(userUuid);
+        UserFinance userFinance = serviceUtil.getUserFinance();
         RecurringReceipt receipt = buildNewRecurringReceipt(dto, userFinance);
         return recurringReceiptRepository.save(receipt).getUuid();
     }
@@ -45,9 +39,10 @@ public class RecurringReceiptServiceImpl implements RecurringReceiptService {
      * @param dto New RecurringReceipt data.
      */
     @Override
-    public void updateRecurringReceipt(final RecurringReceiptDto dto) {
-        serviceUtil.checkUserAuthorization(dto.getUuid());
+    public void updateRecurringReceipt(final String userUuid, final RecurringReceiptDto dto) {
+        serviceUtil.checkUserAuthorization(userUuid);
         RecurringReceipt receipt = getRecurringReceipt(dto.getUuid());
+        serviceUtil.ownerMatcher(userUuid, receipt.getUserFinance().getUserUuid());
         updateRecurringReceipt(dto, receipt);
         recurringReceiptRepository.save(receipt);
     }
@@ -57,9 +52,10 @@ public class RecurringReceiptServiceImpl implements RecurringReceiptService {
      * @param uuid UUID of RecurringReceipt to be deleted.
      */
     @Override
-    public void deleteRecurringReceipt(final String uuid) {
-        serviceUtil.checkUserAuthorization(uuid);
+    public void deleteRecurringReceipt(final String userUuid, final String uuid) {
+        serviceUtil.checkUserAuthorization(userUuid);
         RecurringReceipt receipt = getRecurringReceipt(uuid);
+        serviceUtil.ownerMatcher(userUuid, receipt.getUserFinance().getUserUuid());
         recurringReceiptRepository.delete(receipt);
         recurringReceiptRepository.save(receipt);
     }

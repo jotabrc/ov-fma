@@ -17,6 +17,12 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Entity(name = "tb_financial_entity")
 @Inheritance(strategy = InheritanceType.JOINED)
+@Table(
+        indexes = {
+                @Index(name = "idx_due_date", columnList = "due_date"),
+                @Index(name = "idx_user_finance_id", columnList = "user_finance_id")
+        }
+)
 public abstract class FinancialEntity {
 
     @Id

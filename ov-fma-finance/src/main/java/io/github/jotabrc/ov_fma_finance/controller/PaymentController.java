@@ -16,7 +16,7 @@ import java.net.URI;
 import static io.github.jotabrc.ov_fma_finance.controller.ControllerPath.PREFIX;
 import static io.github.jotabrc.ov_fma_finance.controller.ControllerPath.VERSION;
 
-@RequestMapping(PREFIX + VERSION + "/user/{userUuid}/payment")
+@RequestMapping(PREFIX + VERSION + "/finance/user/{userUuid}/payment")
 @RestController
 public class PaymentController {
 

@@ -4,7 +4,6 @@ import io.github.jotabrc.ov_fma_finance.dto.ReceiptDto;
 import io.github.jotabrc.ov_fma_finance.handler.ReceiptNotFoundException;
 import io.github.jotabrc.ov_fma_finance.model.Receipt;
 import io.github.jotabrc.ov_fma_finance.model.UserFinance;
-import io.github.jotabrc.ov_fma_finance.repository.FinanceRepository;
 import io.github.jotabrc.ov_fma_finance.repository.ReceiptRepository;
 import io.github.jotabrc.ov_fma_finance.util.ServiceUtil;
 import org.springframework.stereotype.Service;
@@ -15,12 +14,10 @@ import java.util.UUID;
 public class ReceiptServiceImpl implements ReceiptService {
 
     private final ReceiptRepository receiptRepository;
-    private final FinanceRepository financeRepository;
     private final ServiceUtil serviceUtil;
 
-    public ReceiptServiceImpl(ReceiptRepository receiptRepository, FinanceRepository financeRepository, ServiceUtil serviceUtil) {
+    public ReceiptServiceImpl(ReceiptRepository receiptRepository, ServiceUtil serviceUtil) {
         this.receiptRepository = receiptRepository;
-        this.financeRepository = financeRepository;
         this.serviceUtil = serviceUtil;
     }
 
@@ -30,10 +27,9 @@ public class ReceiptServiceImpl implements ReceiptService {
      * @return Receipt UUID.
      */
     @Override
-    public String addReceipt(final ReceiptDto dto) {
-        serviceUtil.checkUserAuthorization(dto.getUuid());
+    public String addReceipt(final String userUuid, final ReceiptDto dto) {
+        serviceUtil.checkUserAuthorization(userUuid);
         UserFinance userFinance = serviceUtil.getUserFinance();
-
         Receipt receipt = buildNewReceipt(dto, userFinance);
         return receiptRepository.save(receipt).getUuid();
     }
@@ -43,9 +39,10 @@ public class ReceiptServiceImpl implements ReceiptService {
      * @param dto New Receipt data.
      */
     @Override
-    public void updateReceipt(final ReceiptDto dto) {
-        serviceUtil.checkUserAuthorization(dto.getUuid());
+    public void updateReceipt(final String userUuid, final ReceiptDto dto) {
+        serviceUtil.checkUserAuthorization(userUuid);
         Receipt receipt = getReceipt(dto.getUuid());
+        serviceUtil.ownerMatcher(userUuid, receipt.getUserFinance().getUserUuid());
         updateReceipt(dto, receipt);
         receiptRepository.save(receipt);
     }
@@ -55,9 +52,10 @@ public class ReceiptServiceImpl implements ReceiptService {
      * @param uuid UUID of Receipt to be deleted.
      */
     @Override
-    public void deleteReceipt(final String uuid) {
-        serviceUtil.checkUserAuthorization(uuid);
+    public void deleteReceipt(final String userUuid, final String uuid) {
+        serviceUtil.checkUserAuthorization(userUuid);
         Receipt receipt = getReceipt(uuid);
+        serviceUtil.ownerMatcher(userUuid, receipt.getUserFinance().getUserUuid());
         receiptRepository.delete(receipt);
     }
 

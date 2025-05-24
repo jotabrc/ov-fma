@@ -7,7 +7,7 @@ import org.springframework.validation.annotation.Validated;
 @Validated
 public interface ReceiptService {
 
-    String addReceipt(@NotNull ReceiptDto dto);
-    void updateReceipt(@NotNull ReceiptDto dto);
-    void deleteReceipt(@NotNull String uuid);
+    String addReceipt(@NotNull String userUuid, @NotNull ReceiptDto dto);
+    void updateReceipt(@NotNull String userUuid, @NotNull ReceiptDto dto);
+    void deleteReceipt(@NotNull String userUuid, @NotNull String uuid);
 }

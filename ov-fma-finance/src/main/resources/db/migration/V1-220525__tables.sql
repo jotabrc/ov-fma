@@ -52,3 +52,7 @@ CREATE TABLE IF NOT EXISTS tb_recurrence (
     recurring_until DATE NOT NULL,
     FOREIGN KEY (id) REFERENCES tb_financial_entity (id)
 );
+
+CREATE INDEX idx_recurring_until ON tb_recurrence(recurring_until);
+CREATE INDEX idx_user_finance_id ON tb_financial_entity(user_finance_id);
+CREATE INDEX idx_due_date ON tb_financial_entity(due_date);

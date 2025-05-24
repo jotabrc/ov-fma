@@ -4,7 +4,6 @@ import io.github.jotabrc.ov_fma_finance.dto.PaymentDto;
 import io.github.jotabrc.ov_fma_finance.handler.PaymentNotFoundException;
 import io.github.jotabrc.ov_fma_finance.model.Payment;
 import io.github.jotabrc.ov_fma_finance.model.UserFinance;
-import io.github.jotabrc.ov_fma_finance.repository.FinanceRepository;
 import io.github.jotabrc.ov_fma_finance.repository.PaymentRepository;
 import io.github.jotabrc.ov_fma_finance.util.ServiceUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,13 +15,11 @@ import java.util.UUID;
 public class PaymentServiceImpl implements PaymentService {
 
     private final PaymentRepository paymentRepository;
-    private final FinanceRepository financeRepository;
     private final ServiceUtil serviceUtil;
 
     @Autowired
-    public PaymentServiceImpl(PaymentRepository paymentRepository, FinanceRepository financeRepository, ServiceUtil serviceUtil) {
+    public PaymentServiceImpl(PaymentRepository paymentRepository, ServiceUtil serviceUtil) {
         this.paymentRepository = paymentRepository;
-        this.financeRepository = financeRepository;
         this.serviceUtil = serviceUtil;
     }
 
@@ -48,6 +45,7 @@ public class PaymentServiceImpl implements PaymentService {
     public void updatePayment(final String userUuid, final PaymentDto dto) {
         serviceUtil.checkUserAuthorization(userUuid);
         Payment payment = getPayment(dto.getUuid());
+        serviceUtil.ownerMatcher(userUuid, payment.getUserFinance().getUserUuid());
         updatePayment(dto, payment);
         paymentRepository.save(payment);
     }
@@ -60,6 +58,7 @@ public class PaymentServiceImpl implements PaymentService {
     public void deletePayment(final String userUuid, final String uuid) {
         serviceUtil.checkUserAuthorization(userUuid);
         Payment payment = getPayment(uuid);
+        serviceUtil.ownerMatcher(userUuid, payment.getUserFinance().getUserUuid());
         paymentRepository.delete(payment);
     }
 
