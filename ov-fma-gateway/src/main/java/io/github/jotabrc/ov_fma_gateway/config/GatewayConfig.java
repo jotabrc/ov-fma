@@ -129,11 +129,11 @@ public class GatewayConfig implements WebFluxConfigurer {
                 .csrf(ServerHttpSecurity.CsrfSpec::disable)
                 .authorizeExchange(auth -> auth
                         .pathMatchers(WHITELIST).permitAll()
-                        .pathMatchers("/user/signup").permitAll()
-                        .pathMatchers("/auth/signin/**").permitAll()
-                        .pathMatchers("/user/update").authenticated()
-                        .pathMatchers("/finance/**").authenticated()
-                        .pathMatchers("/user/get-by-uuid/**").authenticated()
+                        .pathMatchers("/auth/login/**").permitAll()
+                        .pathMatchers("/user/register").permitAll()
+                        .pathMatchers("/user/update/**").authenticated()
+                        .pathMatchers("/user/get/**").authenticated()
+                        .pathMatchers("/finance/user/**").authenticated()
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2
                         .jwt(jwt -> jwt.jwtDecoder(jwtDecoder()))

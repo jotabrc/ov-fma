@@ -41,7 +41,7 @@ public class WebSecurityConfig {
                 )
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(WHITELIST).permitAll()
-                        .requestMatchers(PREFIX + VERSION + "/auth/signin/**").permitAll()
+                        .requestMatchers(PREFIX + VERSION + "/auth/login/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterAfter(new TokenGlobalFilter(), UsernamePasswordAuthenticationFilter.class)

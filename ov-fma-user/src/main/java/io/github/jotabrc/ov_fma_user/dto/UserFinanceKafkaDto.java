@@ -6,12 +6,14 @@ import lombok.Getter;
  * User Data Transfer Object.
  */
 @Getter
-public class UserFinanceKafkaDto extends UserDtoAbs {
+public final class UserFinanceKafkaDto {
 
-    private final boolean isActive;
+    private final String userUuid;
+    private final String name;
 
-    public UserFinanceKafkaDto(final String uuid, final String username, final String email, boolean isActive) {
-        super(uuid, username, email);
-        this.isActive = isActive;
+    public UserFinanceKafkaDto(String userUuid,
+                               String name) {
+        this.userUuid = userUuid;
+        this.name = name;
     }
 }

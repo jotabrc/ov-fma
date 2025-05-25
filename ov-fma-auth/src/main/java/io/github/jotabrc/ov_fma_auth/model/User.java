@@ -3,6 +3,7 @@ package io.github.jotabrc.ov_fma_auth.model;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.Accessors;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
@@ -22,7 +23,7 @@ import java.time.LocalDateTime;
         @Index(name = "idx_user_email", columnList = "email", unique = true),
         @Index(name = "idx_user_uuid", columnList = "uuid", unique = true)
 })
-public class User {
+public final class User {
 
     // User relational ID
     // AUTO_INCREMENT
@@ -52,6 +53,10 @@ public class User {
 
     @Column(name = "is_active", nullable = false)
     private boolean isActive;
+
+    @CreationTimestamp
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
 
     @UpdateTimestamp
     @Column(name = "updated_at")

@@ -5,14 +5,14 @@ import io.github.jotabrc.ov_fma_finance.handler.PaymentNotFoundException;
 import io.github.jotabrc.ov_fma_finance.model.RecurringPayment;
 import io.github.jotabrc.ov_fma_finance.model.UserFinance;
 import io.github.jotabrc.ov_fma_finance.repository.RecurringPaymentRepository;
-import io.github.jotabrc.ov_fma_finance.util.ServiceUtil;
+import io.github.jotabrc.ov_fma_finance.service.util.ServiceUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
 
 @Service
-public class RecurringPaymentServiceImpl implements RecurringPaymentService {
+public final class RecurringPaymentServiceImpl implements RecurringPaymentService {
 
     private final RecurringPaymentRepository recurringPaymentRepository;
     private final ServiceUtil serviceUtil;
@@ -30,7 +30,7 @@ public class RecurringPaymentServiceImpl implements RecurringPaymentService {
      * @return RecurringPayment UUID.
      */
     @Override
-    public String addRecurringPayment(final String userUuid, final RecurringPaymentDto dto) {
+    public String save(final String userUuid, final RecurringPaymentDto dto) {
         serviceUtil.checkUserAuthorization(userUuid);
         UserFinance userFinance = serviceUtil.getUserFinance();
         RecurringPayment payment = buildNewRecurringPayment(dto, userFinance);
@@ -43,7 +43,7 @@ public class RecurringPaymentServiceImpl implements RecurringPaymentService {
      * @param dto New data.
      */
     @Override
-    public void updateRecurringPayment(final String userUuid, final RecurringPaymentDto dto) {
+    public void update(final String userUuid, final RecurringPaymentDto dto) {
         serviceUtil.checkUserAuthorization(userUuid);
         RecurringPayment recurringPayment = getRecurringPayment(dto.getUuid());
         serviceUtil.ownerMatcher(userUuid, recurringPayment.getUserFinance().getUserUuid());
@@ -57,7 +57,7 @@ public class RecurringPaymentServiceImpl implements RecurringPaymentService {
      * @param uuid UUID of RecurringPayment to be deleted.
      */
     @Override
-    public void deleteRecurringPayment(final String userUuid, final String uuid) {
+    public void delete(final String userUuid, final String uuid) {
         serviceUtil.checkUserAuthorization(userUuid);
         RecurringPayment recurringPayment = getRecurringPayment(uuid);
         serviceUtil.ownerMatcher(userUuid, recurringPayment.getUserFinance().getUserUuid());

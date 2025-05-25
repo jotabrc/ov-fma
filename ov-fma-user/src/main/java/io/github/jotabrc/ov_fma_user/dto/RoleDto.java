@@ -11,7 +11,7 @@ import java.io.Serializable;
  * Exposes only necessary data.
  */
 @Getter
-public class RoleDto implements Serializable {
+public final class RoleDto implements Serializable {
 
     private final String uuid;
     private final String name;

@@ -52,10 +52,7 @@ class FinanceControllerTest {
                 .builder()
                 .id(1)
                 .userUuid("2f0d0980-8846-4e46-a7db-2a6d1cbd0e9d")
-                .username("username")
-                .email("email@email.com")
                 .name("John Doe")
-                .isActive(true)
                 .financialItems(new ArrayList<>())
                 .build();
         RecurringReceipt recurringReceipt = new RecurringReceipt(

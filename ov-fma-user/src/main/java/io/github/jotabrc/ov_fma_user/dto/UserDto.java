@@ -10,7 +10,7 @@ import java.io.Serializable;
  * User Data Transfer Object.
  */
 @Getter
-public class UserDto extends UserDtoAbs implements Serializable {
+public final class UserDto extends UserDtoAbs implements Serializable {
 
     private final RoleDto role;
     private final String name;

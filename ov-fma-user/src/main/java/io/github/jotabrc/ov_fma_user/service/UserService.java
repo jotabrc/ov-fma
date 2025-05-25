@@ -9,10 +9,9 @@ import org.springframework.validation.annotation.Validated;
 import java.security.NoSuchAlgorithmException;
 
 @Validated
-public interface UserService {
+public sealed interface UserService permits UserServiceImpl {
 
-    UserDto signup(@NotNull UserCreationUpdateDto dto) throws NoSuchAlgorithmException, JsonProcessingException;
-    UserDto update(@NotNull String uuid, @NotNull UserCreationUpdateDto dto) throws NoSuchAlgorithmException, JsonProcessingException;
-
-    UserDto getByUuid(@NotNull String uuid);
+    UserDto save(@NotNull UserCreationUpdateDto dto) throws NoSuchAlgorithmException, JsonProcessingException;
+    UserDto update(@NotNull String userUuid, @NotNull UserCreationUpdateDto dto) throws NoSuchAlgorithmException, JsonProcessingException;
+    UserDto get(@NotNull String userUuid);
 }

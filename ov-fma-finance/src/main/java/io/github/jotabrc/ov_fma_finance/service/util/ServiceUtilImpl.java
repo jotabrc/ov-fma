@@ -1,4 +1,4 @@
-package io.github.jotabrc.ov_fma_finance.util;
+package io.github.jotabrc.ov_fma_finance.service.util;
 
 import io.github.jotabrc.ov_fma_finance.handler.UnauthorizedException;
 import io.github.jotabrc.ov_fma_finance.handler.UserNotFoundException;
@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 import java.util.function.BiPredicate;
 
 @Service
-public class ServiceUtilImpl implements ServiceUtil {
+public final class ServiceUtilImpl implements ServiceUtil {
 
     private final FinanceRepository financeRepository;
 

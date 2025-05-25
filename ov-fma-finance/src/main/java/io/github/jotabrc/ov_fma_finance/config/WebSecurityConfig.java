@@ -2,7 +2,6 @@ package io.github.jotabrc.ov_fma_finance.config;
 
 import io.github.jotabrc.ovauth.config.PropertiesWhitelistLoaderImpl;
 import io.github.jotabrc.ovauth.jwt.TokenGlobalFilter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
@@ -24,8 +23,7 @@ public class WebSecurityConfig {
     private final LoadProperties loadProperties;
     private final String[] WHITELIST;
 
-    @Autowired
-    public WebSecurityConfig(LoadProperties loadProperties) {
+    public WebSecurityConfig(LoadProperties loadProperties, String[] whitelist) {
         this.loadProperties = loadProperties;
         this.WHITELIST = PropertiesWhitelistLoaderImpl.WHITELIST.values().toArray(new String[0]);
     }
@@ -43,10 +41,7 @@ public class WebSecurityConfig {
                 )
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(WHITELIST).permitAll()
-                        .requestMatchers(PREFIX + VERSION + "/payment/add-payment").hasAnyRole("USER", "ADMIN")
-                        .requestMatchers(PREFIX + VERSION + "/payment/add-recurring-payment").hasAnyRole("USER", "ADMIN")
-                        .requestMatchers(PREFIX + VERSION + "/receipt/add-receipt").hasAnyRole("USER", "ADMIN")
-                        .requestMatchers(PREFIX + VERSION + "/receipt/add-recurring-receipt").hasAnyRole("USER", "ADMIN")
+                        .requestMatchers(PREFIX + VERSION + "/finance/user/**").hasAnyRole("USER", "ADMIN")
                         .anyRequest().authenticated()
                 )
                 .addFilterAfter(new TokenGlobalFilter(), UsernamePasswordAuthenticationFilter.class)

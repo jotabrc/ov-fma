@@ -5,9 +5,9 @@ import jakarta.validation.constraints.NotNull;
 import org.springframework.validation.annotation.Validated;
 
 @Validated
-public interface ReceiptService {
+public sealed interface ReceiptService permits ReceiptServiceImpl {
 
-    String addReceipt(@NotNull String userUuid, @NotNull ReceiptDto dto);
-    void updateReceipt(@NotNull String userUuid, @NotNull ReceiptDto dto);
-    void deleteReceipt(@NotNull String userUuid, @NotNull String uuid);
+    String save(@NotNull String userUuid, @NotNull ReceiptDto dto);
+    void update(@NotNull String userUuid, @NotNull ReceiptDto dto);
+    void delete(@NotNull String userUuid, @NotNull String uuid);
 }

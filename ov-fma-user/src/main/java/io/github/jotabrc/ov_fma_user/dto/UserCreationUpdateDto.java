@@ -6,7 +6,7 @@ import lombok.Getter;
  * User Creation Data Transfer Object.
  */
 @Getter
-public class UserCreationUpdateDto extends UserDtoAbs {
+public final class UserCreationUpdateDto extends UserDtoAbs {
 
     private final String password;
     private final String name;

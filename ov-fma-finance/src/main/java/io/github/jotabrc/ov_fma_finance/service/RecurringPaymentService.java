@@ -5,9 +5,9 @@ import jakarta.validation.constraints.NotNull;
 import org.springframework.validation.annotation.Validated;
 
 @Validated
-public interface RecurringPaymentService {
+public sealed interface RecurringPaymentService permits RecurringPaymentServiceImpl {
 
-    String addRecurringPayment(@NotNull String userUuid, @NotNull RecurringPaymentDto dto);
-    void updateRecurringPayment(@NotNull String userUuid, @NotNull RecurringPaymentDto dto);
-    void deleteRecurringPayment(@NotNull String userUuid, @NotNull String uuid);
+    String save(@NotNull String userUuid, @NotNull RecurringPaymentDto dto);
+    void update(@NotNull String userUuid, @NotNull RecurringPaymentDto dto);
+    void delete(@NotNull String userUuid, @NotNull String uuid);
 }

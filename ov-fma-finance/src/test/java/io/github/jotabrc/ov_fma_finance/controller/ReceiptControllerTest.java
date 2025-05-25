@@ -61,7 +61,7 @@ class ReceiptControllerTest {
                 	"vendor": "vendor"
                 }
                 """.formatted(uuid);
-        when(receiptService.addReceipt(any(), any())).thenReturn(uuid);
+        when(receiptService.save(any(), any())).thenReturn(uuid);
         mockMvc.perform(post("/api/v1/finance/user/%s/receipt".formatted(userUuid))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
@@ -104,7 +104,7 @@ class ReceiptControllerTest {
                 dto.getAmount(),
                 dto.getDescription(),
                 dto.getVendor());
-        doNothing().when(receiptService).updateReceipt(userUuid, dto);
+        doNothing().when(receiptService).update(userUuid, dto);
         mockMvc.perform(put("/api/v1/finance/user/%s/receipt/update".formatted(userUuid))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
@@ -120,7 +120,7 @@ class ReceiptControllerTest {
     void deleteReceipt() throws Exception {
         String userUuid = UUID.randomUUID().toString();
         String uuid = UUID.randomUUID().toString();
-        doNothing().when(receiptService).deleteReceipt(userUuid,uuid);
+        doNothing().when(receiptService).delete(userUuid,uuid);
 
         ReceiptDto dto = new ReceiptDto(
                 uuid,
@@ -180,7 +180,7 @@ class ReceiptControllerTest {
                 	"vendor": "Vendor"
                 }
                 """.formatted(uuid);
-        when(recurringReceiptService.addRecurringReceipt(any(), any())).thenReturn(uuid);
+        when(recurringReceiptService.save(any(), any())).thenReturn(uuid);
         mockMvc.perform(post("/api/v1/finance/user/%s/receipt/recurring".formatted(userUuid))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
@@ -232,7 +232,7 @@ class ReceiptControllerTest {
                 dto.getRecurringUntil().getDayOfMonth(),
                 dto.getRecurringUntil().getDayOfMonth(),
                 dto.getVendor());
-        doNothing().when(recurringReceiptService).updateRecurringReceipt(userUuid, dto);
+        doNothing().when(recurringReceiptService).update(userUuid, dto);
         mockMvc.perform(put("/api/v1/finance/user/%s/receipt/recurring/update".formatted(userUuid))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
@@ -248,7 +248,7 @@ class ReceiptControllerTest {
     void deleteRecurringReceipt() throws Exception {
         String userUuid = UUID.randomUUID().toString();
         String uuid = UUID.randomUUID().toString();
-        doNothing().when(recurringReceiptService).deleteRecurringReceipt(userUuid,uuid);
+        doNothing().when(recurringReceiptService).delete(userUuid,uuid);
         RecurringReceiptDto dto = new RecurringReceiptDto(
                 uuid,
                 LocalDate.now(),

@@ -5,13 +5,13 @@ import io.github.jotabrc.ov_fma_finance.handler.ReceiptNotFoundException;
 import io.github.jotabrc.ov_fma_finance.model.Receipt;
 import io.github.jotabrc.ov_fma_finance.model.UserFinance;
 import io.github.jotabrc.ov_fma_finance.repository.ReceiptRepository;
-import io.github.jotabrc.ov_fma_finance.util.ServiceUtil;
+import io.github.jotabrc.ov_fma_finance.service.util.ServiceUtil;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
 
 @Service
-public class ReceiptServiceImpl implements ReceiptService {
+public final class ReceiptServiceImpl implements ReceiptService {
 
     private final ReceiptRepository receiptRepository;
     private final ServiceUtil serviceUtil;
@@ -27,7 +27,7 @@ public class ReceiptServiceImpl implements ReceiptService {
      * @return Receipt UUID.
      */
     @Override
-    public String addReceipt(final String userUuid, final ReceiptDto dto) {
+    public String save(final String userUuid, final ReceiptDto dto) {
         serviceUtil.checkUserAuthorization(userUuid);
         UserFinance userFinance = serviceUtil.getUserFinance();
         Receipt receipt = buildNewReceipt(dto, userFinance);
@@ -39,7 +39,7 @@ public class ReceiptServiceImpl implements ReceiptService {
      * @param dto New Receipt data.
      */
     @Override
-    public void updateReceipt(final String userUuid, final ReceiptDto dto) {
+    public void update(final String userUuid, final ReceiptDto dto) {
         serviceUtil.checkUserAuthorization(userUuid);
         Receipt receipt = getReceipt(dto.getUuid());
         serviceUtil.ownerMatcher(userUuid, receipt.getUserFinance().getUserUuid());
@@ -52,7 +52,7 @@ public class ReceiptServiceImpl implements ReceiptService {
      * @param uuid UUID of Receipt to be deleted.
      */
     @Override
-    public void deleteReceipt(final String userUuid, final String uuid) {
+    public void delete(final String userUuid, final String uuid) {
         serviceUtil.checkUserAuthorization(userUuid);
         Receipt receipt = getReceipt(uuid);
         serviceUtil.ownerMatcher(userUuid, receipt.getUserFinance().getUserUuid());

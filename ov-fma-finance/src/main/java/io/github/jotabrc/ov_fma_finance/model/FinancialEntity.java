@@ -25,7 +25,8 @@ import java.time.LocalDateTime;
                 @Index(name = "idx_user_finance_id", columnList = "user_finance_id")
         }
 )
-public abstract class FinancialEntity implements ToDto<FinancialEntityDto> {
+public sealed abstract class FinancialEntity implements ToDto<FinancialEntityDto>
+        permits Payment, Receipt, Recurrence {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

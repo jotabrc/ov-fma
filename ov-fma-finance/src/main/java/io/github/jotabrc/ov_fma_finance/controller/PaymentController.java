@@ -18,7 +18,7 @@ import static io.github.jotabrc.ov_fma_finance.controller.ControllerPath.VERSION
 
 @RequestMapping(PREFIX + VERSION + "/finance/user/{userUuid}/payment")
 @RestController
-public class PaymentController {
+public final class PaymentController {
 
     private final PaymentService paymentService;
     private final RecurringPaymentService recurringPaymentService;
@@ -31,7 +31,7 @@ public class PaymentController {
     @PostMapping
     @Tag(name = "Payment", description = "Add new Payment")
     public ResponseEntity<String> addPayment(@PathVariable final String userUuid, @RequestBody final PaymentDto dto) {
-        String uuid = paymentService.addPayment(userUuid, dto);
+        String uuid = paymentService.save(userUuid, dto);
         // Creates location path
         URI location = ServletUriComponentsBuilder
                 .fromPath(PREFIX + VERSION + "/payment/get-by-uuid/{uuid}")
@@ -53,21 +53,21 @@ public class PaymentController {
     @PutMapping("/update")
     @Tag(name = "Update Payment", description = "Update Payment")
     public ResponseEntity<String> updatePayment(@PathVariable final String userUuid, @RequestBody final PaymentDto dto) {
-        paymentService.updatePayment(userUuid, dto);
+        paymentService.update(userUuid, dto);
         return  ResponseEntity.ok("Payment with UUID %s has been updated".formatted(dto.getUuid()));
     }
 
     @DeleteMapping("/{uuid}")
     @Tag(name = "Delete Payment", description = "Delete Payment")
     public ResponseEntity<String> deletePayment(@PathVariable final String userUuid, @PathVariable final String uuid) {
-        paymentService.deletePayment(userUuid, uuid);
+        paymentService.delete(userUuid, uuid);
         return  ResponseEntity.ok("Payment with UUID %s has been deleted".formatted(uuid));
     }
 
     @PostMapping("/recurring")
     @Tag(name = "Recurring Payment", description = "Add new Recurring Payment")
     public ResponseEntity<String> addRecurringPayment(@PathVariable final String userUuid, @RequestBody final RecurringPaymentDto dto) {
-        String uuid = recurringPaymentService.addRecurringPayment(userUuid, dto);
+        String uuid = recurringPaymentService.save(userUuid, dto);
         // Creates location path
         URI location = ServletUriComponentsBuilder
                 .fromPath(PREFIX + VERSION + "/recurring-payment/get-by-uuid/{uuid}")
@@ -89,14 +89,14 @@ public class PaymentController {
     @PutMapping("/recurring/update")
     @Tag(name = "Update Recurring Payment", description = "Update Recurring Payment")
     public ResponseEntity<String> updateRecurringPayment(@PathVariable final String userUuid, @RequestBody final RecurringPaymentDto dto) {
-        recurringPaymentService.updateRecurringPayment(userUuid, dto);
+        recurringPaymentService.update(userUuid, dto);
         return  ResponseEntity.ok("Recurring Payment with UUID %s has been updated".formatted(dto.getUuid()));
     }
 
     @DeleteMapping("/recurring/{uuid}")
     @Tag(name = "Delete Recurring Payment", description = "Delete Recurring Payment")
     public ResponseEntity<String> deleteRecurringPayment(@PathVariable final String userUuid, @PathVariable final String uuid) {
-        recurringPaymentService.deleteRecurringPayment(userUuid, uuid);
+        recurringPaymentService.delete(userUuid, uuid);
         return  ResponseEntity.ok("Recurring Payment with UUID %s has been deleted".formatted(uuid));
     }
 }

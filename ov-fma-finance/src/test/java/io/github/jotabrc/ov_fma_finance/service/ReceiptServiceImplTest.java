@@ -4,7 +4,7 @@ import io.github.jotabrc.ov_fma_finance.dto.ReceiptDto;
 import io.github.jotabrc.ov_fma_finance.model.Receipt;
 import io.github.jotabrc.ov_fma_finance.model.UserFinance;
 import io.github.jotabrc.ov_fma_finance.repository.ReceiptRepository;
-import io.github.jotabrc.ov_fma_finance.util.ServiceUtilImpl;
+import io.github.jotabrc.ov_fma_finance.service.util.ServiceUtilImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -43,10 +43,7 @@ class ReceiptServiceImplTest {
                 .builder()
                 .id(1)
                 .userUuid(UUID.randomUUID().toString())
-                .username("username")
-                .email("email@email.com")
                 .name("John Doe")
-                .isActive(true)
                 .financialItems(new ArrayList<>())
                 .build();
         Receipt receipt = new Receipt(
@@ -64,7 +61,7 @@ class ReceiptServiceImplTest {
         doNothing().when(serviceUtil).checkUserAuthorization(any());
         when(serviceUtil.getUserFinance()).thenReturn(userFinance);
         when(receiptRepository.save(any())).thenReturn(receipt);
-        String uuid = receiptService.addReceipt(userFinance.getUserUuid(), (ReceiptDto) receipt.transform());
+        String uuid = receiptService.save(userFinance.getUserUuid(), (ReceiptDto) receipt.transform());
 
         assert uuid.equals(receipt.getUuid());
     }
@@ -75,10 +72,7 @@ class ReceiptServiceImplTest {
                 .builder()
                 .id(1)
                 .userUuid(UUID.randomUUID().toString())
-                .username("username")
-                .email("email@email.com")
                 .name("John Doe")
-                .isActive(true)
                 .financialItems(new ArrayList<>())
                 .build();
         Receipt receipt = new Receipt(
@@ -103,7 +97,7 @@ class ReceiptServiceImplTest {
         doNothing().when(serviceUtil).checkUserAuthorization(any());
         when(receiptRepository.findByUuid(any())).thenReturn(Optional.of(receipt));
         when(receiptRepository.save(any())).thenReturn(any());
-        receiptService.updateReceipt(userFinance.getUserUuid(), dto);
+        receiptService.update(userFinance.getUserUuid(), dto);
         assert receipt.getUuid().equals(dto.getUuid());
         assert receipt.getVendor().equals(dto.getVendor());
         assert receipt.getDescription().equals(dto.getDescription());
@@ -117,10 +111,7 @@ class ReceiptServiceImplTest {
                 .builder()
                 .id(1)
                 .userUuid(UUID.randomUUID().toString())
-                .username("username")
-                .email("email@email.com")
                 .name("John Doe")
-                .isActive(true)
                 .financialItems(new ArrayList<>())
                 .build();
         Receipt receipt = new Receipt(

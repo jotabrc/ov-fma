@@ -1,11 +1,10 @@
 package io.github.jotabrc.ov_fma_finance.service;
 
 import io.github.jotabrc.ov_fma_finance.dto.*;
-import io.github.jotabrc.ov_fma_finance.handler.InstanceNotCompatibleException;
 import io.github.jotabrc.ov_fma_finance.handler.UserAlreadyExistsException;
 import io.github.jotabrc.ov_fma_finance.model.*;
 import io.github.jotabrc.ov_fma_finance.repository.FinanceRepository;
-import io.github.jotabrc.ov_fma_finance.util.ServiceUtil;
+import io.github.jotabrc.ov_fma_finance.service.util.ServiceUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
@@ -20,7 +19,7 @@ import java.util.ArrayList;
 import java.util.function.Function;
 
 @Service
-public class FinanceServiceImpl implements FinanceService {
+public final class FinanceServiceImpl implements FinanceService {
 
     private final FinanceRepository financeRepository;
     private final ServiceUtil serviceUtil;
@@ -38,7 +37,7 @@ public class FinanceServiceImpl implements FinanceService {
      */
     @Override
     @Cacheable(value = "user_finance", key = "#dto.getUserUuid")
-    public void addUserFinance(final UserFinanceDto dto) {
+    public void save(final UserFinanceDto dto) {
         checkUserExistence(dto.getUserUuid());
         UserFinance userFinance = buildNewUserFinance(dto);
         financeRepository.save(userFinance);
@@ -51,7 +50,7 @@ public class FinanceServiceImpl implements FinanceService {
      */
     @Override
     @CachePut(value = "user_finance", key = "#dto.getUserUuid")
-    public void updateUserFinance(final UserFinanceDto dto) {
+    public void update(final UserFinanceDto dto) {
         UserFinance userFinance = serviceUtil.getUserFinance();
         updateUserFinance(dto, userFinance);
         financeRepository.save(userFinance);
@@ -93,10 +92,7 @@ public class FinanceServiceImpl implements FinanceService {
         return UserFinance
                 .builder()
                 .userUuid(dto.getUserUuid())
-                .username(dto.getUsername())
-                .email(dto.getEmail())
                 .name(dto.getName())
-                .isActive(dto.isActive())
                 .financialItems(new ArrayList<>())
                 .build();
     }
@@ -110,10 +106,7 @@ public class FinanceServiceImpl implements FinanceService {
     private void updateUserFinance(final UserFinanceDto dto,
                                    final UserFinance userFinance) {
         userFinance
-                .setUsername(dto.getUsername())
-                .setEmail(dto.getEmail())
-                .setName(dto.getName())
-                .setActive(dto.isActive());
+                .setName(dto.getName());
     }
 
     @Deprecated(forRemoval = true)
@@ -122,10 +115,7 @@ public class FinanceServiceImpl implements FinanceService {
                 UserFinanceDto
                         .builder()
                         .userUuid(u.getUserUuid())
-                        .username(u.getUsername())
-                        .email(u.getEmail())
                         .name(u.getName())
-                        .isActive(u.isActive())
                         .financialItems(
                                 u.getFinancialItems()
                                         .stream()
@@ -142,7 +132,7 @@ public class FinanceServiceImpl implements FinanceService {
         else if (financialEntity instanceof Receipt e) return toDto(e);
         else if (financialEntity instanceof RecurringPayment e) return toDto(e);
         else if (financialEntity instanceof RecurringReceipt e) return toDto(e);
-        else throw new InstanceNotCompatibleException("Unsupported FinancialEntity type %s".formatted(financialEntity.getClass()));
+        else throw new IllegalArgumentException("Unsupported FinancialEntity type %s".formatted(financialEntity.getClass()));
     }
 
     @Deprecated(forRemoval = true)

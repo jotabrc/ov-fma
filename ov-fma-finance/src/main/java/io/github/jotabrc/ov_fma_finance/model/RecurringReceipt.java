@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @Setter
 @Accessors(chain = true)
 @Entity(name = "tb_recurring_receipt")
-public class RecurringReceipt extends Recurrence {
+public final class RecurringReceipt extends Recurrence {
 
     private String vendor;
 

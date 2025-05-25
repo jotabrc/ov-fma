@@ -61,7 +61,7 @@ class PaymentControllerTest {
                 	"payee": "Payee"
                 }
                 """.formatted(uuid);
-        when(paymentService.addPayment(any(), any())).thenReturn(uuid);
+        when(paymentService.save(any(), any())).thenReturn(uuid);
         mockMvc.perform(post("/api/v1/finance/user/%s/payment".formatted(userUuid))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json))
@@ -104,7 +104,7 @@ class PaymentControllerTest {
                 dto.getAmount(),
                 dto.getDescription(),
                 dto.getPayee());
-        doNothing().when(paymentService).updatePayment(userUuid, dto);
+        doNothing().when(paymentService).update(userUuid, dto);
         mockMvc.perform(put("/api/v1/finance/user/%s/payment/update".formatted(userUuid))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json))
@@ -120,7 +120,7 @@ class PaymentControllerTest {
     void deletePayment() throws Exception {
         String userUuid = UUID.randomUUID().toString();
         String uuid = UUID.randomUUID().toString();
-        doNothing().when(paymentService).deletePayment(userUuid,uuid);
+        doNothing().when(paymentService).delete(userUuid,uuid);
 
         PaymentDto dto = new PaymentDto(
                 uuid,
@@ -180,7 +180,7 @@ class PaymentControllerTest {
                 	"payee": "Payee"
                 }
                 """.formatted(uuid);
-        when(recurringPaymentService.addRecurringPayment(any(), any())).thenReturn(uuid);
+        when(recurringPaymentService.save(any(), any())).thenReturn(uuid);
         mockMvc.perform(post("/api/v1/finance/user/%s/payment/recurring".formatted(userUuid))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
@@ -232,7 +232,7 @@ class PaymentControllerTest {
                 dto.getRecurringUntil().getDayOfMonth(),
                 dto.getRecurringUntil().getDayOfMonth(),
                 dto.getPayee());
-        doNothing().when(recurringPaymentService).updateRecurringPayment(userUuid, dto);
+        doNothing().when(recurringPaymentService).update(userUuid, dto);
         mockMvc.perform(put("/api/v1/finance/user/%s/payment/recurring/update".formatted(userUuid))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
@@ -248,7 +248,7 @@ class PaymentControllerTest {
     void deleteRecurringPayment() throws Exception {
         String userUuid = UUID.randomUUID().toString();
         String uuid = UUID.randomUUID().toString();
-        doNothing().when(paymentService).deletePayment(userUuid,uuid);
+        doNothing().when(paymentService).delete(userUuid,uuid);
         RecurringPaymentDto dto = new RecurringPaymentDto(
                 uuid,
                 LocalDate.now(),

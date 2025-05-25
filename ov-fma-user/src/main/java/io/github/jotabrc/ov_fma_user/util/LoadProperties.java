@@ -9,6 +9,6 @@ public class LoadProperties {
 
     @PostConstruct
     public void init() throws Exception {
-        new PropertiesWhitelistLoaderImpl().loadProperties();
+        new PropertiesWhitelistLoaderImpl().loadProperties("ov-auth.properties");
     }
 }

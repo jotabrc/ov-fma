@@ -21,7 +21,7 @@ import static io.github.jotabrc.ov_fma_user.controller.ControllerPath.VERSION;
 
 @RequestMapping(PREFIX + VERSION + "/user")
 @RestController
-public class UserController {
+public final class UserController {
 
     private final UserService userService;
 
@@ -30,13 +30,13 @@ public class UserController {
         this.userService = userService;
     }
 
-    @PostMapping("/signup")
+    @PostMapping("/register")
     @Tag(name = "User SIGNUP", description = "Register's new user")
-    public ResponseEntity<String> signup(@RequestBody final UserCreationUpdateDto dto) throws NoSuchAlgorithmException, JsonProcessingException {
-        String uuid = userService.signup(dto).getUuid();
+    public ResponseEntity<String> save(@RequestBody final UserCreationUpdateDto dto) throws NoSuchAlgorithmException, JsonProcessingException {
+        String uuid = userService.save(dto).getUuid();
         // Creates location path to retrieve user information
         URI location = ServletUriComponentsBuilder
-                .fromPath(PREFIX + VERSION + "/user/get-by-uuid/{uuid}")
+                .fromPath(PREFIX + VERSION + "/user/get/{uuid}")
                 .buildAndExpand(uuid)
                 .toUri();
         ControllerMessage controllerMessage = ControllerMessage
@@ -52,10 +52,10 @@ public class UserController {
                 );
     }
 
-    @PutMapping("/update/{uuid}")
+    @PutMapping("/update/{userUuid}")
     @Tag(name = "User UPDATE", description = "Updates user information, requires valid UUID")
-    public ResponseEntity<String> update(@PathVariable final String uuid, @RequestBody final UserCreationUpdateDto dto) throws NoSuchAlgorithmException, JsonProcessingException {
-        userService.update(uuid, dto);
+    public ResponseEntity<String> update(@PathVariable("userUuid") final String userUuid, @RequestBody final UserCreationUpdateDto dto) throws NoSuchAlgorithmException, JsonProcessingException {
+        userService.update(userUuid, dto);
         ControllerMessage controllerMessage = ControllerMessage
                 .builder()
                 .message("User update was successful")
@@ -68,10 +68,10 @@ public class UserController {
                 );
     }
 
-    @GetMapping("/get-by-uuid/{uuid}")
+    @GetMapping("/get/{userUuid}")
     @Tag(name = "User GET BY UUID", description = "Get user information with uuid")
-    public ResponseEntity<UserDto> getByUuid(@PathVariable("uuid") final String uuid) {
-        UserDto dto = userService.getByUuid(uuid);
+    public ResponseEntity<UserDto> get(@PathVariable("userUuid") final String userUuid) {
+        UserDto dto = userService.get(userUuid);
         return ResponseEntity
                 .status(HttpStatus.FOUND)
                 .body(dto);

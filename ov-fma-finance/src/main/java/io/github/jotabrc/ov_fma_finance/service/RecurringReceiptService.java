@@ -5,9 +5,9 @@ import jakarta.validation.constraints.NotNull;
 import org.springframework.validation.annotation.Validated;
 
 @Validated
-public interface RecurringReceiptService {
+public sealed interface RecurringReceiptService permits RecurringReceiptServiceImpl {
 
-    String addRecurringReceipt(@NotNull String userUuid, @NotNull RecurringReceiptDto dto);
-    void updateRecurringReceipt(@NotNull String userUuid, @NotNull RecurringReceiptDto dto);
-    void deleteRecurringReceipt(@NotNull String userUuid, @NotNull String uuid);
+    String save(@NotNull String userUuid, @NotNull RecurringReceiptDto dto);
+    void update(@NotNull String userUuid, @NotNull RecurringReceiptDto dto);
+    void delete(@NotNull String userUuid, @NotNull String uuid);
 }

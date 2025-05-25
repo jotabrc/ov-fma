@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity(name = "tb_role")
-public class Role {
+public final class Role {
 
     // Role relational ID
     // AUTO_INCREMENT

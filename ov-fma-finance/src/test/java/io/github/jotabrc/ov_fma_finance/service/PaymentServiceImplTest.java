@@ -4,7 +4,7 @@ import io.github.jotabrc.ov_fma_finance.dto.PaymentDto;
 import io.github.jotabrc.ov_fma_finance.model.Payment;
 import io.github.jotabrc.ov_fma_finance.model.UserFinance;
 import io.github.jotabrc.ov_fma_finance.repository.PaymentRepository;
-import io.github.jotabrc.ov_fma_finance.util.ServiceUtilImpl;
+import io.github.jotabrc.ov_fma_finance.service.util.ServiceUtilImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -43,10 +43,7 @@ class PaymentServiceImplTest {
                 .builder()
                 .id(1)
                 .userUuid(UUID.randomUUID().toString())
-                .username("username")
-                .email("email@email.com")
                 .name("John Doe")
-                .isActive(true)
                 .financialItems(new ArrayList<>())
                 .build();
         Payment payment = new Payment(1,
@@ -64,7 +61,7 @@ class PaymentServiceImplTest {
         doNothing().when(serviceUtil).checkUserAuthorization(any());
         when(serviceUtil.getUserFinance()).thenReturn(userFinance);
         when(paymentRepository.save(any())).thenReturn(payment);
-        String uuid = paymentService.addPayment(userFinance.getUserUuid(), paymentDto);
+        String uuid = paymentService.save(userFinance.getUserUuid(), paymentDto);
         assert uuid.equals(payment.getUuid());
     }
 
@@ -74,10 +71,7 @@ class PaymentServiceImplTest {
                 .builder()
                 .id(1)
                 .userUuid(UUID.randomUUID().toString())
-                .username("username")
-                .email("email@email.com")
                 .name("John Doe")
-                .isActive(true)
                 .financialItems(new ArrayList<>())
                 .build();
         Payment payment = new Payment(1,
@@ -101,7 +95,7 @@ class PaymentServiceImplTest {
         doNothing().when(serviceUtil).checkUserAuthorization(any());
         when(paymentRepository.findByUuid(any())).thenReturn(Optional.of(payment));
         when(paymentRepository.save(any())).thenReturn(any());
-        paymentService.updatePayment(userFinance.getUserUuid(), dto);
+        paymentService.update(userFinance.getUserUuid(), dto);
 
         assert payment.getAmount() == dto.getAmount() &&
                 payment.getDescription().equals(dto.getDescription()) &&
@@ -114,10 +108,7 @@ class PaymentServiceImplTest {
                 .builder()
                 .id(1)
                 .userUuid(UUID.randomUUID().toString())
-                .username("username")
-                .email("email@email.com")
                 .name("John Doe")
-                .isActive(true)
                 .financialItems(new ArrayList<>())
                 .build();
         Payment payment = new Payment(1,

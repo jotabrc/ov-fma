@@ -30,7 +30,7 @@ public class ReceiptController {
     @PostMapping
     @Tag(name = "Receipt", description = "Add new Receipt")
     public ResponseEntity<String> addReceipt(@PathVariable final String userUuid, @RequestBody final ReceiptDto dto) {
-        String uuid = receiptService.addReceipt(userUuid, dto);
+        String uuid = receiptService.save(userUuid, dto);
         // Creates location path
         URI location = ServletUriComponentsBuilder
                 .fromPath(PREFIX + VERSION + "/receipt/get-by-uuid/{uuid}")
@@ -52,21 +52,21 @@ public class ReceiptController {
     @PutMapping("/update")
     @Tag(name = "Update Receipt", description = "Updated Receipt")
     public ResponseEntity<String> updateReceipt(@PathVariable final String userUuid, @RequestBody ReceiptDto dto) {
-        receiptService.updateReceipt(userUuid, dto);
+        receiptService.update(userUuid, dto);
         return ResponseEntity.ok("Receipt with UUID %s has been updated".formatted(dto.getUuid()));
     }
 
     @DeleteMapping("/{uuid}")
     @Tag(name = "Delete Receipt", description = "Delete Receipt")
     public ResponseEntity<String> deleteReceipt(@PathVariable final String userUuid, @PathVariable final String uuid) {
-        receiptService.deleteReceipt(userUuid, uuid);
+        receiptService.delete(userUuid, uuid);
         return ResponseEntity.ok("Receipt with UUID %s has been deleted".formatted(uuid));
     }
 
     @PostMapping("/recurring")
     @Tag(name = "Recurring Receipt", description = "Add new Recurring Receipt")
     public ResponseEntity<String> addRecurringReceipt(@PathVariable final String userUuid, @RequestBody final RecurringReceiptDto dto) {
-        String uuid = recurringReceiptService.addRecurringReceipt(userUuid, dto);
+        String uuid = recurringReceiptService.save(userUuid, dto);
         // Creates location path
         URI location = ServletUriComponentsBuilder
                 .fromPath(PREFIX + VERSION + "/recurring-receipt/get-by-uuid/{uuid}")
@@ -88,14 +88,14 @@ public class ReceiptController {
     @PutMapping("/recurring/update")
     @Tag(name = "Update Recurring Receipt", description = "Update Recurring Receipt")
     public ResponseEntity<String> updateRecurringReceipt(@PathVariable final String userUuid, @RequestBody RecurringReceiptDto dto) {
-        recurringReceiptService.updateRecurringReceipt(userUuid, dto);
+        recurringReceiptService.update(userUuid, dto);
         return ResponseEntity.ok("Recurring Receipt with UUID %s has been updated".formatted(dto.getUuid()));
     }
 
     @DeleteMapping("/recurring/{uuid}")
     @Tag(name = "Delete Recurring Receipt", description = "Delete Recurring Receipt")
     public ResponseEntity<String> deleteRecurringReceipt(@PathVariable final String userUuid, @PathVariable final String uuid) {
-        recurringReceiptService.deleteRecurringReceipt(userUuid, uuid);
+        recurringReceiptService.delete(userUuid, uuid);
         return  ResponseEntity.ok("Recurring Receipt with UUID %s has been deleted".formatted(uuid));
     }
 }

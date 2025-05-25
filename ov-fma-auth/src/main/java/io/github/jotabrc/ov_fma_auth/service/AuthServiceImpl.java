@@ -2,7 +2,7 @@ package io.github.jotabrc.ov_fma_auth.service;
 
 import io.github.jotabrc.ov_fma_auth.AuthRepository;
 import io.github.jotabrc.ov_fma_auth.config.RedisConfig;
-import io.github.jotabrc.ov_fma_auth.dto.SignInDto;
+import io.github.jotabrc.ov_fma_auth.dto.LoginDto;
 import io.github.jotabrc.ov_fma_auth.dto.UserDto;
 import io.github.jotabrc.ov_fma_auth.handler.AuthenticationDeniedException;
 import io.github.jotabrc.ov_fma_auth.handler.TooManyRequestsException;
@@ -27,7 +27,7 @@ import java.util.List;
  * Auth Service implementation of AuthService interface.
  */
 @Service
-public class AuthServiceImpl implements AuthService {
+public final class AuthServiceImpl implements AuthService {
 
     private final RedisConfig redisConfig;
     private final AuthRepository authRepository;
@@ -45,10 +45,9 @@ public class AuthServiceImpl implements AuthService {
      * @throws UserAlreadyExistsException if user already exists.
      */
     @Override
-    public void add(final UserDto dto) {
+    public void save(final UserDto dto) {
         // Check if user already exists, if it does throw UserAlreadyExistsException.
         userExists(dto.getUuid());
-
         User user = buildNewUser(dto);
         authRepository.save(user);
     }
@@ -72,11 +71,11 @@ public class AuthServiceImpl implements AuthService {
      * @return JWT Token.
      */
     @Override
-    public String signIn(final SignInDto dto, final String uuid) throws NoSuchAlgorithmException {
-        Boolean firstAttempt = redisConfig.redisTemplate().opsForValue().setIfAbsent(uuid, 1, Duration.ofMinutes(10));
+    public String login(final String userUuid, final LoginDto dto) throws NoSuchAlgorithmException {
+        Boolean firstAttempt = redisConfig.redisTemplate().opsForValue().setIfAbsent(userUuid, 1, Duration.ofMinutes(10));
 
         Long tries = 1L;
-        if (Boolean.FALSE.equals(firstAttempt)) tries = redisConfig.redisTemplate().opsForValue().increment(uuid, 1);
+        if (Boolean.FALSE.equals(firstAttempt)) tries = redisConfig.redisTemplate().opsForValue().increment(userUuid, 1);
         if (tries == null) tries = 1L;
         else if (tries.compareTo(4L) >= 0) throw new TooManyRequestsException("Too many requests, wait before trying again");
 
@@ -217,7 +216,7 @@ public class AuthServiceImpl implements AuthService {
      * @param user Valid user credentials.
      * @throws NoSuchAlgorithmException hash and salt algorithm error.
      */
-    private void validateCredentials(SignInDto dto, User user) throws NoSuchAlgorithmException {
+    private void validateCredentials(LoginDto dto, User user) throws NoSuchAlgorithmException {
         String hashedPassword = getHash(dto.getPassword(), user.getSalt());
         if (!hashedPassword.equals(user.getHash()))
             throw new AuthenticationDeniedException("Authentication denied, credentials don't match");

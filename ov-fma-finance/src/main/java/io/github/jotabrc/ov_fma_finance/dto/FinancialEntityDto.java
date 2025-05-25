@@ -10,7 +10,8 @@ import java.time.LocalDate;
 
 @Getter
 @Setter
-public abstract class FinancialEntityDto implements Serializable {
+public sealed abstract class FinancialEntityDto implements Serializable
+        permits PaymentDto, ReceiptDto, RecurrenceDto {
 
     private final String uuid;
     private final LocalDate dueDate;

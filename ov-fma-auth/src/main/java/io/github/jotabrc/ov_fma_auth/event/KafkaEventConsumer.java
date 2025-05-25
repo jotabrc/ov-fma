@@ -28,7 +28,7 @@ public class KafkaEventConsumer {
         UserDto userDto = objectMapper.readValue(record.value(), UserDto.class);
 
         switch (record.topic()) {
-            case KafkaConfig.USER_NEW -> authService.add(userDto);
+            case KafkaConfig.USER_NEW -> authService.save(userDto);
             case KafkaConfig.USER_UPDATE -> authService.update(userDto);
         }
     }

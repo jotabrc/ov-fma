@@ -29,8 +29,8 @@ public class KafkaEventConsumer {
         UserFinanceDto dto = buildNewUserFinanceDto(userFinanceAddDto);
 
         switch (record.topic()) {
-            case KafkaConfig.USER_FINANCE_NEW -> financeService.addUserFinance(dto);
-            case KafkaConfig.USER_FINANCE_UPDATE -> financeService.updateUserFinance(dto);
+            case KafkaConfig.USER_FINANCE_NEW -> financeService.save(dto);
+            case KafkaConfig.USER_FINANCE_UPDATE -> financeService.update(dto);
         }
     }
 
@@ -38,10 +38,7 @@ public class KafkaEventConsumer {
         return UserFinanceDto
                 .builder()
                 .userUuid(dto.getUserUuid())
-                .username(dto.getUsername())
-                .email(dto.getEmail())
                 .name(dto.getName())
-                .isActive(dto.isActive())
                 .build();
     }
 }

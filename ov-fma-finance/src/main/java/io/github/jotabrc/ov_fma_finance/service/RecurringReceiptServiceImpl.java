@@ -5,13 +5,13 @@ import io.github.jotabrc.ov_fma_finance.handler.ReceiptNotFoundException;
 import io.github.jotabrc.ov_fma_finance.model.RecurringReceipt;
 import io.github.jotabrc.ov_fma_finance.model.UserFinance;
 import io.github.jotabrc.ov_fma_finance.repository.RecurringReceiptRepository;
-import io.github.jotabrc.ov_fma_finance.util.ServiceUtil;
+import io.github.jotabrc.ov_fma_finance.service.util.ServiceUtil;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
 
 @Service
-public class RecurringReceiptServiceImpl implements RecurringReceiptService {
+public final class RecurringReceiptServiceImpl implements RecurringReceiptService {
 
     private final RecurringReceiptRepository recurringReceiptRepository;
     private final ServiceUtil serviceUtil;
@@ -27,7 +27,7 @@ public class RecurringReceiptServiceImpl implements RecurringReceiptService {
      * @return RecurringReceipt UUID.
      */
     @Override
-    public String addRecurringReceipt(final String userUuid, final RecurringReceiptDto dto) {
+    public String save(final String userUuid, final RecurringReceiptDto dto) {
         serviceUtil.checkUserAuthorization(userUuid);
         UserFinance userFinance = serviceUtil.getUserFinance();
         RecurringReceipt receipt = buildNewRecurringReceipt(dto, userFinance);
@@ -39,7 +39,7 @@ public class RecurringReceiptServiceImpl implements RecurringReceiptService {
      * @param dto New RecurringReceipt data.
      */
     @Override
-    public void updateRecurringReceipt(final String userUuid, final RecurringReceiptDto dto) {
+    public void update(final String userUuid, final RecurringReceiptDto dto) {
         serviceUtil.checkUserAuthorization(userUuid);
         RecurringReceipt receipt = getRecurringReceipt(dto.getUuid());
         serviceUtil.ownerMatcher(userUuid, receipt.getUserFinance().getUserUuid());
@@ -52,7 +52,7 @@ public class RecurringReceiptServiceImpl implements RecurringReceiptService {
      * @param uuid UUID of RecurringReceipt to be deleted.
      */
     @Override
-    public void deleteRecurringReceipt(final String userUuid, final String uuid) {
+    public void delete(final String userUuid, final String uuid) {
         serviceUtil.checkUserAuthorization(userUuid);
         RecurringReceipt receipt = getRecurringReceipt(uuid);
         serviceUtil.ownerMatcher(userUuid, receipt.getUserFinance().getUserUuid());

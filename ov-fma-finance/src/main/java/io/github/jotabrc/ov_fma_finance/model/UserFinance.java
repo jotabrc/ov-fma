@@ -18,7 +18,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity(name = "tb_user_finance")
-public class UserFinance implements ToDto<UserFinanceDto> {
+public final class UserFinance implements ToDto<UserFinanceDto> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,17 +27,8 @@ public class UserFinance implements ToDto<UserFinanceDto> {
     @Column(name = "user_uuid", length = 36, nullable = false, unique = true)
     private String userUuid;
 
-    @Column(length = 50, unique = true, nullable = false)
-    private String username;
-
-    @Column(length = 320, nullable = false, unique = true)
-    private String email;
-
     @Column(nullable = false)
     private String name;
-
-    @Column(name = "is_active", nullable = false)
-    private boolean isActive;
 
     @OneToMany(mappedBy = "userFinance", cascade = CascadeType.ALL)
     private List<FinancialEntity> financialItems;
@@ -58,10 +49,7 @@ public class UserFinance implements ToDto<UserFinanceDto> {
         return UserFinanceDto
                 .builder()
                 .userUuid(this.getUserUuid())
-                .username(this.getUsername())
-                .email(this.getEmail())
                 .name(this.getName())
-                .isActive(this.isActive())
                 .financialItems(
                         this.getFinancialItems()
                                 .stream()

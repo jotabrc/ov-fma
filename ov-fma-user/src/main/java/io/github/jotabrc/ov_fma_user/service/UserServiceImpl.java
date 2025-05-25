@@ -30,7 +30,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * User Service class implementation of UserService interface.
  */
 @Service
-public class UserServiceImpl implements UserService {
+public final class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
@@ -52,7 +52,7 @@ public class UserServiceImpl implements UserService {
      */
     @Cacheable(value = "user", key = "#dto.getUuid")
     @Override
-    public UserDto signup(final UserCreationUpdateDto dto) throws NoSuchAlgorithmException, JsonProcessingException {
+    public UserDto save(final UserCreationUpdateDto dto) throws NoSuchAlgorithmException, JsonProcessingException {
 
         // Throws CredentialNotAvailableException if email or username is already in use.
         emailAndUsernameAvailability(dto.getEmail(), dto.getUsername());
@@ -71,16 +71,16 @@ public class UserServiceImpl implements UserService {
     /**
      * Updates user information, update password if NOT null/empty/blank.
      *
-     * @param uuid
+     * @param userUuid
      * @param dto UserCreationUpdateDto.
      */
     @CachePut(value = "user", key = "#uuid")
     @Override
-    public UserDto update(final String uuid, final UserCreationUpdateDto dto) throws NoSuchAlgorithmException, JsonProcessingException {
+    public UserDto update(final String userUuid, final UserCreationUpdateDto dto) throws NoSuchAlgorithmException, JsonProcessingException {
         // Checks if account to be changed is the same as the token authentication
-        checkUserAuthorization(uuid);
+        checkUserAuthorization(userUuid);
         // Throws UserNotFoundException if user UUID is not found.
-        User user = getUser(dto.getUuid());
+        User user = getUser(userUuid);
         // Throws CredentialNotAvailableException if email or username is already in use.
         dataToBeChecked(dto, user);
 
@@ -101,16 +101,16 @@ public class UserServiceImpl implements UserService {
     /**
      * Get User by UUID.
      *
-     * @param uuid uuid String to search user.
+     * @param userUuid uuid String to search user.
      * @return UserDto.
      * @throws UserNotFoundException if no user is found with the provided UUID parameter.
      */
     @Cacheable(value = "user", key = "#uuid")
     @Override
-    public UserDto getByUuid(final String uuid) throws UserNotFoundException {
+    public UserDto get(final String userUuid) throws UserNotFoundException {
         // Checks if account requested user information matched authenticated user
-        checkUserAuthorization(uuid);
-        User user = getUser(uuid);
+        checkUserAuthorization(userUuid);
+        User user = getUser(userUuid);
         return toDto(user);
     }
 
@@ -349,13 +349,13 @@ public class UserServiceImpl implements UserService {
     }
 
     /**
-     * Transforms User into UserKafkaDto.
+     * Transforms User into UserAuthKafkaDto.
      *
      * @param user User DAO.
-     * @return UserKafkaDto.
+     * @return UserAuthKafkaDto.
      */
-    private UserKafkaDto toKafkaDto(final User user) {
-        return new UserKafkaDto(user.getUuid(), user.getUsername(), user.getEmail(), user.getRole().getName().getName(),
+    private UserAuthKafkaDto toKafkaDto(final User user) {
+        return new UserAuthKafkaDto(user.getUuid(), user.getUsername(), user.getEmail(), user.getRole().getName().getName(),
                 user.getSalt(), user.getHash(), user.isActive());
     }
 
@@ -366,17 +366,17 @@ public class UserServiceImpl implements UserService {
      * @return UserFinanceKafkaDto.
      */
     private UserFinanceKafkaDto toUserFinanceKafkaDto(final User user) {
-        return new UserFinanceKafkaDto(user.getUuid(), user.getUsername(), user.getEmail(), user.isActive());
+        return new UserFinanceKafkaDto(user.getUuid(), user.getName());
     }
 
     /**
      * Send Kafka Message.
      *
-     * @param user User DAO will be transformed into UserKafkaDto.
+     * @param user User DAO will be transformed into UserAuthKafkaDto.
      * @throws JsonProcessingException if DTO parsing to JSON error occurs.
      */
     private void sendKafkaMessageToAuthService(final User user, final String topic) throws JsonProcessingException {
-        UserKafkaDto kafkaDto = toKafkaDto(user);
+        UserAuthKafkaDto kafkaDto = toKafkaDto(user);
         kafkaProducer.produce(kafkaDto, topic);
     }
 
@@ -393,10 +393,10 @@ public class UserServiceImpl implements UserService {
 
     /**
      * Checks SecurityContextHolder Authentication for matching UUID.
-     * @param uuid UUID to be checked.
+     * @param userUuid UUID to be checked.
      */
-    private void checkUserAuthorization(final String uuid) {
-        if (!SecurityContextHolder.getContext().getAuthentication().getName().equals(uuid))
+    private void checkUserAuthorization(final String userUuid) {
+        if (!SecurityContextHolder.getContext().getAuthentication().getName().equals(userUuid))
             throw new AuthorizationDeniedException("Security Context Holder authentication doesn't match with provided user information");
     }
 }

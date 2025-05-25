@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS tb_user (
+CREATE TABLE IF NOT EXISTS tb_user_auth (
     id BIGSERIAL PRIMARY KEY,
     uuid VARCHAR(36) NOT NULL UNIQUE,
     username VARCHAR(50) NOT NULL UNIQUE,
@@ -7,6 +7,7 @@ CREATE TABLE IF NOT EXISTS tb_user (
     salt VARCHAR(255) NOT NULL,
     hash VARCHAR(255) NOT NULL,
     is_active BOOLEAN NOT NULL DEFAULT true,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP,
     version BIGINT
 );

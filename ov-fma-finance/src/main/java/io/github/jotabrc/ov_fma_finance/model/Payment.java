@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @Setter
 @Accessors(chain = true)
 @Entity(name = "tb_payment")
-public class Payment extends FinancialEntity {
+public final class Payment extends FinancialEntity {
 
     @Column(nullable = false, unique = false)
     private String payee;

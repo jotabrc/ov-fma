@@ -4,7 +4,7 @@ import io.github.jotabrc.ov_fma_finance.dto.RecurringPaymentDto;
 import io.github.jotabrc.ov_fma_finance.model.RecurringPayment;
 import io.github.jotabrc.ov_fma_finance.model.UserFinance;
 import io.github.jotabrc.ov_fma_finance.repository.RecurringPaymentRepository;
-import io.github.jotabrc.ov_fma_finance.util.ServiceUtilImpl;
+import io.github.jotabrc.ov_fma_finance.service.util.ServiceUtilImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -43,10 +43,7 @@ class RecurringPaymentServiceImplTest {
                 .builder()
                 .id(1)
                 .userUuid(UUID.randomUUID().toString())
-                .username("username")
-                .email("email@email.com")
                 .name("John Doe")
-                .isActive(true)
                 .financialItems(new ArrayList<>())
                 .build();
         RecurringPayment recurringPayment = new RecurringPayment(
@@ -65,7 +62,7 @@ class RecurringPaymentServiceImplTest {
         doNothing().when(serviceUtil).checkUserAuthorization(any());
         when(serviceUtil.getUserFinance()).thenReturn(userFinance);
         when(recurringPaymentRepository.save(any())).thenReturn(recurringPayment);
-        String uuid = recurringPaymentService.addRecurringPayment(userFinance.getUserUuid(), (RecurringPaymentDto) recurringPayment.transform());
+        String uuid = recurringPaymentService.save(userFinance.getUserUuid(), (RecurringPaymentDto) recurringPayment.transform());
         assert uuid.equals(recurringPayment.getUuid());
     }
 
@@ -75,10 +72,7 @@ class RecurringPaymentServiceImplTest {
                 .builder()
                 .id(1)
                 .userUuid(UUID.randomUUID().toString())
-                .username("username")
-                .email("email@email.com")
                 .name("John Doe")
-                .isActive(true)
                 .financialItems(new ArrayList<>())
                 .build();
         RecurringPayment recurringPayment = new RecurringPayment(
@@ -105,7 +99,7 @@ class RecurringPaymentServiceImplTest {
         doNothing().when(serviceUtil).checkUserAuthorization(any());
         when(recurringPaymentRepository.findByUuid(any())).thenReturn(Optional.of(recurringPayment));
         when(recurringPaymentRepository.save(any())).thenReturn(any());
-        recurringPaymentService.updateRecurringPayment(userFinance.getUserUuid(), dto);
+        recurringPaymentService.update(userFinance.getUserUuid(), dto);
         assert recurringPayment.getPayee().equals(dto.getPayee());
         assert recurringPayment.getRecurringUntil().equals(dto.getRecurringUntil());
         assert recurringPayment.getDescription().equals(dto.getDescription());
@@ -120,10 +114,7 @@ class RecurringPaymentServiceImplTest {
                 .builder()
                 .id(1)
                 .userUuid(UUID.randomUUID().toString())
-                .username("username")
-                .email("email@email.com")
                 .name("John Doe")
-                .isActive(true)
                 .financialItems(new ArrayList<>())
                 .build();
         RecurringPayment recurringPayment = new RecurringPayment(
@@ -142,6 +133,6 @@ class RecurringPaymentServiceImplTest {
         doNothing().when(serviceUtil).checkUserAuthorization(any());
         when(recurringPaymentRepository.findByUuid(any())).thenReturn(Optional.of(recurringPayment));
         doNothing().when(recurringPaymentRepository).delete(any());
-        recurringPaymentService.deleteRecurringPayment(userFinance.getUserUuid(), recurringPayment.getUuid());
+        recurringPaymentService.delete(userFinance.getUserUuid(), recurringPayment.getUuid());
     }
 }

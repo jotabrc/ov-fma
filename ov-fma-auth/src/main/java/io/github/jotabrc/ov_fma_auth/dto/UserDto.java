@@ -10,7 +10,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class UserDto extends UserDtoAbs {
+public final class UserDto extends UserDtoAbs {
 
     private String salt;
     private String hash;

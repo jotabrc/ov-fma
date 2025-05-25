@@ -10,7 +10,7 @@ import java.time.LocalDate;
 
 @Getter
 @Setter
-public class PaymentDto extends FinancialEntityDto implements Serializable {
+public final class PaymentDto extends FinancialEntityDto implements Serializable {
 
     private final String payee;
 

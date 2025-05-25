@@ -1,11 +1,11 @@
-package io.github.jotabrc.ov_fma_finance.util;
+package io.github.jotabrc.ov_fma_finance.service.util;
 
 import io.github.jotabrc.ov_fma_finance.model.UserFinance;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.validation.annotation.Validated;
 
 @Validated
-public interface ServiceUtil {
+public sealed interface ServiceUtil permits ServiceUtilImpl {
 
     String getUserUuid();
     UserFinance getUserFinance();

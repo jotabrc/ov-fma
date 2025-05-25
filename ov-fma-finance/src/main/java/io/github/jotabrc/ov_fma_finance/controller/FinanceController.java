@@ -18,7 +18,7 @@ import static io.github.jotabrc.ov_fma_finance.controller.ControllerPath.VERSION
 
 @RequestMapping(PREFIX + VERSION + "/finance/user")
 @RestController
-public class FinanceController {
+public final class FinanceController {
 
     private final FinanceService financeService;
 

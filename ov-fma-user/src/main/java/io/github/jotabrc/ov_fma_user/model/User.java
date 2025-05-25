@@ -23,7 +23,7 @@ import java.time.LocalDateTime;
         @Index(name = "idx_user_email", columnList = "email", unique = true),
         @Index(name = "idx_user_uuid", columnList = "uuid", unique = true)
 })
-public class User {
+public final class User {
 
     // User relational ID
     // AUTO_INCREMENT

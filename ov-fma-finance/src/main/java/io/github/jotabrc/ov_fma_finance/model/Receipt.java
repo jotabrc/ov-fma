@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Entity(name = "tb_receipt")
-public class Receipt extends FinancialEntity {
+public final class Receipt extends FinancialEntity {
 
     private String vendor;
 

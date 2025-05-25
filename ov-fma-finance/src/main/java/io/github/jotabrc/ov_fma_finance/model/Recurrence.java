@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
                 @Index(name = "idx_recurring_until", columnList = "recurring_until")
         }
 )
-public abstract class Recurrence extends FinancialEntity {
+public sealed abstract class Recurrence extends FinancialEntity permits RecurringPayment, RecurringReceipt {
 
     @Column(nullable = false, name = "recurrence_until")
     private LocalDate recurringUntil;

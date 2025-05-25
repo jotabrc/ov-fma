@@ -5,14 +5,14 @@ import io.github.jotabrc.ov_fma_finance.handler.PaymentNotFoundException;
 import io.github.jotabrc.ov_fma_finance.model.Payment;
 import io.github.jotabrc.ov_fma_finance.model.UserFinance;
 import io.github.jotabrc.ov_fma_finance.repository.PaymentRepository;
-import io.github.jotabrc.ov_fma_finance.util.ServiceUtil;
+import io.github.jotabrc.ov_fma_finance.service.util.ServiceUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
 
 @Service
-public class PaymentServiceImpl implements PaymentService {
+public final class PaymentServiceImpl implements PaymentService {
 
     private final PaymentRepository paymentRepository;
     private final ServiceUtil serviceUtil;
@@ -30,7 +30,7 @@ public class PaymentServiceImpl implements PaymentService {
      * @return Payment UUID.
      */
     @Override
-    public String addPayment(final String userUuid, final PaymentDto dto) {
+    public String save(final String userUuid, final PaymentDto dto) {
         serviceUtil.checkUserAuthorization(userUuid);
         UserFinance userFinance = serviceUtil.getUserFinance();
         Payment payment = buildNewPayment(dto, userFinance);
@@ -42,7 +42,7 @@ public class PaymentServiceImpl implements PaymentService {
      * @param dto New Payment data.
      */
     @Override
-    public void updatePayment(final String userUuid, final PaymentDto dto) {
+    public void update(final String userUuid, final PaymentDto dto) {
         serviceUtil.checkUserAuthorization(userUuid);
         Payment payment = getPayment(dto.getUuid());
         serviceUtil.ownerMatcher(userUuid, payment.getUserFinance().getUserUuid());
@@ -55,7 +55,7 @@ public class PaymentServiceImpl implements PaymentService {
      * @param uuid UUID of Payment to be deleted.
      */
     @Override
-    public void deletePayment(final String userUuid, final String uuid) {
+    public void delete(final String userUuid, final String uuid) {
         serviceUtil.checkUserAuthorization(userUuid);
         Payment payment = getPayment(uuid);
         serviceUtil.ownerMatcher(userUuid, payment.getUserFinance().getUserUuid());

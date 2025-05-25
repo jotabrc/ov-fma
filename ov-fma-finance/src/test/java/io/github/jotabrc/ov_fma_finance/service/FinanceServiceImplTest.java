@@ -3,7 +3,7 @@ package io.github.jotabrc.ov_fma_finance.service;
 import io.github.jotabrc.ov_fma_finance.dto.UserFinanceDto;
 import io.github.jotabrc.ov_fma_finance.model.UserFinance;
 import io.github.jotabrc.ov_fma_finance.repository.FinanceRepository;
-import io.github.jotabrc.ov_fma_finance.util.ServiceUtilImpl;
+import io.github.jotabrc.ov_fma_finance.service.util.ServiceUtilImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -44,26 +44,20 @@ class FinanceServiceImplTest {
         UserFinanceDto dto = UserFinanceDto
                 .builder()
                 .userUuid(UUID.randomUUID().toString())
-                .username("username")
-                .email("email@email.com")
                 .name("John Doe")
-                .isActive(true)
                 .financialItems(new ArrayList<>())
                 .build();
         UserFinance userFinance = UserFinance
                 .builder()
                 .id(1)
                 .userUuid(dto.getUserUuid())
-                .username(dto.getUsername())
-                .email(dto.getEmail())
                 .name(dto.getName())
-                .isActive(dto.isActive())
                 .financialItems(new ArrayList<>())
                 .build();
         when(financeRepository.existsByUserUuid(any())).thenReturn(false);
         when(financeRepository.save(any())).thenReturn(userFinance);
 
-        financeService.addUserFinance(dto);
+        financeService.save(dto);
         assert dto.getUserUuid().equals(userFinance.getUserUuid());
     }
 
@@ -73,28 +67,20 @@ class FinanceServiceImplTest {
                 .builder()
                 .id(1)
                 .userUuid(UUID.randomUUID().toString())
-                .username("username")
-                .email("email@email.com")
                 .name("John Doe")
-                .isActive(true)
                 .financialItems(new ArrayList<>())
                 .build();
         UserFinanceDto dto = UserFinanceDto
                 .builder()
                 .userUuid(userFinance.getUserUuid())
-                .username("newUsername")
-                .email("new-email@email.com")
                 .name("John Bloggs")
-                .isActive(true)
                 .financialItems(new ArrayList<>())
                 .build();
         when(serviceUtil.getUserFinance()).thenReturn(userFinance);
         when(financeRepository.save(any())).thenReturn(userFinance);
-        financeService.updateUserFinance(dto);
+        financeService.update(dto);
         assert
                 userFinance.getUserUuid().equals(dto.getUserUuid()) &&
-                        userFinance.getUsername().equals(dto.getUsername()) &&
-                        userFinance.getEmail().equals(dto.getEmail()) &&
                         userFinance.getName().equals(dto.getName());
     }
 
@@ -104,10 +90,7 @@ class FinanceServiceImplTest {
                 .builder()
                 .id(1)
                 .userUuid(UUID.randomUUID().toString())
-                .username("username")
-                .email("email@email.com")
                 .name("John Doe")
-                .isActive(true)
                 .financialItems(new ArrayList<>())
                 .build();
         Pageable pageable = PageRequest.of(0, 10);

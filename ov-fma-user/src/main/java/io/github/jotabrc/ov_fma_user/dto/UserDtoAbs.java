@@ -11,7 +11,7 @@ import java.io.Serializable;
  * Exposes only necessary data.
  */
 @Getter
-public abstract class UserDtoAbs implements Serializable {
+public abstract sealed class UserDtoAbs implements Serializable permits UserCreationUpdateDto, UserDto {
 
     private final String uuid;
     private final String username;

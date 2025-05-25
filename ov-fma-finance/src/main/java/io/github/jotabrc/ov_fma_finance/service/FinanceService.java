@@ -8,12 +8,10 @@ import org.springframework.validation.annotation.Validated;
 import java.time.LocalDate;
 
 @Validated
-public interface FinanceService {
+public sealed interface FinanceService permits FinanceServiceImpl {
 
-    void addUserFinance(@NotNull UserFinanceDto dto);
-
-    void updateUserFinance(@NotNull UserFinanceDto dto);
-
+    void save(@NotNull UserFinanceDto dto);
+    void update(@NotNull UserFinanceDto dto);
     Page<UserFinanceDto> get(@NotNull String userUuid,
                              @NotNull LocalDate fromDate,
                              @NotNull LocalDate toDate,

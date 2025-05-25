@@ -46,9 +46,9 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(WHITELIST).permitAll()
                         .requestMatchers("/error").permitAll()
-                        .requestMatchers(PREFIX + VERSION + "/user/signup").permitAll()
-                        .requestMatchers(PREFIX + VERSION + "/user/update").hasAnyRole(RoleName.USER.getName(), RoleName.ADMIN.getName())
-                        .requestMatchers(PREFIX + VERSION + "/user/get-by-uuid/**").hasAnyRole(RoleName.USER.getName(), RoleName.ADMIN.getName())
+                        .requestMatchers(PREFIX + VERSION + "/user/login").permitAll()
+                        .requestMatchers(PREFIX + VERSION + "/user/update/**").hasAnyRole(RoleName.USER.getName(), RoleName.ADMIN.getName())
+                        .requestMatchers(PREFIX + VERSION + "/user/get/**").hasAnyRole(RoleName.USER.getName(), RoleName.ADMIN.getName())
                         .anyRequest().authenticated()
                 )
                 .addFilterAfter(new TokenGlobalFilter(), UsernamePasswordAuthenticationFilter.class)

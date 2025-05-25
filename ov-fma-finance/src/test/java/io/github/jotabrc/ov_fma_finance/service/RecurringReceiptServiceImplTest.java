@@ -4,7 +4,7 @@ import io.github.jotabrc.ov_fma_finance.dto.RecurringReceiptDto;
 import io.github.jotabrc.ov_fma_finance.model.RecurringReceipt;
 import io.github.jotabrc.ov_fma_finance.model.UserFinance;
 import io.github.jotabrc.ov_fma_finance.repository.RecurringReceiptRepository;
-import io.github.jotabrc.ov_fma_finance.util.ServiceUtilImpl;
+import io.github.jotabrc.ov_fma_finance.service.util.ServiceUtilImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -44,10 +44,7 @@ class RecurringReceiptServiceImplTest {
                 .builder()
                 .id(1)
                 .userUuid(UUID.randomUUID().toString())
-                .username("username")
-                .email("email@email.com")
                 .name("John Doe")
-                .isActive(true)
                 .financialItems(new ArrayList<>())
                 .build();
         RecurringReceipt receipt = new RecurringReceipt(
@@ -66,6 +63,8 @@ class RecurringReceiptServiceImplTest {
         doNothing().when(serviceUtil).checkUserAuthorization(anyString());
         when(serviceUtil.getUserFinance()).thenReturn(userFinance);
         when(recurringReceiptRepository.save(any(RecurringReceipt.class))).thenReturn(receipt);
+        String uuid = recurringReceiptService.save(userFinance.getUserUuid(), (RecurringReceiptDto) receipt.transform());
+        assert uuid.equals(receipt.getUuid());
     }
 
     @Test
@@ -74,10 +73,7 @@ class RecurringReceiptServiceImplTest {
                 .builder()
                 .id(1)
                 .userUuid(UUID.randomUUID().toString())
-                .username("username")
-                .email("email@email.com")
                 .name("John Doe")
-                .isActive(true)
                 .financialItems(new ArrayList<>())
                 .build();
         RecurringReceipt receipt = new RecurringReceipt(
@@ -104,7 +100,7 @@ class RecurringReceiptServiceImplTest {
         doNothing().when(serviceUtil).checkUserAuthorization(anyString());
         when(recurringReceiptRepository.findByUuid(any())).thenReturn(Optional.of(receipt));
         when(recurringReceiptRepository.save(any(RecurringReceipt.class))).thenReturn(receipt);
-        recurringReceiptService.updateRecurringReceipt(userFinance.getUserUuid(), dto);
+        recurringReceiptService.update(userFinance.getUserUuid(), dto);
         assert receipt.getVendor().equals(dto.getVendor());
         assert receipt.getRecurringUntil().equals(dto.getRecurringUntil());
         assert receipt.getDescription().equals(dto.getDescription());
@@ -119,10 +115,7 @@ class RecurringReceiptServiceImplTest {
                 .builder()
                 .id(1)
                 .userUuid(UUID.randomUUID().toString())
-                .username("username")
-                .email("email@email.com")
                 .name("John Doe")
-                .isActive(true)
                 .financialItems(new ArrayList<>())
                 .build();
         RecurringReceipt receipt = new RecurringReceipt(
@@ -141,6 +134,6 @@ class RecurringReceiptServiceImplTest {
         doNothing().when(serviceUtil).checkUserAuthorization(any());
         when(recurringReceiptRepository.findByUuid(any())).thenReturn(Optional.of(receipt));
         doNothing().when(recurringReceiptRepository).delete(any());
-        recurringReceiptService.deleteRecurringReceipt(userFinance.getUserUuid(), receipt.getUuid());
+        recurringReceiptService.delete(userFinance.getUserUuid(), receipt.getUuid());
     }
 }

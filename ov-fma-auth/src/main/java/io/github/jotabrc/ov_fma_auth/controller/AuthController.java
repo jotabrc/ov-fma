@@ -1,6 +1,6 @@
 package io.github.jotabrc.ov_fma_auth.controller;
 
-import io.github.jotabrc.ov_fma_auth.dto.SignInDto;
+import io.github.jotabrc.ov_fma_auth.dto.LoginDto;
 import io.github.jotabrc.ov_fma_auth.service.AuthService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +14,7 @@ import static io.github.jotabrc.ov_fma_auth.controller.ControllerPath.VERSION;
 
 @RequestMapping(PREFIX + VERSION + "/auth")
 @RestController
-public class AuthController {
+public final class AuthController {
 
     private final AuthService authService;
 
@@ -23,10 +23,15 @@ public class AuthController {
         this.authService = authService;
     }
 
-    @PostMapping("/signin/{uuid}")
-    @Tag(name = "SignIn Authentication", description = "Authenticates user")
-    public ResponseEntity<String> signIn(@RequestBody final SignInDto dto, @PathVariable final String uuid) throws NoSuchAlgorithmException {
-        String jwt = authService.signIn(dto, uuid);
-        return ResponseEntity.ok("Token created: %s".formatted(jwt));
+    @PostMapping("/login/{userUuid}")
+    @Tag(name = "User login", description = "Authenticates user")
+    public ResponseEntity<String> login(@PathVariable("userUuid") final String userUuid, @RequestBody final LoginDto dto) throws NoSuchAlgorithmException {
+        String jwt = authService.login(userUuid, dto);
+        return ResponseEntity.ok("""
+                        {
+                            "message": "Token created",
+                            "token": "%s"
+                        }
+                        """.formatted(jwt));
     }
 }

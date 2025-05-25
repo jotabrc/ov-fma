@@ -10,7 +10,7 @@ import java.time.LocalDate;
 
 @Getter
 @Setter
-public class RecurringReceiptDto extends RecurrenceDto implements Serializable {
+public final class RecurringReceiptDto extends RecurrenceDto implements Serializable {
 
     private final String vendor;
 

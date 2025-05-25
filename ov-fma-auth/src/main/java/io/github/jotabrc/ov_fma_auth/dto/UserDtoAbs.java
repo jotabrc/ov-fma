@@ -13,7 +13,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public abstract class UserDtoAbs {
+public sealed abstract class UserDtoAbs permits UserDto {
 
     private String uuid;
     private String username;
