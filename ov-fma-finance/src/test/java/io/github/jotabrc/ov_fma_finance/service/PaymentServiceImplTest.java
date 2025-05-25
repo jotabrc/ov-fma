@@ -24,13 +24,13 @@ import static org.mockito.Mockito.when;
 class PaymentServiceImplTest {
 
     @Mock
-    PaymentRepository paymentRepository;
+    private PaymentRepository paymentRepository;
 
     @Mock
-    ServiceUtilImpl serviceUtil;
+    private ServiceUtilImpl serviceUtil;
 
     @InjectMocks
-    PaymentServiceImpl paymentService;
+    private PaymentServiceImpl paymentService;
 
     @BeforeEach
     void init() {

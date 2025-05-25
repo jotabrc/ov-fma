@@ -57,7 +57,6 @@ public class RecurringReceiptServiceImpl implements RecurringReceiptService {
         RecurringReceipt receipt = getRecurringReceipt(uuid);
         serviceUtil.ownerMatcher(userUuid, receipt.getUserFinance().getUserUuid());
         recurringReceiptRepository.delete(receipt);
-        recurringReceiptRepository.save(receipt);
     }
 
     // =================================================================================================================

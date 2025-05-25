@@ -16,7 +16,7 @@ import java.time.LocalDate;
 import static io.github.jotabrc.ov_fma_finance.controller.ControllerPath.PREFIX;
 import static io.github.jotabrc.ov_fma_finance.controller.ControllerPath.VERSION;
 
-@RequestMapping(PREFIX + VERSION + "/finance/user/{userUuid}")
+@RequestMapping(PREFIX + VERSION + "/finance/user")
 @RestController
 public class FinanceController {
 

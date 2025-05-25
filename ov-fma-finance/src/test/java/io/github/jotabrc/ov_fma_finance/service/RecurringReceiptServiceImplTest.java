@@ -1,9 +1,9 @@
 package io.github.jotabrc.ov_fma_finance.service;
 
-import io.github.jotabrc.ov_fma_finance.dto.ReceiptDto;
-import io.github.jotabrc.ov_fma_finance.model.Receipt;
+import io.github.jotabrc.ov_fma_finance.dto.RecurringReceiptDto;
+import io.github.jotabrc.ov_fma_finance.model.RecurringReceipt;
 import io.github.jotabrc.ov_fma_finance.model.UserFinance;
-import io.github.jotabrc.ov_fma_finance.repository.ReceiptRepository;
+import io.github.jotabrc.ov_fma_finance.repository.RecurringReceiptRepository;
 import io.github.jotabrc.ov_fma_finance.util.ServiceUtilImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,19 +18,20 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
-class ReceiptServiceImplTest {
+class RecurringReceiptServiceImplTest {
 
     @Mock
-    private ReceiptRepository receiptRepository;
+    private RecurringReceiptRepository recurringReceiptRepository;
 
     @Mock
     private ServiceUtilImpl serviceUtil;
 
     @InjectMocks
-    private ReceiptServiceImpl receiptService;
+    private RecurringReceiptServiceImpl recurringReceiptService;
 
     @BeforeEach
     void init() {
@@ -38,7 +39,7 @@ class ReceiptServiceImplTest {
     }
 
     @Test
-    void addReceipt() {
+    void addRecurringReceipt() {
         UserFinance userFinance = UserFinance
                 .builder()
                 .id(1)
@@ -49,28 +50,26 @@ class ReceiptServiceImplTest {
                 .isActive(true)
                 .financialItems(new ArrayList<>())
                 .build();
-        Receipt receipt = new Receipt(
+        RecurringReceipt receipt = new RecurringReceipt(
                 1,
                 UUID.randomUUID().toString(),
                 userFinance,
                 LocalDate.now(),
-                1000.00,
+                120.23,
                 "Description",
                 LocalDateTime.now(),
                 null,
                 0,
+                LocalDate.now(),
                 "Vendor"
         );
-        doNothing().when(serviceUtil).checkUserAuthorization(any());
+        doNothing().when(serviceUtil).checkUserAuthorization(anyString());
         when(serviceUtil.getUserFinance()).thenReturn(userFinance);
-        when(receiptRepository.save(any())).thenReturn(receipt);
-        String uuid = receiptService.addReceipt(userFinance.getUserUuid(), (ReceiptDto) receipt.transform());
-
-        assert uuid.equals(receipt.getUuid());
+        when(recurringReceiptRepository.save(any(RecurringReceipt.class))).thenReturn(receipt);
     }
 
     @Test
-    void updateReceipt() {
+    void updateRecurringReceipt() {
         UserFinance userFinance = UserFinance
                 .builder()
                 .id(1)
@@ -81,38 +80,41 @@ class ReceiptServiceImplTest {
                 .isActive(true)
                 .financialItems(new ArrayList<>())
                 .build();
-        Receipt receipt = new Receipt(
+        RecurringReceipt receipt = new RecurringReceipt(
                 1,
                 UUID.randomUUID().toString(),
                 userFinance,
                 LocalDate.now(),
-                1000.00,
+                120.23,
                 "Description",
                 LocalDateTime.now(),
                 null,
                 0,
+                LocalDate.now(),
                 "Vendor"
         );
-        ReceiptDto dto = new ReceiptDto(
+        RecurringReceiptDto dto = new RecurringReceiptDto(
                 receipt.getUuid(),
                 LocalDate.now().plusDays(1),
-                1.00,
-                "N/A",
-                "Another Vendor"
+                139.23,
+                "New Description",
+                LocalDate.now().plusMonths(2),
+                "New Vendor"
         );
-        doNothing().when(serviceUtil).checkUserAuthorization(any());
-        when(receiptRepository.findByUuid(any())).thenReturn(Optional.of(receipt));
-        when(receiptRepository.save(any())).thenReturn(any());
-        receiptService.updateReceipt(userFinance.getUserUuid(), dto);
-        assert receipt.getUuid().equals(dto.getUuid());
+        doNothing().when(serviceUtil).checkUserAuthorization(anyString());
+        when(recurringReceiptRepository.findByUuid(any())).thenReturn(Optional.of(receipt));
+        when(recurringReceiptRepository.save(any(RecurringReceipt.class))).thenReturn(receipt);
+        recurringReceiptService.updateRecurringReceipt(userFinance.getUserUuid(), dto);
         assert receipt.getVendor().equals(dto.getVendor());
+        assert receipt.getRecurringUntil().equals(dto.getRecurringUntil());
         assert receipt.getDescription().equals(dto.getDescription());
         assert receipt.getAmount() == dto.getAmount();
         assert receipt.getDueDate().equals(dto.getDueDate());
+        assert receipt.getUuid().equals(dto.getUuid());
     }
 
     @Test
-    void deleteReceipt() {
+    void deleteRecurringReceipt() {
         UserFinance userFinance = UserFinance
                 .builder()
                 .id(1)
@@ -123,20 +125,22 @@ class ReceiptServiceImplTest {
                 .isActive(true)
                 .financialItems(new ArrayList<>())
                 .build();
-        Receipt receipt = new Receipt(
+        RecurringReceipt receipt = new RecurringReceipt(
                 1,
                 UUID.randomUUID().toString(),
                 userFinance,
                 LocalDate.now(),
-                1000.00,
+                120.23,
                 "Description",
                 LocalDateTime.now(),
                 null,
                 0,
+                LocalDate.now(),
                 "Vendor"
         );
         doNothing().when(serviceUtil).checkUserAuthorization(any());
-        when(receiptRepository.findByUuid(any())).thenReturn(Optional.of(receipt));
-        doNothing().when(receiptRepository).delete(any());
+        when(recurringReceiptRepository.findByUuid(any())).thenReturn(Optional.of(receipt));
+        doNothing().when(recurringReceiptRepository).delete(any());
+        recurringReceiptService.deleteRecurringReceipt(userFinance.getUserUuid(), receipt.getUuid());
     }
 }

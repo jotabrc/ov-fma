@@ -26,13 +26,13 @@ import static org.mockito.Mockito.when;
 class FinanceServiceImplTest {
 
     @Mock
-    FinanceRepository financeRepository;
+    private FinanceRepository financeRepository;
 
     @Mock
-    ServiceUtilImpl serviceUtil;
+    private ServiceUtilImpl serviceUtil;
 
     @InjectMocks
-    FinanceServiceImpl financeService;
+    private FinanceServiceImpl financeService;
 
     @BeforeEach
     void init() {
