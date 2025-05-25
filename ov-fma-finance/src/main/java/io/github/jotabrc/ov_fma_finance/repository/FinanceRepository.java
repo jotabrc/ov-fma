@@ -16,9 +16,11 @@ public interface FinanceRepository extends JpaRepository<UserFinance, Long> {
 
     Optional<UserFinance> findByUserUuid(final String userUuid);
 
-    @Query("SELECT e FROM UserFinance e " +
+    @Query("SELECT DISTINCT e FROM UserFinance e " +
             "JOIN e.financialItems f " +
+            "LEFT JOIN Recurrence r ON r.id = f.id " +
             "WHERE f.dueDate BETWEEN :fromDate AND :toDate " +
+            "AND (r.recurringUntil BETWEEN :fromDate AND :toDate OR r IS NULL) " +
             "AND e.userUuid = :uuid")
     Page<UserFinance> findByDueDate(@Param("uuid") final String uuid,
                                     @Param("fromDate") final LocalDate fromDate,
