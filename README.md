@@ -1,28 +1,61 @@
 **João Carlos Roveda Ostrovski**</br>
-**System name**: OV-FMA \- Ostro Veda Finance Management Application (Aplicação de Gerenciamento Financeiro)  
-**Version**: *
+**System name**: ov-fma \- Finance Management Application (Aplicação de Gerenciamento Financeiro)  
+**Version**: 71-SNAPSHOT
 
 ### Project description
-Financial management; income, expenditure, tracking; financial budget and investment registration.  
-Services are used and deployed in four modules:
+RESTful API for tracking receipts and payments providing financial management control.  
 
-1. **Gateway**: all requests need to be directed to the gateway for proper authorization; services will deny access otherwise.
-2. **User**: registration, user data querying and updates (new password, email, username, etc.),
-3. **Authentication**: user authentication;
-4. **Finance**: Finance Manager API for registering, querying and updating financial information;
-    1. Requires a registered and authenticated user (JWT).
+#### Microservices:
+1. **ov-fma-gateway**: Back end entrypoint, required for all services requests;
+2. **ov-fma-user**: User registration/update, sends User information for 'ov-fma-auth' and 'ov-fma-finance';
+3. **ov-fma-auth**: User authentication, receives user registration/update data from Kafka;
+4. **ov-fma-finance**: Register payments, receipts keeping financial information decoupled from other services;
+   1. save, update, delete.
+5. **ov-fma-config**: Configuration server, retrieves services configurations from a private repository;
+6. **kafka-service**: Decouples updates from 'ov-fma-user' to 'ov-fma-auth' and 'ov-fma-finance'.
 
 ### Settings
-VM requires `$VM_IP` environment variable for Gateway Swagger OpenAPI customizer.
-- Swagger documentation in back-end services will send requests to the gateway using the virtual machine ip, otherwise the request fail for missing `X-Secure-Token` generated at the gateway and required at the back-end services.
+#### Required Environment Variables
+##### ov-fma-gateway
+.env:
+```text
+SECRET_KEY # for JWT decode
+SPRING_PROFILES_ACTIVE=prd
+CONFIG_SERVER_URI=config-service # Config server, if deploying with Docker Swarm 'config-service' will resolve to it's URI
+CONFIG_SERVER_PORT=8084
+CONFIG_SERVER_USER
+CONFIG_SERVER_PASSWORD
+```
 
-Vagrantfile configures the set-up of the virtual machine, to use open the terminal in the project directory and use the command `vagrant up`, this will create an Ubuntu Server with 1 cpu, 512mb of ram and 5gb of disk space.<br/>
-- the vagrant-default-install.sh will be executed automatically in Vagrant VM creation, installing Docker.
-
-Docker can be used in the VM opening the terminal in the project root directory using the command `docker-compose up --build`, if desired with `-d` optional for running in the background.</br>
+##### ov-fma-user, ov-fma-finance & ov-fma-auth
+Each services require its own '.env' file, place in the root folder of each module. e.g. 'ov-fma-*/.env'
+```text
+SECRET_KEY
+SPRING_PROFILES_ACTIVE=prd
+REDIS_PASSWORD
+REDIS_PORT=6379
+CONFIG_SERVER_URI=config-service
+CONFIG_SERVER_PORT=8084
+CONFIG_SERVER_USER
+CONFIG_SERVER_PASSWORD
+POSTGRES_USER
+POSTGRES_PASSWORD
+POSTGRES_DB
+POSTGRES_HOST=user-postgres-sql
+POSTGRES_PORT=5432
+```
+##### ov-fma-config
+.env
+```text
+SPRING_PROFILES_ACTIVE=prd
+GIT_USERNAME
+GIT_PASSWORD
+REPO_URI
+SPRING_USER
+SPRING_PASSWORD
+```
+For more details see Docker Compose.
+[docker-compose.yml](docker-compose.yml)
 
 ### Diagram
 ![diagram.png](docs/diagram.png)
-
-##### Status
-_work in progress_
