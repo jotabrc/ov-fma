@@ -72,12 +72,7 @@ public final class AuthServiceImpl implements AuthService {
      */
     @Override
     public String login(final String userUuid, final LoginDto dto) throws NoSuchAlgorithmException {
-        Boolean firstAttempt = redisConfig.redisTemplate().opsForValue().setIfAbsent(userUuid, 1, Duration.ofMinutes(10));
-
-        Long tries = 1L;
-        if (Boolean.FALSE.equals(firstAttempt)) tries = redisConfig.redisTemplate().opsForValue().increment(userUuid, 1);
-        if (tries == null) tries = 1L;
-        else if (tries.compareTo(4L) >= 0) throw new TooManyRequestsException("Too many requests, wait before trying again");
+        doCache(userUuid);
 
         User user = getUserByUsername(dto.getUsername());
         validateCredentials(dto, user);
@@ -237,5 +232,18 @@ public final class AuthServiceImpl implements AuthService {
                 .build();
 
         return TokenCreator.create(TokenConfig.PREFIX, TokenConfig.KEY, tokenObject);
+    }
+
+    /**
+     * Cache user attempts to authenticate.
+     * @param userUuid
+     */
+    private void doCache(final String userUuid) {
+        Boolean firstAttempt = redisConfig.redisTemplate().opsForValue().setIfAbsent(userUuid, 1, Duration.ofMinutes(10));
+
+        Long tries = 1L;
+        if (Boolean.FALSE.equals(firstAttempt)) tries = redisConfig.redisTemplate().opsForValue().increment(userUuid, 1);
+        if (tries == null) tries = 1L;
+        else if (tries.compareTo(4L) >= 0) throw new TooManyRequestsException("Too many requests, wait before trying again");
     }
 }

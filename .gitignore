@@ -1,4 +1,5 @@
 /.vagrant/
 worker.sh
 /kafka/.env
-/redis/.envee
+/redis/.env
+/redis/.env

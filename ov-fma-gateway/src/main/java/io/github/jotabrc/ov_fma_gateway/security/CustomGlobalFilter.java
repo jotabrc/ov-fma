@@ -49,8 +49,7 @@ public class CustomGlobalFilter implements GlobalFilter {
                 .expiration(new Date(System.currentTimeMillis() + TokenConfig.EXPIRATION))
                 .roles(List.of("SYSTEM"))
                 .build();
-        String jwt = TokenCreator.create(TokenConfig.PREFIX, TokenConfig.KEY, tokenObject);
-        return jwt;
+        return TokenCreator.create(TokenConfig.PREFIX, TokenConfig.KEY, tokenObject);
     }
 
     /**

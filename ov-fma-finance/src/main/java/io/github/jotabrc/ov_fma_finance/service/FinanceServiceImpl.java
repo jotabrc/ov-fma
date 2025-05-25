@@ -57,6 +57,7 @@ public final class FinanceServiceImpl implements FinanceService {
     }
 
     @Override
+    @Cacheable(value = "financeCache")
     public Page<UserFinanceDto> get(final String userUuid,
                                     final LocalDate fromDate,
                                     final LocalDate toDate,
