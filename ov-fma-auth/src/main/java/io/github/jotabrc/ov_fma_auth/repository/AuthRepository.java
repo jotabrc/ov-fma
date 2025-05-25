@@ -1,4 +1,4 @@
-package io.github.jotabrc.ov_fma_auth;
+package io.github.jotabrc.ov_fma_auth.repository;
 
 import io.github.jotabrc.ov_fma_auth.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;

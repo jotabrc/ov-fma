@@ -1,6 +1,6 @@
 package io.github.jotabrc.ov_fma_auth.service;
 
-import io.github.jotabrc.ov_fma_auth.AuthRepository;
+import io.github.jotabrc.ov_fma_auth.repository.AuthRepository;
 import io.github.jotabrc.ov_fma_auth.config.RedisConfig;
 import io.github.jotabrc.ov_fma_auth.dto.LoginDto;
 import io.github.jotabrc.ov_fma_auth.dto.UserDto;
@@ -73,10 +73,8 @@ public final class AuthServiceImpl implements AuthService {
     @Override
     public String login(final String userUuid, final LoginDto dto) throws NoSuchAlgorithmException {
         doCache(userUuid);
-
         User user = getUserByUsername(dto.getUsername());
         validateCredentials(dto, user);
-
         return createJwtToken(user.getUuid(), user.getRole());
     }
 
