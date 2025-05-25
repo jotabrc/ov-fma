@@ -59,7 +59,7 @@ public final class UserController {
         ControllerMessage controllerMessage = ControllerMessage
                 .builder()
                 .message("User update was successful")
-                .uuid(dto.getUuid())
+                .uuid(userUuid)
                 .build();
         return ResponseEntity
                 .ok(
