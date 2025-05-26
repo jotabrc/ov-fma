@@ -62,7 +62,7 @@ class PaymentControllerTest {
                 }
                 """.formatted(uuid);
         when(paymentService.save(any(), any())).thenReturn(uuid);
-        mockMvc.perform(post("/api/v1/finance/user/%s/payment".formatted(userUuid))
+        mockMvc.perform(post("/api/v1/finance/user/%s/payment", userUuid)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json))
                 .andExpect(status().isCreated())
@@ -105,7 +105,7 @@ class PaymentControllerTest {
                 dto.getDescription(),
                 dto.getPayee());
         doNothing().when(paymentService).update(userUuid, dto);
-        mockMvc.perform(put("/api/v1/finance/user/%s/payment/update".formatted(userUuid))
+        mockMvc.perform(put("/api/v1/finance/user/%s/payment/update", userUuid)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json))
                 .andExpect(status().isOk())
@@ -149,7 +149,7 @@ class PaymentControllerTest {
                 dto.getDescription(),
                 dto.getPayee());
 
-        mockMvc.perform(delete("/api/v1/finance/user/%s/payment/%s".formatted(userUuid, uuid)))
+        mockMvc.perform(delete("/api/v1/finance/user/%s/payment/%s", userUuid, uuid))
                 .andExpect(status().isOk())
                 .andExpect(result -> {
                     String response = result.getResponse().getContentAsString();
@@ -181,7 +181,7 @@ class PaymentControllerTest {
                 }
                 """.formatted(uuid);
         when(recurringPaymentService.save(any(), any())).thenReturn(uuid);
-        mockMvc.perform(post("/api/v1/finance/user/%s/payment/recurring".formatted(userUuid))
+        mockMvc.perform(post("/api/v1/finance/user/%s/payment/recurring", userUuid)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
                 .andExpect(status().isCreated())
@@ -233,7 +233,7 @@ class PaymentControllerTest {
                 dto.getRecurringUntil().getDayOfMonth(),
                 dto.getPayee());
         doNothing().when(recurringPaymentService).update(userUuid, dto);
-        mockMvc.perform(put("/api/v1/finance/user/%s/payment/recurring/update".formatted(userUuid))
+        mockMvc.perform(put("/api/v1/finance/user/%s/payment/recurring/update", userUuid)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
                 .andExpect(status().isOk())
@@ -285,7 +285,7 @@ class PaymentControllerTest {
                 dto.getRecurringUntil().getDayOfMonth(),
                 dto.getPayee());
 
-        mockMvc.perform(delete("/api/v1/finance/user/%s/payment/recurring/%s".formatted(userUuid, uuid)))
+        mockMvc.perform(delete("/api/v1/finance/user/%s/payment/recurring/%s", userUuid, uuid))
                 .andExpect(status().isOk())
                 .andExpect(result -> {
                     String response = result.getResponse().getContentAsString();
