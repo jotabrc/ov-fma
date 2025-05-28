@@ -3,7 +3,9 @@ server:
   port: 8081
 spring:
   config:
-    import: configserver:http://${CONFIG_SERVER_URI}:${CONFIG_SERVER_PORT}
+    import:
+      - configserver:http://${CONFIG_SERVER_URI}:${CONFIG_SERVER_PORT}
+      - configserver:validation.yml
   application:
     name: ov-fma-user
   cloud:

@@ -60,7 +60,6 @@ class UserServiceImplTest {
     @Test
     void save() throws JsonProcessingException, NoSuchAlgorithmException {
         UserCreationUpdateDto dto = new UserCreationUpdateDto(
-                null,
                 "username",
                 "email@email.com",
                 "John Doe",
@@ -96,7 +95,6 @@ class UserServiceImplTest {
     @Test
     void update() throws JsonProcessingException, NoSuchAlgorithmException {
         UserCreationUpdateDto dto = new UserCreationUpdateDto(
-                null,
                 "newusername",
                 "newemail@email.com",
                 "John Bloggs",

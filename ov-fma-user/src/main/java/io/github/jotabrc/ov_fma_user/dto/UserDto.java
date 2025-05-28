@@ -12,17 +12,19 @@ import java.io.Serializable;
 @Getter
 public final class UserDto extends UserDtoAbs implements Serializable {
 
+    private final String uuid;
     private final RoleDto role;
     private final String name;
 
     @JsonCreator
     public UserDto(
-            @JsonProperty("uuid") final String uuid,
             @JsonProperty("username") final String username,
             @JsonProperty("email") final String email,
+            @JsonProperty("uuid") final String uuid,
             @JsonProperty("name") String name,
             @JsonProperty("role") final RoleDto role) {
-        super(uuid, username, email);
+        super(username, email);
+        this.uuid = uuid;
         this.name = name;
         this.role = role;
     }

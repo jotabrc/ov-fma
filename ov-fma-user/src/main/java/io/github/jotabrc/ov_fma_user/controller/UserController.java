@@ -6,10 +6,13 @@ import io.github.jotabrc.ov_fma_user.dto.UserCreationUpdateDto;
 import io.github.jotabrc.ov_fma_user.dto.UserDto;
 import io.github.jotabrc.ov_fma_user.service.UserService;
 import io.github.jotabrc.ov_fma_user.util.ControllerMessage;
+import io.github.jotabrc.ov_fma_user.validation.ValidUuid;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -19,6 +22,7 @@ import java.security.NoSuchAlgorithmException;
 import static io.github.jotabrc.ov_fma_user.controller.ControllerPath.PREFIX;
 import static io.github.jotabrc.ov_fma_user.controller.ControllerPath.VERSION;
 
+@Validated
 @RequestMapping(PREFIX + VERSION + "/user")
 @RestController
 public final class UserController {
@@ -32,7 +36,7 @@ public final class UserController {
 
     @PostMapping("/register")
     @Tag(name = "User SIGNUP", description = "Register's new user")
-    public ResponseEntity<String> save(@RequestBody final UserCreationUpdateDto dto) throws NoSuchAlgorithmException, JsonProcessingException {
+    public ResponseEntity<String> save(@Valid @RequestBody final UserCreationUpdateDto dto) throws NoSuchAlgorithmException, JsonProcessingException {
         String uuid = userService.save(dto).getUuid();
         // Creates location path to retrieve user information
         URI location = ServletUriComponentsBuilder
@@ -54,7 +58,7 @@ public final class UserController {
 
     @PutMapping("/update/{userUuid}")
     @Tag(name = "User UPDATE", description = "Updates user information, requires valid UUID")
-    public ResponseEntity<String> update(@PathVariable("userUuid") final String userUuid, @RequestBody final UserCreationUpdateDto dto) throws NoSuchAlgorithmException, JsonProcessingException {
+    public ResponseEntity<String> update(@ValidUuid @PathVariable("userUuid") final String userUuid, @Valid @RequestBody final UserCreationUpdateDto dto) throws NoSuchAlgorithmException, JsonProcessingException {
         userService.update(userUuid, dto);
         ControllerMessage controllerMessage = ControllerMessage
                 .builder()
@@ -70,7 +74,7 @@ public final class UserController {
 
     @GetMapping("/get/{userUuid}")
     @Tag(name = "User GET BY UUID", description = "Get user information with uuid")
-    public ResponseEntity<UserDto> get(@PathVariable("userUuid") final String userUuid) {
+    public ResponseEntity<UserDto> get(@ValidUuid @PathVariable("userUuid") final String userUuid) {
         UserDto dto = userService.get(userUuid);
         return ResponseEntity
                 .status(HttpStatus.FOUND)

@@ -43,7 +43,6 @@ class UserControllerTest {
     @Test
     void save() throws Exception {
         UserCreationUpdateDto dto = new UserCreationUpdateDto(
-                null,
                 "username",
                 "email@email.com",
                 "John Doe",
@@ -84,7 +83,6 @@ class UserControllerTest {
     @Test
     void update() throws Exception {
         UserCreationUpdateDto dto = new UserCreationUpdateDto(
-                null,
                 "username",
                 "email@email.com",
                 "John Doe",

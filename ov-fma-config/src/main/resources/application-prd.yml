@@ -25,6 +25,7 @@ spring:
             - '{application}/{profile}'
             - '{application}/ov-auth.properties'
             - '{application}/service.properties'
+            - 'common'
 
 logging:
   level:
